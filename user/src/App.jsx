@@ -1,21 +1,7 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import Profile from "./pages/Profile";
-import MyBookings from "./pages/MyBookings";
-
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/bookings" element={<MyBookings />} />
-      </Routes>
-    </BrowserRouter>
+    <div className="min-h-screen bg-black text-white flex items-center justify-center">
+      <h1 className="text-5xl">MJ Farmhouse</h1>
+    </div>
   );
 }
