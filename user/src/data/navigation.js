@@ -1,7 +1,8 @@
 export const navigation = [
-  { label: "Home", href: "/" },
   { label: "About", href: "#about" },
   { label: "Gallery", href: "#gallery" },
+  { label: "Updates", href: "#updates" },
   { label: "FAQ", href: "#faq" },
-  { label: "Booking", href: "#booking" },
+  { label: "Book Now", href: "#booking" },
+  { label: "Pay", href: "#payment" },
 ];
