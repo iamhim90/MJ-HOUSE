@@ -1278,27 +1278,72 @@
     </div>
 
     <div class="reveal" style="transition-delay:.1s">
-      <div class="pricing-row" id="slots">
-        <div class="slot sel" data-slot="noon" data-price="12000">
-          <span class="slot-status" id="sstatus-noon"></span>
-          <div class="slot-name">Noon</div>
-          <div class="slot-time">12 PM &ndash; 3 PM</div>
-          <div class="slot-price">12,000</div>
-          <div class="slot-advance">Advance: ₹3,600</div>
+      <div style="margin-bottom:2.5rem">
+        <div style="font-size:.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--wheat);margin-bottom:1rem;opacity:.8">Half Day</div>
+        <div class="pricing-row" id="slots">
+          <div class="slot sel" data-slot="hday-morning" data-price="20000">
+            <span class="slot-status" id="sstatus-hday-morning"></span>
+            <div class="slot-name">Morning</div>
+            <div class="slot-time">9 AM &ndash; 3 PM</div>
+            <div class="slot-price">20,000</div>
+            <div class="slot-advance">Advance: ₹6,000</div>
+          </div>
+          <div class="slot" data-slot="hday-evening" data-price="20000">
+            <span class="slot-status" id="sstatus-hday-evening"></span>
+            <div class="slot-name">Evening</div>
+            <div class="slot-time">3:30 PM &ndash; 10:30 PM</div>
+            <div class="slot-price">20,000</div>
+            <div class="slot-advance">Advance: ₹6,000</div>
+          </div>
+          <div class="slot" data-slot="fullday" data-price="30000">
+            <span class="slot-status" id="sstatus-fullday"></span>
+            <div class="slot-name">Full Day</div>
+            <div class="slot-time">9 AM &ndash; 10 PM</div>
+            <div class="slot-price">30,000</div>
+            <div class="slot-advance">Advance: ₹9,000</div>
+          </div>
         </div>
-        <div class="slot" data-slot="evening" data-price="15000">
-          <span class="slot-status" id="sstatus-evening"></span>
-          <div class="slot-name">Evening</div>
-          <div class="slot-time">6 PM &ndash; 9 PM</div>
-          <div class="slot-price">15,000</div>
-          <div class="slot-advance">Advance: ₹4,500</div>
+      </div>
+
+      <div>
+        <div style="font-size:.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--wheat);margin-bottom:1rem;opacity:.8">Special Occasion</div>
+        <div style="margin-bottom:2rem">
+          <div style="font-size:.85rem;color:rgba(245,240,232,.6);margin-bottom:.8rem;letter-spacing:.5px">Daris</div>
+          <div class="pricing-row">
+            <div class="slot" data-slot="daris-morning" data-price="12000">
+              <span class="slot-status" id="sstatus-daris-morning"></span>
+              <div class="slot-name">Morning</div>
+              <div class="slot-time">11 AM &ndash; 2 PM</div>
+              <div class="slot-price">12,000</div>
+              <div class="slot-advance">Advance: ₹3,600</div>
+            </div>
+            <div class="slot" data-slot="daris-evening" data-price="12000">
+              <span class="slot-status" id="sstatus-daris-evening"></span>
+              <div class="slot-name">Evening</div>
+              <div class="slot-time">7 PM &ndash; 10 PM</div>
+              <div class="slot-price">12,000</div>
+              <div class="slot-advance">Advance: ₹3,600</div>
+            </div>
+          </div>
         </div>
-        <div class="slot" data-slot="fullday" data-price="30000">
-          <span class="slot-status" id="sstatus-fullday"></span>
-          <div class="slot-name">Full Day</div>
-          <div class="slot-time">12 AM &ndash; 10 PM</div>
-          <div class="slot-price">30,000</div>
-          <div class="slot-advance">Advance: ₹9,000</div>
+        <div>
+          <div style="font-size:.85rem;color:rgba(245,240,232,.6);margin-bottom:.8rem;letter-spacing:.5px">Birthday</div>
+          <div class="pricing-row">
+            <div class="slot" data-slot="birthday-morning" data-price="12000">
+              <span class="slot-status" id="sstatus-birthday-morning"></span>
+              <div class="slot-name">Morning</div>
+              <div class="slot-time">11 AM &ndash; 3 PM</div>
+              <div class="slot-price">12,000</div>
+              <div class="slot-advance">Advance: ₹3,600</div>
+            </div>
+            <div class="slot" data-slot="birthday-evening" data-price="12000">
+              <span class="slot-status" id="sstatus-birthday-evening"></span>
+              <div class="slot-name">Evening</div>
+              <div class="slot-time">6 PM &ndash; 10 PM</div>
+              <div class="slot-price">12,000</div>
+              <div class="slot-advance">Advance: ₹3,600</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1309,7 +1354,7 @@
     <div class="advance-banner reveal" style="transition-delay:.15s">
       <div class="advance-banner-left">
         <span class="advance-banner-label">Advance Payment (30%)</span>
-        <div class="advance-banner-amount" id="advanceBannerAmt">3,600</div>
+        <div class="advance-banner-amount" id="advanceBannerAmt">6,000</div>
       </div>
       <div class="advance-banner-note">Only 30% advance is required to confirm your booking. The remaining 70% is collected after the event.</div>
     </div>
@@ -1318,8 +1363,8 @@
       <div class="form-head"><h2>Your Details</h2><p>All fields marked * are required</p></div>
       <div class="form-body">
         <form id="bookForm" novalidate>
-          <input type="hidden" id="selSlot" value="noon">
-          <input type="hidden" id="selPrice" value="12000">
+          <input type="hidden" id="selSlot" value="hday-morning">
+          <input type="hidden" id="selPrice" value="20000">
           <div class="frow">
             <div class="ff"><label for="bName">Full Name *</label><input type="text" id="bName" placeholder="Your full name" required></div>
             <div class="ff"><label for="bPhone">Mobile Number *</label><input type="tel" id="bPhone" placeholder="10-digit number" required maxlength="10"></div>
@@ -2118,8 +2163,8 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
         // Reset form
         this.reset();
         document.querySelectorAll('.slot').forEach(s => s.classList.remove('sel'));
-        document.querySelector('[data-slot="noon"]').classList.add('sel');
-        updateAdvanceDisplay(12000);
+        document.querySelector('[data-slot="hday-morning"]').classList.add('sel');
+        updateAdvanceDisplay(20000);
         hideMsg();
 
         // Populate status tracker
