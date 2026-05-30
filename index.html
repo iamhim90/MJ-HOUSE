@@ -1700,7 +1700,7 @@ thumbs.forEach(t => t.addEventListener('click', () => {resetAuto();goSlide(parse
 window.addEventListener('resize', () => goSlide(curSlide), {passive:true});
  
 /* ── LIGHTBOX ── */
-const lbImages = ['gallery1.jpeg','gallery2.jpeg','gallery3.jpeg','gallery4.jpeg','gallery5.jpeg','gallery6.jpeg','gallery7.jpeg','gallery9.jpeg','gallery10.jpeg'];
+const lbImages = ['assets/gallery1.jpeg','assets/gallery2.jpeg','assets/gallery3.jpeg','assets/gallery4.jpeg','assets/gallery5.jpeg','assets/gallery6.jpeg','assets/gallery7.jpeg','assets/gallery9.jpeg','assets/gallery10.jpeg'];
 let lbIdx = 0;
 function openLightbox(i) { lbIdx=i; document.getElementById('lbImg').src=lbImages[lbIdx]; document.getElementById('lightbox').classList.add('open'); document.body.style.overflow='hidden'; }
 function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow=''; }
