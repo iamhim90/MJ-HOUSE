@@ -66,19 +66,19 @@
     /* ── CUSTOM CURSOR ── */
     .cursor-dot {
       position:fixed; width:8px; height:8px; background:var(--wheat); border-radius:50%;
-      pointer-events:none; z-index:99997; transform:translate(-50%,-50%);
+      pointer-events:none; z-index:99999999; transform:translate(-50%,-50%);
       left:-40px; top:-40px; transition:width .2s,height .2s,background .2s,opacity .2s;
       mix-blend-mode:screen; opacity:0;
     }
     .cursor-ring {
       position:fixed; width:36px; height:36px; border:1px solid rgba(201,169,110,.5); border-radius:50%;
-      pointer-events:none; z-index:99996; transform:translate(-50%,-50%);
+      pointer-events:none; z-index:99999998; transform:translate(-50%,-50%);
       left:-60px; top:-60px; transition:width .3s,height .3s,border-color .3s,opacity .2s; opacity:0;
     }
     .cursor-glow {
       position:fixed; width:320px; height:320px;
       background:radial-gradient(circle, rgba(201,169,110,.12) 0%, rgba(201,169,110,.04) 40%, transparent 70%);
-      border-radius:50%; pointer-events:none; z-index:9995; transform:translate(-50%,-50%);
+      border-radius:50%; pointer-events:none; z-index:99999997; transform:translate(-50%,-50%);
       left:-500px; top:-500px; transition:opacity .2s; opacity:0;
     }
     body.cursor-hover .cursor-dot { width:12px; height:12px; background:var(--gold); }
@@ -398,53 +398,143 @@
     .faq-a-inner { padding:0 0 1.4rem; font-size:.88rem; color:rgba(245,240,232,.45); line-height:1.8; }
     .faq-item.open .faq-a { max-height:200px; }
  
-    /* ── BOOKING ── */
-    .booking-section { background:linear-gradient(135deg,var(--soil) 0%,#1a1208 100%); padding:7rem 1.5rem; border-top:1px solid rgba(201,169,110,.06); }
-    .booking-inner { max-width:1100px; margin:0 auto; }
-    .pricing-row { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:2.5rem; }
-    .slot {
-      background:var(--glass); border:1px solid var(--glass-border); border-radius:8px;
-      padding:1.8rem 1.4rem; text-align:center; cursor:pointer;
-      transition:all .3s; position:relative; overflow:hidden;
+    /* ── BOOKING — TWO-COLUMN SPLIT ── */
+    .booking-section { background:linear-gradient(160deg,var(--soil) 0%,#120d06 100%); padding:6rem 1.5rem; border-top:1px solid rgba(201,169,110,.06); }
+    .booking-inner { max-width:1280px; margin:0 auto; }
+    .booking-split { display:grid; grid-template-columns:1fr 420px; gap:3rem; align-items:start; margin-top:3rem; }
+
+    /* ── LEFT PANEL: SLOT PICKER ── */
+    .slots-panel { display:flex; flex-direction:column; gap:1.8rem; }
+
+    /* Category block wrapper */
+    .slot-category {
+      border:1px solid rgba(201,169,110,0.1); border-radius:14px;
+      overflow:hidden; background:rgba(255,255,255,0.02);
+      transition:border-color .3s;
     }
-    .slot::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(201,169,110,.04),transparent); }
-    .slot:hover { border-color:rgba(201,169,110,.4); transform:translateY(-4px); }
-    .slot.sel { border-color:var(--wheat); background:rgba(201,169,110,.08); box-shadow:0 0 0 1px var(--wheat) inset, 0 12px 32px rgba(201,169,110,.15); }
-    .slot-name { font-family:'Cinzel',serif; font-size:.75rem; letter-spacing:2px; text-transform:uppercase; color:var(--wheat); margin-bottom:.5rem; }
-    .slot-time { font-size:.78rem; color:rgba(245,240,232,.35); letter-spacing:.5px; margin-bottom:.8rem; }
-    .slot-price { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:300; color:var(--cream); }
-    .slot-price::before { content:'₹'; font-size:1rem; vertical-align:top; margin-top:.4rem; display:inline-block; color:var(--wheat); }
-    .slot-advance { font-size:.72rem; color:rgba(201,169,110,.6); margin-top:.4rem; letter-spacing:.3px; }
+    .slot-category:hover { border-color:rgba(201,169,110,0.2); }
+
+    /* Category header bar */
+    .slot-cat-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:1.1rem 1.6rem;
+      background:linear-gradient(90deg,rgba(201,169,110,0.07),rgba(201,169,110,0.02));
+      border-bottom:1px solid rgba(201,169,110,0.1);
+    }
+    .slot-cat-left { display:flex; align-items:center; gap:.8rem; }
+    .slot-cat-icon {
+      width:34px; height:34px; border-radius:8px;
+      background:linear-gradient(135deg,rgba(201,169,110,0.2),rgba(201,169,110,0.06));
+      border:1px solid rgba(201,169,110,0.2);
+      display:flex; align-items:center; justify-content:center;
+      color:var(--wheat); font-size:.9rem; flex-shrink:0;
+    }
+    .slot-cat-title {
+      font-family:'Cinzel',serif; font-size:.72rem; letter-spacing:3px;
+      text-transform:uppercase; color:var(--wheat);
+    }
+    .slot-cat-sub { font-size:.68rem; color:rgba(245,240,232,.3); letter-spacing:.5px; margin-top:.1rem; }
+    .slot-cat-badge {
+      font-size:.58rem; letter-spacing:2px; text-transform:uppercase;
+      padding:.3rem .8rem; border-radius:20px;
+      background:rgba(201,169,110,.1); color:rgba(201,169,110,.7);
+      border:1px solid rgba(201,169,110,.18);
+    }
+
+    /* Subcategory label (Daris / Birthday) */
+    .slot-sub-label {
+      font-size:.68rem; letter-spacing:2px; text-transform:uppercase;
+      color:rgba(245,240,232,.3); padding:.9rem 1.6rem .5rem;
+      display:flex; align-items:center; gap:.6rem;
+    }
+    .slot-sub-label::after { content:''; flex:1; height:1px; background:rgba(201,169,110,.06); }
+
+    /* Slot grid inside a category */
+    .slot-grid { display:grid; gap:0; }
+    .slot-grid.cols-1 { grid-template-columns:1fr; }
+    .slot-grid.cols-2 { grid-template-columns:1fr 1fr; }
+    .slot-grid .slot:not(:last-child) { border-right:1px solid rgba(201,169,110,.07); }
+    .slot-grid.cols-1 .slot:not(:last-child) { border-right:none; border-bottom:1px solid rgba(201,169,110,.07); }
+
+    /* Redesigned slot card */
+    .slot {
+      background:transparent; border:none; border-radius:0;
+      padding:1.5rem 1.8rem; text-align:left; cursor:pointer;
+      transition:all .25s; position:relative; overflow:hidden;
+    }
+    .slot::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(201,169,110,.04),transparent); opacity:0; transition:opacity .25s; }
+    .slot:hover::before { opacity:1; }
+    .slot:hover { background:rgba(201,169,110,.04); }
+    .slot.sel { background:rgba(201,169,110,.09); }
+    .slot.sel::before { opacity:1; }
+    /* Selected indicator: left accent bar */
+    .slot.sel::after { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:linear-gradient(to bottom,var(--wheat),var(--bark)); }
+    .slot-inner { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+    .slot-left { flex:1; }
+    .slot-name { font-family:'Cinzel',serif; font-size:.7rem; letter-spacing:2.5px; text-transform:uppercase; color:var(--wheat); margin-bottom:.3rem; display:flex; align-items:center; gap:.5rem; }
+    .slot-name .sel-dot { width:6px; height:6px; background:var(--wheat); border-radius:50%; opacity:0; transition:opacity .2s; flex-shrink:0; }
+    .slot.sel .slot-name .sel-dot { opacity:1; }
+    .slot-time { font-size:.75rem; color:rgba(245,240,232,.35); letter-spacing:.4px; }
+    .slot-right { text-align:right; flex-shrink:0; }
+    .slot-price { font-family:'Cormorant Garamond',serif; font-size:1.7rem; font-weight:300; color:var(--cream); line-height:1; }
+    .slot-price::before { content:'₹'; font-size:.8rem; vertical-align:top; margin-top:.25rem; display:inline-block; color:var(--wheat); }
+    .slot-advance { font-size:.66rem; color:rgba(201,169,110,.55); margin-top:.3rem; letter-spacing:.3px; }
     .slot.sel .slot-advance { color:var(--wheat); font-weight:500; }
-    .slot.sel::after { content:'Selected'; position:absolute; top:.5rem; right:.6rem; font-size:.55rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--wheat); }
-    .form-wrap { background:var(--glass); border:1px solid var(--glass-border); border-radius:10px; overflow:hidden; -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); }
-    .form-head { padding:1.8rem 2rem; border-bottom:1px solid rgba(201,169,110,.1); }
-    .form-head h2 { font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:300; color:var(--cream); }
-    .form-head p { font-size:.75rem; color:rgba(245,240,232,.3); margin-top:.25rem; letter-spacing:.5px; }
-    .form-body { padding:2rem; }
-    .frow { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-bottom:1.2rem; }
+    .slot.sel .slot-price { color:var(--wheat); }
+
+    /* Slot disabled state */
+    .slot.slot-disabled { opacity:.4; cursor:not-allowed; pointer-events:none; }
+
+    /* Best Value badge */
+    .slot-badge {
+      position:absolute; top:.8rem; right:.8rem;
+      font-size:.52rem; letter-spacing:1.5px; text-transform:uppercase;
+      background:linear-gradient(135deg,var(--wheat),var(--bark));
+      color:var(--soil); padding:.2rem .6rem; border-radius:3px; font-weight:700;
+    }
+
+    /* ── RIGHT PANEL: STICKY FORM ── */
+    .form-panel { position:sticky; top:90px; }
+    .form-wrap { background:rgba(255,255,255,.03); border:1px solid rgba(201,169,110,.15); border-radius:14px; overflow:hidden; -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); }
+    .form-head { padding:1.6rem 1.8rem; border-bottom:1px solid rgba(201,169,110,.1); background:linear-gradient(135deg,rgba(201,169,110,.05),transparent); }
+    .form-head h2 { font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:300; color:var(--cream); }
+    .form-head p { font-size:.7rem; color:rgba(245,240,232,.3); margin-top:.2rem; letter-spacing:.4px; }
+    .form-body { padding:1.6rem 1.8rem; }
+    .frow { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
     .frow.full { grid-template-columns:1fr; }
-    .ff { display:flex; flex-direction:column; gap:.4rem; }
-    .ff label { font-size:.7rem; letter-spacing:1.5px; text-transform:uppercase; color:rgba(245,240,232,.4); }
+    .ff { display:flex; flex-direction:column; gap:.35rem; }
+    .ff label { font-size:.65rem; letter-spacing:1.5px; text-transform:uppercase; color:rgba(245,240,232,.35); }
     .ff input, .ff select, .ff textarea {
-      background:rgba(255,255,255,.04); border:1px solid rgba(201,169,110,.15);
-      border-radius:5px; padding:.85rem 1rem; color:var(--cream);
-      font-family:'DM Sans',sans-serif; font-size:.9rem;
+      background:rgba(255,255,255,.04); border:1px solid rgba(201,169,110,.13);
+      border-radius:6px; padding:.8rem .9rem; color:var(--cream);
+      font-family:'DM Sans',sans-serif; font-size:.85rem;
       transition:border-color .2s,background .2s; outline:none;
     }
     .ff input:focus, .ff select:focus, .ff textarea:focus { border-color:rgba(201,169,110,.5); background:rgba(201,169,110,.04); }
     .ff select { appearance:none; cursor:pointer; }
     .ff select option { background:var(--soil); color:var(--cream); }
-    .ff textarea { resize:vertical; min-height:80px; }
-    .ff input::placeholder, .ff textarea::placeholder { color:rgba(245,240,232,.2); }
-    .wa-note { font-size:.7rem; color:rgba(245,240,232,.25); text-align:center; margin-top:.6rem; letter-spacing:.3px; }
-    .advance-banner { background:rgba(201,169,110,.07); border:1px solid rgba(201,169,110,.2); border-radius:8px; padding:1rem 1.4rem; margin-bottom:2rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.8rem; }
-    .advance-banner-left { display:flex; flex-direction:column; gap:.2rem; }
-    .advance-banner-label { font-size:.65rem; letter-spacing:1.5px; text-transform:uppercase; color:rgba(201,169,110,.6); }
-    .advance-banner-amount { font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:300; color:var(--wheat); }
-    .advance-banner-amount::before { content:'₹'; font-size:.9rem; vertical-align:top; margin-top:.35rem; display:inline-block; }
-    .advance-banner-note { font-size:.72rem; color:rgba(245,240,232,.35); line-height:1.5; max-width:260px; }
-    @media(max-width:600px){ .frow{grid-template-columns:1fr} .pricing-row{grid-template-columns:1fr} .advance-banner{flex-direction:column;align-items:flex-start} }
+    .ff textarea { resize:vertical; min-height:70px; }
+    .ff input::placeholder, .ff textarea::placeholder { color:rgba(245,240,232,.18); }
+    .wa-note { font-size:.66rem; color:rgba(245,240,232,.2); text-align:center; margin-top:.5rem; letter-spacing:.3px; }
+
+    /* Selected slot summary strip inside form */
+    .form-slot-summary {
+      background:rgba(201,169,110,.07); border:1px solid rgba(201,169,110,.18);
+      border-radius:8px; padding:.9rem 1.1rem; margin-bottom:1.2rem;
+      display:flex; align-items:center; justify-content:space-between; gap:.5rem;
+    }
+    .fss-left { font-size:.72rem; color:rgba(245,240,232,.5); letter-spacing:.5px; }
+    .fss-left strong { display:block; font-size:.85rem; color:var(--cream); font-weight:500; margin-bottom:.1rem; }
+    .fss-right { text-align:right; flex-shrink:0; }
+    .fss-price { font-family:'Cormorant Garamond',serif; font-size:1.4rem; color:var(--wheat); line-height:1; }
+    .fss-price::before { content:'₹'; font-size:.75rem; vertical-align:top; margin-top:.2rem; display:inline-block; }
+    .fss-advance { font-size:.65rem; color:rgba(201,169,110,.55); }
+
+    .advance-banner { display:none; } /* hidden — replaced by form-slot-summary */
+
+    /* Responsive */
+    @media(max-width:900px) { .booking-split { grid-template-columns:1fr; } .form-panel { position:static; } }
+    @media(max-width:600px) { .frow { grid-template-columns:1fr; } .slot-grid.cols-2 { grid-template-columns:1fr; } .slot-grid .slot:not(:last-child) { border-right:none; border-bottom:1px solid rgba(201,169,110,.07); } }
  
     /* ── QR PAYMENT SECTION ── */
     .qr-section { background:var(--ink); padding:7rem 1.5rem; border-top:1px solid rgba(201,169,110,.06); }
@@ -798,10 +888,9 @@
     /* 3D depth on form wrap on hover */
     .form-wrap {
       transition:transform .4s ease, box-shadow .4s ease;
-      transform-style:preserve-3d;
     }
     .form-wrap:hover {
-      transform:perspective(1000px) rotateX(0.4deg) translateY(-2px);
+      transform:translateY(-2px);
       box-shadow:0 24px 60px rgba(0,0,0,.25), 0 0 0 1px rgba(201,169,110,.15);
     }
  
@@ -828,123 +917,98 @@
     .cal-trigger { position:relative; }
     .cal-display {
       background:rgba(255,255,255,.04); border:1px solid rgba(201,169,110,.15);
-      border-radius:5px; padding:.85rem 1rem; color:var(--cream);
-      font-family:'DM Sans',sans-serif; font-size:.9rem; cursor:pointer;
+      border-radius:6px; padding:.8rem .9rem; color:var(--cream);
+      font-family:'DM Sans',sans-serif; font-size:.85rem; cursor:pointer;
       display:flex; align-items:center; justify-content:space-between;
       transition:border-color .2s,background .2s; user-select:none;
     }
     .cal-display:hover, .cal-display.open { border-color:rgba(201,169,110,.5); background:rgba(201,169,110,.04); }
     .cal-placeholder { color:rgba(245,240,232,.2); }
     .cal-selected-text { color:var(--cream); }
-    .cal-icon { color:var(--wheat); font-size:.8rem; opacity:.7; }
+    .cal-icon { color:var(--wheat); font-size:.8rem; opacity:.7; flex-shrink:0; }
+
+    /* ── CALENDAR PANEL — fixed so it is never clipped by parent column ── */
     .cal-panel {
-      position:absolute; top:calc(100% + 8px); left:0; right:0;
-      background:linear-gradient(160deg,#1e1509 0%,#140e06 100%);
-      border:1px solid rgba(201,169,110,.2); border-radius:10px; padding:.7rem;
-      z-index:9000; box-shadow:0 24px 60px rgba(0,0,0,.6);
-      display:none; min-width:280px; max-width:360px;
-      -webkit-backdrop-filter:blur(20px); backdrop-filter:blur(20px);
-      will-change:opacity; overflow:hidden;
-      height:auto; max-height:none;
+      position:fixed;
+      background:linear-gradient(160deg,#1e1509 0%,#120d06 100%);
+      border:1px solid rgba(201,169,110,.25);
+      border-radius:14px;
+      padding:1rem;
+      z-index:60000;
+      box-shadow:0 28px 80px rgba(0,0,0,.75), 0 0 0 1px rgba(201,169,110,.06) inset;
+      -webkit-backdrop-filter:blur(24px); backdrop-filter:blur(24px);
+      width:320px;
+      display:none;
+      overflow:visible;
     }
-    .cal-panel.open { display:block; animation:fadeUp .15s ease; }
-    .cal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:.6rem; gap:.4rem; }
-    .cal-month-label { font-family:'Cinzel',serif; font-size:.7rem; letter-spacing:2px; color:var(--wheat); text-transform:uppercase; flex:1; text-align:center; }
+    .cal-panel.open { display:block; animation:fadeUp .18s ease; }
+
+    /* Mobile overlay backdrop */
+    #calBackdrop {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,.55); z-index:59999;
+      -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
+    }
+    #calBackdrop.active { display:block; }
+
+    .cal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:.8rem; gap:.5rem; }
+    .cal-month-label { font-family:'Cinzel',serif; font-size:.72rem; letter-spacing:2px; color:var(--wheat); text-transform:uppercase; flex:1; text-align:center; }
     .cal-nav {
       background:none; border:1px solid rgba(201,169,110,.2); border-radius:50%;
-      width:24px; height:24px; color:var(--wheat); cursor:pointer;
-      display:flex; align-items:center; justify-content:center; font-size:.55rem;
+      width:28px; height:28px; color:var(--wheat); cursor:pointer;
+      display:flex; align-items:center; justify-content:center; font-size:.6rem;
       transition:all .15s; flex-shrink:0;
     }
-    .cal-nav:active { background:rgba(201,169,110,.15); border-color:rgba(201,169,110,.4); }
-    .cal-weekdays { display:grid; grid-template-columns:repeat(7,1fr); gap:0; margin-bottom:.2rem; }
-    .cal-weekday { text-align:center; font-size:.52rem; letter-spacing:.3px; text-transform:uppercase; color:rgba(245,240,232,.28); padding:.2rem 0; }
+    .cal-nav:hover { background:rgba(201,169,110,.12); border-color:rgba(201,169,110,.5); }
+    .cal-nav:active { background:rgba(201,169,110,.2); }
+
+    .cal-weekdays { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:.4rem; }
+    .cal-weekday { text-align:center; font-size:.58rem; letter-spacing:.5px; text-transform:uppercase; color:rgba(245,240,232,.35); padding:.3rem 0; }
+
     .cal-days {
-      display:grid; grid-template-columns:repeat(7,1fr); gap:1px;
-      margin-bottom:.6rem; width:100%; box-sizing:border-box;
+      display:grid; grid-template-columns:repeat(7,1fr); gap:2px;
+      margin-bottom:.8rem; width:100%; box-sizing:border-box;
     }
     .cal-day {
-      width:100%; height:32px;
+      width:100%; aspect-ratio:1;
       display:flex; align-items:center; justify-content:center;
-      border-radius:2px; font-size:.7rem; cursor:pointer;
-      transition:all .1s; position:relative; border:1px solid transparent;
+      border-radius:6px; font-size:.78rem; cursor:pointer;
+      transition:all .12s; position:relative; border:1px solid transparent;
       user-select:none; -webkit-user-select:none;
-      flex-shrink:0; box-sizing:border-box; padding:0;
+      box-sizing:border-box; font-family:'DM Sans',sans-serif;
+      min-height:36px;
     }
     .cal-day.empty { cursor:default; }
     .cal-day.past { color:rgba(245,240,232,.12); cursor:not-allowed; }
-    .cal-day.today { border-color:rgba(201,169,110,.25); color:var(--wheat); }
-    .cal-day.today::after { content:''; position:absolute; bottom:1px; left:50%; transform:translateX(-50%); width:1px; height:1px; border-radius:50%; background:var(--wheat); }
-    /* Availability states */
-    .cal-day.avail { background:rgba(74,222,128,.09); color:rgba(134,239,172,.9); }
-    .cal-day.avail:active { background:rgba(74,222,128,.2); }
-    .cal-day.partial { background:rgba(251,191,36,.08); color:rgba(252,211,77,.9); }
-    .cal-day.partial:active { background:rgba(251,191,36,.2); }
-    .cal-day.full { background:rgba(251,113,133,.07); color:rgba(252,165,165,.45); cursor:not-allowed; }
-    .cal-day.nodata { color:rgba(245,240,232,.5); }
-    .cal-day.nodata:active { background:rgba(201,169,110,.07); }
+    .cal-day.today { border-color:rgba(201,169,110,.35); color:var(--wheat); font-weight:600; }
+    .cal-day.today::after { content:''; position:absolute; bottom:3px; left:50%; transform:translateX(-50%); width:3px; height:3px; border-radius:50%; background:var(--wheat); }
+    .cal-day.selectable { color:rgba(245,240,232,.7); }
+    .cal-day.selectable:hover { background:rgba(201,169,110,.08); }
+    .cal-day.selectable:active { background:rgba(201,169,110,.15); }
     .cal-day.selected {
       background:var(--wheat) !important; color:var(--soil) !important;
       font-weight:700; border-color:transparent !important;
-      box-shadow:0 2px 8px rgba(201,169,110,.3);
-    }
-    .cal-legend { display:flex; gap:.5rem; margin-top:.4rem; padding-top:.4rem; border-top:1px solid rgba(201,169,110,.08); flex-wrap:wrap; font-size:.55rem; }
-    .cal-legend-item { display:flex; align-items:center; gap:.2rem; letter-spacing:.3px; color:rgba(245,240,232,.35); }
-    .cal-legend-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
-    .leg-green { background:rgba(74,222,128,.75); }
-    .leg-yellow { background:rgba(251,191,36,.75); }
-    .leg-red { background:rgba(251,113,133,.65); }
-
-    @media(hover:hover) {
-      .cal-day.avail:hover { background:rgba(74,222,128,.2); }
-      .cal-day.partial:hover { background:rgba(251,191,36,.2); }
-      .cal-day.nodata:hover { background:rgba(201,169,110,.07); }
-      .cal-nav:hover { background:rgba(201,169,110,.1); border-color:rgba(201,169,110,.4); }
+      box-shadow:0 2px 12px rgba(201,169,110,.4);
     }
 
-    @media(max-width:900px) {
-      .cal-panel { position:fixed !important; top:auto !important; bottom:0 !important; left:0 !important; right:0 !important;
-        border-radius:16px 16px 0 0; width:100% !important; min-width:unset !important;
-        max-width:none !important; margin:0; box-sizing:border-box;
-        height:auto !important; overflow:hidden;
-        padding:.8rem; padding-bottom:1.5rem;
+    /* ── MOBILE: full-width bottom sheet ── */
+    @media(max-width:680px) {
+      .cal-panel {
+        position:fixed !important;
+        bottom:0 !important; left:0 !important; right:0 !important; top:auto !important;
+        width:100% !important; border-radius:20px 20px 0 0;
+        padding:1.2rem 1rem 2rem;
+        max-height:80vh; overflow-y:auto;
       }
+      .cal-day { font-size:.82rem; min-height:40px; }
+      .cal-weekday { font-size:.6rem; }
+      .cal-nav { width:32px; height:32px; font-size:.65rem; }
+      .cal-month-label { font-size:.75rem; }
+      .cal-days { gap:3px; }
     }
-
-    @media(max-width:768px) {
-      .cal-panel { padding:.7rem; }
-      .cal-day { height:36px; font-size:.68rem; }
-      .cal-weekday { font-size:.50rem; padding:.2rem 0; }
-      .cal-month-label { font-size:.68rem; }
-      .cal-nav { width:22px; height:22px; font-size:.5rem; }
-      .cal-days { gap:0px; margin-bottom:.5rem; }
-    }
-
-    @media(max-width:600px) {
-      .cal-panel { padding:.65rem; }
-      .cal-day { height:38px; font-size:.66rem; }
-      .cal-weekday { font-size:.48rem; }
-      .cal-header { margin-bottom:.5rem; }
-      .cal-month-label { font-size:.66rem; }
-      .cal-legend { font-size:.52rem; }
-    }
-
-    @media(max-width:480px) {
-      .cal-panel { padding:.6rem; }
-      .cal-day { height:34px; font-size:.63rem; }
-      .cal-days { gap:0px; }
-      .cal-weekday { font-size:.46rem; }
-      .cal-month-label { font-size:.63rem; }
-      .cal-nav { width:20px; height:20px; font-size:.48rem; }
-      .cal-legend { font-size:.50rem; gap:.4rem; }
-    }
-
     @media(max-width:400px) {
-      .cal-panel { padding:.55rem; }
-      .cal-day { height:32px; font-size:.6rem; }
-      .cal-weekday { font-size:.44rem; padding:.15rem 0; }
-      .cal-month-label { font-size:.6rem; }
-      .cal-header { margin-bottom:.4rem; gap:.3rem; }
+      .cal-day { font-size:.75rem; min-height:36px; }
+      .cal-days { gap:2px; }
     }
 
     /* ── SLOT STATUS BADGES ── */
@@ -955,21 +1019,7 @@
       position:absolute; top:.5rem; left:.6rem;
       transition:all .25s;
     }
-    .slot-status.badge-avail { display:block; background:rgba(74,222,128,.12); color:#86efac; border:1px solid rgba(74,222,128,.2); }
-    .slot-status.badge-booked { display:block; background:rgba(251,113,133,.12); color:#fca5a5; border:1px solid rgba(251,113,133,.2); }
-    .slot.slot-disabled { opacity:.38; cursor:not-allowed !important; pointer-events:none; }
-    .slot.slot-disabled:hover { transform:none !important; border-color:var(--glass-border) !important; }
-    /* Shift "Selected" badge right when slot-status is visible */
-    .slot-status.badge-avail ~ .slot-name, .slot-status.badge-booked ~ .slot-name { margin-top:.4rem; }
 
-    /* ── DATE AVAILABILITY INFO BAR ── */
-    #dateAvailInfo {
-      display:none; margin-bottom:1.6rem; padding:.9rem 1.2rem; border-radius:7px;
-      font-size:.82rem; border:1px solid; animation:fadeUp .3s ease; line-height:1.65;
-    }
-    #dateAvailInfo.info-avail { background:rgba(74,222,128,.06); border-color:rgba(74,222,128,.2); color:#86efac; }
-    #dateAvailInfo.info-partial { background:rgba(251,191,36,.06); border-color:rgba(251,191,36,.2); color:#fcd34d; }
-    #dateAvailInfo.info-full { background:rgba(251,113,133,.06); border-color:rgba(251,113,133,.2); color:#fca5a5; }
 
     /* ── BOOKING MESSAGE BOX ── */
     #bookingMessage {
@@ -994,6 +1044,204 @@
     #bookingMessage .msg-val { font-size:.82rem; word-break:break-all; overflow-wrap:anywhere; max-width:100%; }
 
     /* 3D effects now work on mobile too via touch events */
+
+    /* ── TERMS & CONDITIONS MODAL ── */
+    #tcOverlay {
+      position:fixed; inset:0; z-index:999999;
+      background:rgba(8,5,3,0.96);
+      display:flex; align-items:center; justify-content:center;
+      padding:1rem;
+      opacity:0; transition:opacity .55s ease;
+      -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+    }
+    #tcOverlay.tc-visible { opacity:1; }
+    #tcOverlay.tc-hidden { opacity:0; pointer-events:none; }
+
+    .tc-modal {
+      background:linear-gradient(160deg,#1e150a 0%,#120d06 100%);
+      border:1px solid rgba(201,169,110,0.28);
+      border-radius:16px;
+      max-width:700px; width:100%;
+      max-height:90vh;
+      display:flex; flex-direction:column;
+      box-shadow:0 40px 100px rgba(0,0,0,0.7), 0 0 0 1px rgba(201,169,110,0.08) inset;
+      overflow:hidden;
+      transform:translateY(30px) scale(0.97);
+      transition:transform .55s cubic-bezier(.34,1.56,.64,1);
+    }
+    #tcOverlay.tc-visible .tc-modal { transform:translateY(0) scale(1); }
+
+    .tc-header {
+      padding:2rem 2.4rem 1.6rem;
+      border-bottom:1px solid rgba(201,169,110,0.12);
+      flex-shrink:0;
+      background:linear-gradient(135deg,rgba(201,169,110,0.06),transparent);
+      position:relative;
+    }
+    .tc-header::before {
+      content:'';
+      position:absolute; top:0; left:0; right:0; height:2px;
+      background:linear-gradient(90deg,transparent,var(--wheat),transparent);
+    }
+    .tc-seal {
+      display:inline-flex; align-items:center; gap:.5rem;
+      font-size:.58rem; letter-spacing:4px; text-transform:uppercase;
+      color:rgba(201,169,110,0.6); margin-bottom:.8rem;
+    }
+    .tc-seal::before,.tc-seal::after { content:''; width:16px; height:1px; background:rgba(201,169,110,0.3); }
+    .tc-header h2 {
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(1.5rem,3.5vw,2rem);
+      font-weight:300; color:var(--cream);
+      letter-spacing:1px; line-height:1.2;
+    }
+    .tc-header p {
+      font-size:.75rem; color:rgba(245,240,232,0.35);
+      margin-top:.4rem; letter-spacing:.4px; line-height:1.6;
+    }
+
+    .tc-body {
+      flex:1; overflow-y:auto; padding:1.8rem 2.4rem;
+      scrollbar-width:thin; scrollbar-color:rgba(201,169,110,0.2) transparent;
+    }
+    .tc-body::-webkit-scrollbar { width:4px; }
+    .tc-body::-webkit-scrollbar-track { background:transparent; }
+    .tc-body::-webkit-scrollbar-thumb { background:rgba(201,169,110,0.2); border-radius:2px; }
+
+    .tc-clause {
+      margin-bottom:1.6rem;
+      padding:1.4rem 1.6rem;
+      background:rgba(255,255,255,0.025);
+      border:1px solid rgba(201,169,110,0.1);
+      border-radius:10px;
+      transition:border-color .3s;
+    }
+    .tc-clause:hover { border-color:rgba(201,169,110,0.22); }
+    .tc-clause-num {
+      font-family:'Cinzel',serif;
+      font-size:.62rem; letter-spacing:3px; text-transform:uppercase;
+      color:var(--wheat); margin-bottom:.5rem; display:flex; align-items:center; gap:.5rem;
+    }
+    .tc-clause-num::after { content:''; flex:1; height:1px; background:rgba(201,169,110,0.12); }
+    .tc-clause h4 {
+      font-family:'Cormorant Garamond',serif;
+      font-size:1.05rem; font-weight:400; color:rgba(245,240,232,0.85);
+      margin-bottom:.5rem;
+    }
+    .tc-clause p {
+      font-size:.83rem; color:rgba(245,240,232,0.45);
+      line-height:1.85;
+    }
+    .tc-clause p strong { color:rgba(201,169,110,0.85); font-weight:500; }
+
+    .tc-authority {
+      margin-bottom:1.6rem;
+      padding:1.4rem 1.6rem;
+      background:linear-gradient(135deg,rgba(201,169,110,0.08),rgba(201,169,110,0.03));
+      border:1px solid rgba(201,169,110,0.25);
+      border-radius:10px;
+      text-align:center;
+    }
+    .tc-authority .janab-title {
+      font-family:'Cinzel',serif;
+      font-size:.65rem; letter-spacing:4px; text-transform:uppercase;
+      color:rgba(201,169,110,0.5); margin-bottom:.4rem;
+    }
+    .tc-authority h4 {
+      font-family:'Cormorant Garamond',serif;
+      font-size:1.2rem; color:var(--wheat); font-weight:400; margin-bottom:.4rem;
+    }
+    .tc-authority p {
+      font-size:.78rem; color:rgba(245,240,232,0.4); line-height:1.7;
+    }
+
+    .tc-checkbox-row {
+      display:flex; align-items:flex-start; gap:.8rem;
+      padding:1rem 0; margin-bottom:.5rem;
+    }
+    .tc-checkbox {
+      width:18px; height:18px; flex-shrink:0; margin-top:2px;
+      accent-color:var(--wheat); cursor:pointer;
+    }
+    .tc-checkbox-label {
+      font-size:.8rem; color:rgba(245,240,232,0.5); line-height:1.6; cursor:pointer;
+    }
+    .tc-checkbox-label strong { color:rgba(245,240,232,0.75); }
+
+    .tc-footer {
+      padding:1.4rem 2.4rem 1.8rem;
+      border-top:1px solid rgba(201,169,110,0.1);
+      flex-shrink:0;
+      display:flex; flex-direction:column; gap:.8rem;
+    }
+    .tc-footer-note {
+      font-size:.68rem; color:rgba(245,240,232,0.25);
+      text-align:center; letter-spacing:.3px; line-height:1.5;
+    }
+    .tc-btn-row { display:flex; gap:.8rem; }
+    #tcAcceptBtn {
+      flex:2; background:var(--wheat); color:var(--soil);
+      border:none; border-radius:6px;
+      padding:1rem 1.6rem; font-size:.8rem; font-weight:600;
+      letter-spacing:1.5px; text-transform:uppercase;
+      cursor:pointer; transition:all .25s;
+      box-shadow:0 8px 24px rgba(201,169,110,0.25);
+      display:flex; align-items:center; justify-content:center; gap:.5rem;
+      position:relative; overflow:hidden;
+    }
+    #tcAcceptBtn::before {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent);
+    }
+    #tcAcceptBtn:hover { background:var(--gold); transform:translateY(-2px); box-shadow:0 14px 36px rgba(201,169,110,0.35); }
+    #tcAcceptBtn:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+    #tcDeclineBtn {
+      flex:1; background:transparent; color:rgba(245,240,232,0.4);
+      border:1px solid rgba(245,240,232,0.12); border-radius:6px;
+      padding:1rem 1.2rem; font-size:.78rem;
+      letter-spacing:1px; text-transform:uppercase;
+      cursor:pointer; transition:all .25s;
+    }
+    #tcDeclineBtn:hover { border-color:rgba(239,68,68,0.4); color:rgba(239,68,68,0.7); background:rgba(239,68,68,0.05); }
+
+    /* Decline rejection screen */
+    #tcRejected {
+      display:none; position:fixed; inset:0; z-index:9999999;
+      background:#0a0603;
+      align-items:center; justify-content:center;
+      text-align:center; padding:2rem;
+      flex-direction:column;
+    }
+    #tcRejected.active { display:flex; }
+    .tc-rej-icon { font-size:3.5rem; margin-bottom:1.2rem; opacity:.5; }
+    .tc-rej-title {
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(1.6rem,4vw,2.4rem); font-weight:300;
+      color:rgba(245,240,232,0.7); margin-bottom:.8rem;
+    }
+    .tc-rej-sub {
+      font-size:.85rem; color:rgba(245,240,232,0.3);
+      line-height:1.8; max-width:420px; margin:0 auto 2rem;
+    }
+    .tc-rej-line {
+      width:48px; height:1px;
+      background:linear-gradient(90deg,transparent,rgba(201,169,110,0.3),transparent);
+      margin:0 auto 2rem;
+    }
+    .tc-rej-close {
+      font-size:.68rem; letter-spacing:2px; text-transform:uppercase;
+      color:rgba(245,240,232,0.2); cursor:pointer; border:none;
+      background:none; padding:.5rem 1.2rem;
+      border:1px solid rgba(245,240,232,0.08); border-radius:4px;
+      transition:all .2s;
+    }
+    .tc-rej-close:hover { color:rgba(245,240,232,0.5); border-color:rgba(245,240,232,0.2); }
+
+    @media(max-width:600px) {
+      .tc-header, .tc-body, .tc-footer { padding-left:1.4rem; padding-right:1.4rem; }
+      .tc-btn-row { flex-direction:column-reverse; }
+      #tcAcceptBtn, #tcDeclineBtn { flex:unset; width:100%; }
+    }
   </style>
 </head>
 <body>
@@ -1009,7 +1257,80 @@
   <div class="l-line"></div>
   <div class="l-bar"><div class="l-fill"></div></div>
 </div>
- 
+
+<!-- TERMS & CONDITIONS MODAL -->
+<div id="tcOverlay" role="dialog" aria-modal="true" aria-labelledby="tcModalTitle" style="display:none;">
+  <div class="tc-modal">
+    <div class="tc-header">
+      <div class="tc-seal">Official Document</div>
+      <h2 id="tcModalTitle">Terms &amp; Conditions of Booking</h2>
+      <p>MJ Culture Farmhouse &amp; Events &mdash; Dahod, Gujarat &bull; Please read carefully before proceeding</p>
+    </div>
+    <div class="tc-body" id="tcBody">
+
+      <!-- Clause 1: Security Deposit -->
+      <div class="tc-clause">
+        <div class="tc-clause-num">Article I</div>
+        <h4>Security Deposit — Refundable Assurance</h4>
+        <p>Upon confirmation of any booking, a mandatory <strong>refundable security deposit of ₹10,000 (Rupees Ten Thousand)</strong> shall be collected from the guest. This deposit serves exclusively as a financial assurance against any damage, breakage, misuse, or loss of property belonging to MJ Culture Farmhouse. The deposit shall be returned in full upon inspection and clearance of the premises after the event. Any deductions shall be made strictly on the basis of documented damages, and a detailed account shall be provided to the guest accordingly.</p>
+      </div>
+
+      <!-- Clause 2: Cancellation Policy -->
+      <div class="tc-clause">
+        <div class="tc-clause-num">Article II</div>
+        <h4>Cancellation &amp; Refund Policy</h4>
+        <p>In the event of cancellation of a confirmed booking, the following policy shall apply: <strong>Cancellations made 10 (ten) or more days prior to the scheduled event date</strong> shall attract a deduction of <strong>20% (Twenty Percent) of the total advance payment</strong> made at the time of booking. Cancellations made within 10 days of the event date shall be subject to a separate forfeiture policy as communicated at the time of booking. All refund requests must be submitted in writing via official channels and shall be processed within 7–10 working days.</p>
+      </div>
+
+      <!-- Clause 3: Premises Maintenance -->
+      <div class="tc-clause">
+        <div class="tc-clause-num">Article III</div>
+        <h4>Premises Maintenance &amp; Code of Conduct</h4>
+        <p>The guest and all attendees are required to maintain the farmhouse premises in a clean, orderly, and respectful condition throughout the duration of their event. <strong>MJ Culture Farmhouse must be returned in the same condition as received.</strong> Any wilful damage, vandalism, littering, or failure to maintain decorum shall result in deductions from the security deposit and may result in immediate termination of the event without refund. Guests are fully responsible for the conduct of all individuals present at their event.</p>
+      </div>
+
+      <!-- Clause 4: Alcohol-Free & No Nuisance -->
+      <div class="tc-clause">
+        <div class="tc-clause-num">Article IV</div>
+        <h4>Alcohol-Free Premises &amp; Zero Nuisance Policy</h4>
+        <p>MJ Culture Farmhouse operates as a <strong>strictly alcohol-free venue.</strong> The possession, consumption, or distribution of any alcoholic beverages or prohibited substances on or around the premises is <strong>strictly forbidden</strong> and constitutes grounds for immediate termination of the event and forfeiture of all payments. Additionally, all guests are expected to conduct themselves with the utmost respect and dignity. Any behaviour causing disturbance, nuisance, or inconvenience to staff, neighbours, or the surrounding community shall not be tolerated under any circumstances.</p>
+      </div>
+
+      <!-- Clause 5: Janab Saab Authority -->
+      <div class="tc-authority">
+        <div class="janab-title">Supreme Authority</div>
+        <h4>Mandatory Approval of Janab Saab</h4>
+        <p>The explicit prior approval of <strong>Janab Saab</strong> — the designated authority and principal overseer of MJ Culture — is <strong>mandatory and non-negotiable</strong> for all bookings, events, and matters pertaining to the farmhouse. No booking shall be deemed confirmed, and no event shall proceed, without the express consent and authorisation of Janab Saab. This clause supersedes all other conditions and applies universally across all categories of events, packages, and arrangements.</p>
+      </div>
+
+      <!-- Consent checkbox -->
+      <div class="tc-checkbox-row">
+        <input type="checkbox" id="tcConsent" class="tc-checkbox">
+        <label for="tcConsent" class="tc-checkbox-label">
+          I have read, understood, and agree to comply with all the <strong>Terms &amp; Conditions</strong> stated above. I acknowledge that violation of any clause may result in termination of the event and/or financial deductions from my security deposit.
+        </label>
+      </div>
+
+    </div><!-- /tc-body -->
+    <div class="tc-footer">
+      <p class="tc-footer-note">By clicking "I Accept", you acknowledge that you have read and understood all terms above and agree to be legally bound by them. Your acceptance will be recorded with a timestamp.</p>
+      <div class="tc-btn-row">
+        <button id="tcDeclineBtn" onclick="tcDecline()"><i class="fas fa-times"></i> Decline</button>
+        <button id="tcAcceptBtn" onclick="tcAccept()" disabled><i class="fas fa-check"></i> I Accept &amp; Proceed</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DECLINE REJECTION SCREEN -->
+<div id="tcRejected">
+  <div class="tc-rej-icon">🚫</div>
+  <h2 class="tc-rej-title">This Farmhouse Is Not For You</h2>
+  <div class="tc-rej-line"></div>
+  <p class="tc-rej-sub">You have chosen not to accept the Terms &amp; Conditions of MJ Culture Farmhouse. We respect your decision. However, access to our booking services and facilities is exclusively available to guests who agree to our terms.<br><br>We hope to welcome you another time.</p>
+  <button class="tc-rej-close" onclick="window.location.href='about:blank'">Close &amp; Exit</button>
+</div>
+
 <!-- CURSOR -->
 <div class="cursor-dot" id="cursorDot"></div>
 <div class="cursor-ring" id="cursorRing"></div>
@@ -1270,165 +1591,256 @@
 <!-- BOOKING -->
 <section class="booking-section" id="booking">
   <div class="booking-inner">
-    <div class="reveal" style="max-width:560px;margin-bottom:3rem">
+    <!-- Section header -->
+    <div class="reveal" style="max-width:560px;margin-bottom:0">
       <span class="sec-tag">Reserve Your Date</span>
       <h2 class="sec-h">Book the Farmhouse</h2>
       <div class="rule"></div>
       <p class="sec-p">Choose your time slot, fill in your details — your booking is confirmed instantly.</p>
     </div>
 
-    <div class="reveal" style="transition-delay:.1s">
-      <div style="margin-bottom:2.5rem">
-        <div style="font-size:.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--wheat);margin-bottom:1rem;opacity:.8">Full Day</div>
-        <div class="pricing-row" id="slots">
-          <div class="slot sel" data-slot="fullday" data-price="30000">
-            <span class="slot-status" id="sstatus-fullday"></span>
-            <div class="slot-name">Full Day</div>
-            <div class="slot-time">9 AM &ndash; 10 PM</div>
-            <div class="slot-price">30,000</div>
-            <div class="slot-advance">Advance: ₹9,000</div>
-          </div>
-        </div>
-      </div>
+    <!-- TWO-COLUMN SPLIT -->
+    <div class="booking-split">
 
-      <div style="margin-bottom:2.5rem">
-        <div style="font-size:.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--wheat);margin-bottom:1rem;opacity:.8">Half Day</div>
-        <div class="pricing-row">
-          <div class="slot" data-slot="hday-morning" data-price="20000">
-            <span class="slot-status" id="sstatus-hday-morning"></span>
-            <div class="slot-name">Morning</div>
-            <div class="slot-time">9 AM &ndash; 3 PM</div>
-            <div class="slot-price">20,000</div>
-            <div class="slot-advance">Advance: ₹6,000</div>
-          </div>
-          <div class="slot" data-slot="hday-evening" data-price="20000">
-            <span class="slot-status" id="sstatus-hday-evening"></span>
-            <div class="slot-name">Evening</div>
-            <div class="slot-time">3:30 PM &ndash; 10:30 PM</div>
-            <div class="slot-price">20,000</div>
-            <div class="slot-advance">Advance: ₹6,000</div>
-          </div>
-        </div>
-      </div>
+      <!-- ══ LEFT: SLOT PICKER ══ -->
+      <div class="slots-panel reveal" style="transition-delay:.1s">
 
-      <div>
-        <div style="font-size:.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--wheat);margin-bottom:1rem;opacity:.8">Special Occasion</div>
-        <div style="margin-bottom:2rem">
-          <div style="font-size:.85rem;color:rgba(245,240,232,.6);margin-bottom:.8rem;letter-spacing:.5px">Daris</div>
-          <div class="pricing-row">
-            <div class="slot" data-slot="daris-morning" data-price="12000">
-              <span class="slot-status" id="sstatus-daris-morning"></span>
-              <div class="slot-name">Morning</div>
-              <div class="slot-time">11 AM &ndash; 2 PM</div>
-              <div class="slot-price">12,000</div>
-              <div class="slot-advance">Advance: ₹3,600</div>
+        <!-- ① FULL DAY -->
+        <div class="slot-category">
+          <div class="slot-cat-header">
+            <div class="slot-cat-left">
+              <div class="slot-cat-icon"><i class="fas fa-sun"></i></div>
+              <div>
+                <div class="slot-cat-title">Full Day</div>
+                <div class="slot-cat-sub">9 AM &ndash; 10 PM &bull; 13 hours of exclusive access</div>
+              </div>
             </div>
-            <div class="slot" data-slot="daris-evening" data-price="12000">
-              <span class="slot-status" id="sstatus-daris-evening"></span>
-              <div class="slot-name">Evening</div>
-              <div class="slot-time">7 PM &ndash; 10 PM</div>
-              <div class="slot-price">12,000</div>
-              <div class="slot-advance">Advance: ₹3,600</div>
-            </div>
+            <span class="slot-cat-badge">Best Value</span>
           </div>
-        </div>
-        <div>
-          <div style="font-size:.85rem;color:rgba(245,240,232,.6);margin-bottom:.8rem;letter-spacing:.5px">Birthday</div>
-          <div class="pricing-row">
-            <div class="slot" data-slot="birthday-morning" data-price="12000">
-              <span class="slot-status" id="sstatus-birthday-morning"></span>
-              <div class="slot-name">Morning</div>
-              <div class="slot-time">11 AM &ndash; 3 PM</div>
-              <div class="slot-price">12,000</div>
-              <div class="slot-advance">Advance: ₹3,600</div>
-            </div>
-            <div class="slot" data-slot="birthday-evening" data-price="12000">
-              <span class="slot-status" id="sstatus-birthday-evening"></span>
-              <div class="slot-name">Evening</div>
-              <div class="slot-time">6 PM &ndash; 10 PM</div>
-              <div class="slot-price">12,000</div>
-              <div class="slot-advance">Advance: ₹3,600</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Date availability info bar -->
-    <div id="dateAvailInfo" role="status" aria-live="polite"></div>
-
-    <!-- 30% Advance Payment Banner -->
-    <div class="advance-banner reveal" style="transition-delay:.15s">
-      <div class="advance-banner-left">
-        <span class="advance-banner-label">Advance Payment (30%)</span>
-        <div class="advance-banner-amount" id="advanceBannerAmt">9,000</div>
-      </div>
-      <div class="advance-banner-note">Only 30% advance is required to confirm your booking. The remaining 70% is collected after the event.</div>
-    </div>
-
-    <div class="form-wrap reveal" style="transition-delay:.2s">
-      <div class="form-head"><h2>Your Details</h2><p>All fields marked * are required</p></div>
-      <div class="form-body">
-        <form id="bookForm" novalidate>
-          <input type="hidden" id="selSlot" value="fullday">
-          <input type="hidden" id="selPrice" value="30000">
-          <div class="frow">
-            <div class="ff"><label for="bName">Full Name *</label><input type="text" id="bName" placeholder="Your full name" required></div>
-            <div class="ff"><label for="bPhone">Mobile Number *</label><input type="tel" id="bPhone" placeholder="10-digit number" required maxlength="10"></div>
-          </div>
-          <div class="frow">
-            <div class="ff"><label for="bEmail">Email Address</label><input type="email" id="bEmail" placeholder="your@email.com"></div>
-            <div class="ff">
-              <label>Event Date *</label>
-              <!-- hidden input — value set by calendar, read by booking JS unchanged -->
-              <input type="hidden" id="bDate">
-              <div class="cal-trigger" id="calTrigger">
-                <div class="cal-display" id="calDisplay" tabindex="0" role="button" aria-haspopup="true" aria-label="Open date picker">
-                  <span id="calPlaceholder" class="cal-placeholder">Choose a date</span>
-                  <i class="fas fa-calendar-alt cal-icon"></i>
+          <div class="slot-grid cols-1" id="slots">
+            <div class="slot sel" data-slot="fullday" data-price="30000">
+              <span class="slot-badge">Most Popular</span>
+              <span class="slot-status" id="sstatus-fullday"></span>
+              <div class="slot-inner">
+                <div class="slot-left">
+                  <div class="slot-name"><span class="sel-dot"></span>Full Day Exclusive</div>
+                  <div class="slot-time"><i class="fas fa-clock" style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>9:00 AM &ndash; 10:00 PM</div>
                 </div>
-                <div class="cal-panel" id="calPanel" role="dialog" aria-label="Date picker">
-                  <div class="cal-header">
-                    <button class="cal-nav" id="calPrev" type="button" aria-label="Previous month"><i class="fas fa-chevron-left"></i></button>
-                    <span class="cal-month-label" id="calMonthLabel"></span>
-                    <button class="cal-nav" id="calNext" type="button" aria-label="Next month"><i class="fas fa-chevron-right"></i></button>
-                  </div>
-                  <div class="cal-weekdays">
-                    <div class="cal-weekday">Su</div><div class="cal-weekday">Mo</div>
-                    <div class="cal-weekday">Tu</div><div class="cal-weekday">We</div>
-                    <div class="cal-weekday">Th</div><div class="cal-weekday">Fr</div>
-                    <div class="cal-weekday">Sa</div>
-                  </div>
-                  <div class="cal-days" id="calDays"></div>
-                  <div class="cal-legend">
-                    <div class="cal-legend-item"><div class="cal-legend-dot leg-green"></div>Available</div>
-                    <div class="cal-legend-item"><div class="cal-legend-dot leg-yellow"></div>Limited</div>
-                    <div class="cal-legend-item"><div class="cal-legend-dot leg-red"></div>Fully Booked</div>
-                  </div>
+                <div class="slot-right">
+                  <div class="slot-price">30,000</div>
+                  <div class="slot-advance">Advance: &#8377;9,000</div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="frow">
-            <div class="ff">
-              <label for="bOccasion">Occasion *</label>
-              <select id="bOccasion" required>
-                <option value="">Select occasion&hellip;</option>
-                <option>Wedding</option><option>Birthday</option><option>Family Event</option>
-                <option>Engagement</option><option>Nikah</option><option>Corporate Event</option>
-                <option>Photoshoot</option><option>Other</option>
-              </select>
+        </div>
+
+        <!-- ② HALF DAY -->
+        <div class="slot-category">
+          <div class="slot-cat-header">
+            <div class="slot-cat-left">
+              <div class="slot-cat-icon"><i class="fas fa-adjust"></i></div>
+              <div>
+                <div class="slot-cat-title">Half Day</div>
+                <div class="slot-cat-sub">6 hours of access &bull; Morning or Evening</div>
+              </div>
             </div>
-            <div class="ff"><label for="bGuests">Approx. Guests *</label><input type="number" id="bGuests" placeholder="e.g. 80" min="10" max="500" required></div>
+            <span class="slot-cat-badge">2 Options</span>
           </div>
-          <div class="frow full">
-            <div class="ff"><label for="bNotes">Special Requirements</label><textarea id="bNotes" placeholder="Decorations, catering preferences, accessibility needs&hellip;"></textarea></div>
+          <div class="slot-grid cols-2">
+            <div class="slot" data-slot="hday-morning" data-price="20000">
+              <span class="slot-status" id="sstatus-hday-morning"></span>
+              <div class="slot-inner">
+                <div class="slot-left">
+                  <div class="slot-name"><span class="sel-dot"></span>Morning</div>
+                  <div class="slot-time"><i class="fas fa-clock" style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>9 AM &ndash; 3 PM</div>
+                </div>
+                <div class="slot-right">
+                  <div class="slot-price">20,000</div>
+                  <div class="slot-advance">Adv: &#8377;6,000</div>
+                </div>
+              </div>
+            </div>
+            <div class="slot" data-slot="hday-evening" data-price="20000">
+              <span class="slot-status" id="sstatus-hday-evening"></span>
+              <div class="slot-inner">
+                <div class="slot-left">
+                  <div class="slot-name"><span class="sel-dot"></span>Evening</div>
+                  <div class="slot-time"><i class="fas fa-clock" style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>3:30 PM &ndash; 10:30 PM</div>
+                </div>
+                <div class="slot-right">
+                  <div class="slot-price">20,000</div>
+                  <div class="slot-advance">Adv: &#8377;6,000</div>
+                </div>
+              </div>
+            </div>
           </div>
-          <button type="submit" id="submitBtn" class="btn-wa"><i class="fas fa-calendar-check"></i>Confirm Booking</button>
-          <div id="bookingMessage" role="alert" aria-live="polite"></div>
-          <p class="wa-note"><i class="fas fa-database" style="font-size:.62rem;margin-right:3px"></i>Data saved securely in our system</p>
-        </form>
-      </div>
-    </div>
+        </div>
+
+        <!-- ③ SPECIAL OCCASION -->
+        <div class="slot-category">
+          <div class="slot-cat-header">
+            <div class="slot-cat-left">
+              <div class="slot-cat-icon"><i class="fas fa-star"></i></div>
+              <div>
+                <div class="slot-cat-title">Special Occasion</div>
+                <div class="slot-cat-sub">Daris & Birthday packages &bull; 3&ndash;4 hour slots</div>
+              </div>
+            </div>
+            <span class="slot-cat-badge">4 Options</span>
+          </div>
+
+          <!-- Daris -->
+          <div class="slot-sub-label"><i class="fas fa-mosque" style="opacity:.4;font-size:.65rem"></i> Daris</div>
+          <div class="slot-grid cols-2">
+            <div class="slot" data-slot="daris-morning" data-price="12000">
+              <span class="slot-status" id="sstatus-daris-morning"></span>
+              <div class="slot-inner">
+                <div class="slot-left">
+                  <div class="slot-name"><span class="sel-dot"></span>Morning</div>
+                  <div class="slot-time"><i class="fas fa-clock" style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>11 AM &ndash; 2 PM</div>
+                </div>
+                <div class="slot-right">
+                  <div class="slot-price">12,000</div>
+                  <div class="slot-advance">Adv: &#8377;3,600</div>
+                </div>
+              </div>
+            </div>
+            <div class="slot" data-slot="daris-evening" data-price="12000">
+              <span class="slot-status" id="sstatus-daris-evening"></span>
+              <div class="slot-inner">
+                <div class="slot-left">
+                  <div class="slot-name"><span class="sel-dot"></span>Evening</div>
+                  <div class="slot-time"><i class="fas fa-clock" style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>7 PM &ndash; 10 PM</div>
+                </div>
+                <div class="slot-right">
+                  <div class="slot-price">12,000</div>
+                  <div class="slot-advance">Adv: &#8377;3,600</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Birthday -->
+          <div class="slot-sub-label" style="border-top:1px solid rgba(201,169,110,.06);margin-top:.3rem"><i class="fas fa-birthday-cake" style="opacity:.4;font-size:.65rem"></i> Birthday</div>
+          <div class="slot-grid cols-2">
+            <div class="slot" data-slot="birthday-morning" data-price="12000">
+              <span class="slot-status" id="sstatus-birthday-morning"></span>
+              <div class="slot-inner">
+                <div class="slot-left">
+                  <div class="slot-name"><span class="sel-dot"></span>Morning</div>
+                  <div class="slot-time"><i class="fas fa-clock" style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>11 AM &ndash; 3 PM</div>
+                </div>
+                <div class="slot-right">
+                  <div class="slot-price">12,000</div>
+                  <div class="slot-advance">Adv: &#8377;3,600</div>
+                </div>
+              </div>
+            </div>
+            <div class="slot" data-slot="birthday-evening" data-price="12000">
+              <span class="slot-status" id="sstatus-birthday-evening"></span>
+              <div class="slot-inner">
+                <div class="slot-left">
+                  <div class="slot-name"><span class="sel-dot"></span>Evening</div>
+                  <div class="slot-time"><i class="fas fa-clock" style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>6 PM &ndash; 10 PM</div>
+                </div>
+                <div class="slot-right">
+                  <div class="slot-price">12,000</div>
+                  <div class="slot-advance">Adv: &#8377;3,600</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Availability info bar -->
+        <div id="dateAvailInfo" role="status" aria-live="polite"></div>
+
+      </div><!-- /slots-panel -->
+
+      <!-- ══ RIGHT: STICKY FORM ══ -->
+      <div class="form-panel reveal" style="transition-delay:.2s">
+        <div class="form-wrap">
+          <div class="form-head">
+            <h2>Your Details</h2>
+            <p>All fields marked * are required</p>
+          </div>
+          <div class="form-body">
+
+            <!-- Selected slot summary -->
+            <div class="form-slot-summary" id="formSlotSummary">
+              <div class="fss-left">
+                <strong id="fssSlotName">Full Day Exclusive</strong>
+                <span id="fssSlotTime">9:00 AM &ndash; 10:00 PM</span>
+              </div>
+              <div class="fss-right">
+                <div class="fss-price" id="fssPriceDisplay">30,000</div>
+                <div class="fss-advance">Adv: &#8377;<span id="advanceBannerAmt">9,000</span></div>
+              </div>
+            </div>
+
+            <form id="bookForm" novalidate>
+              <input type="hidden" id="selSlot" value="fullday">
+              <input type="hidden" id="selPrice" value="30000">
+              <div class="frow">
+                <div class="ff"><label for="bName">Full Name *</label><input type="text" id="bName" placeholder="Your full name" required></div>
+                <div class="ff"><label for="bPhone">Mobile Number *</label><input type="tel" id="bPhone" placeholder="10-digit number" required maxlength="10"></div>
+              </div>
+              <div class="frow">
+                <div class="ff"><label for="bEmail">Email Address</label><input type="email" id="bEmail" placeholder="your@email.com"></div>
+                <div class="ff">
+                  <label>Event Date *</label>
+                  <input type="hidden" id="bDate">
+                  <div class="cal-trigger" id="calTrigger">
+                    <div class="cal-display" id="calDisplay" tabindex="0" role="button" aria-haspopup="true" aria-label="Open date picker">
+                      <span id="calPlaceholder" class="cal-placeholder">Choose a date</span>
+                      <i class="fas fa-calendar-alt cal-icon"></i>
+                    </div>
+                    <div class="cal-panel" id="calPanel" role="dialog" aria-label="Date picker">
+                      <div class="cal-header">
+                        <button class="cal-nav" id="calPrev" type="button" aria-label="Previous month"><i class="fas fa-chevron-left"></i></button>
+                        <span class="cal-month-label" id="calMonthLabel"></span>
+                        <button class="cal-nav" id="calNext" type="button" aria-label="Next month"><i class="fas fa-chevron-right"></i></button>
+                      </div>
+                      <div class="cal-weekdays">
+                        <div class="cal-weekday">Su</div><div class="cal-weekday">Mo</div>
+                        <div class="cal-weekday">Tu</div><div class="cal-weekday">We</div>
+                        <div class="cal-weekday">Th</div><div class="cal-weekday">Fr</div>
+                        <div class="cal-weekday">Sa</div>
+                      </div>
+                      <div class="cal-days" id="calDays"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="frow">
+                <div class="ff">
+                  <label for="bOccasion">Occasion *</label>
+                  <select id="bOccasion" required>
+                    <option value="">Select occasion&hellip;</option>
+                    <option>Wedding</option><option>Birthday</option><option>Family Event</option>
+                    <option>Engagement</option><option>Nikah</option><option>Corporate Event</option>
+                    <option>Photoshoot</option><option>Other</option>
+                  </select>
+                </div>
+                <div class="ff"><label for="bGuests">Approx. Guests *</label><input type="number" id="bGuests" placeholder="e.g. 80" min="10" max="500" required></div>
+              </div>
+              <div class="frow full">
+                <div class="ff"><label for="bNotes">Special Requirements</label><textarea id="bNotes" placeholder="Decorations, catering preferences, accessibility needs&hellip;"></textarea></div>
+              </div>
+              <button type="submit" id="submitBtn" class="btn-wa"><i class="fas fa-calendar-check"></i>Confirm Booking</button>
+              <div id="bookingMessage" role="alert" aria-live="polite"></div>
+              <p class="wa-note"><i class="fas fa-database" style="font-size:.62rem;margin-right:3px"></i>Data saved securely in our system</p>
+            </form>
+          </div>
+        </div>
+      </div><!-- /form-panel -->
+
+    </div><!-- /booking-split -->
+
+    <!-- Booking Status Tracker (shown after submit) -->
+    <div id="bookingStatusTracker"></div>
+
   </div>
 </section>
  
@@ -1608,7 +2020,11 @@ window.addEventListener('load', () => {
   setTimeout(() => {
     const l = document.getElementById('loader');
     l.classList.add('done');
-    setTimeout(() => l.style.display = 'none', 800);
+    setTimeout(() => {
+      l.style.display = 'none';
+      // Show Terms & Conditions modal after loader hides
+      showTermsModal();
+    }, 800);
   }, 1800);
 });
  
@@ -1650,7 +2066,7 @@ if (window.matchMedia('(hover:hover)').matches) {
   }, {passive:true});
   document.addEventListener('mouseenter', () => {}, {passive:true});
  
-  document.querySelectorAll('a,button,.slot,.amen,.testi-card,.ann-card,.thumb,.arrow-btn,.soc,.faq-q').forEach(el => {
+  document.querySelectorAll('a,button,.slot,.amen,.testi-card,.ann-card,.thumb,.arrow-btn,.soc,.faq-q,#tcAcceptBtn,#tcDeclineBtn,.tc-checkbox,.tc-checkbox-label,.tc-clause,.tc-rej-close').forEach(el => {
     el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
     el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
   });
@@ -1781,12 +2197,15 @@ document.getElementById('annCards').innerHTML = ANNOUNCEMENTS.map(a => {
 function updateAdvanceDisplay(price) {
   const advance = Math.round(price * 0.30);
   const fmt = advance.toLocaleString('en-IN');
-  // Banner between slots and form
+  // Advance banner in form summary
   const bannerEl = document.getElementById('advanceBannerAmt');
   if (bannerEl) bannerEl.textContent = fmt;
+  // Form slot summary price
+  const fssPrice = document.getElementById('fssPriceDisplay');
+  if (fssPrice) fssPrice.textContent = parseInt(price).toLocaleString('en-IN');
   // QR card advance label
   const qrEl = document.getElementById('qrAdvanceAmt');
-  if (qrEl) qrEl.textContent = '₹' + fmt;
+  if (qrEl) qrEl.textContent = '\u20b9' + fmt;
   // UPI deep link — pre-fill advance amount
   const upiLink = document.getElementById('upiPayLink');
   if (upiLink) {
@@ -1795,6 +2214,16 @@ function updateAdvanceDisplay(price) {
 }
 
 /* ── SLOT SELECTION ── */
+// Map slot data-slot value to friendly display name + time
+const SLOT_META = {
+  'fullday':          { name: 'Full Day Exclusive',  time: '9:00 AM – 10:00 PM' },
+  'hday-morning':     { name: 'Half Day – Morning',  time: '9:00 AM – 3:00 PM' },
+  'hday-evening':     { name: 'Half Day – Evening',  time: '3:30 PM – 10:30 PM' },
+  'daris-morning':    { name: 'Daris – Morning',     time: '11:00 AM – 2:00 PM' },
+  'daris-evening':    { name: 'Daris – Evening',     time: '7:00 PM – 10:00 PM' },
+  'birthday-morning': { name: 'Birthday – Morning',  time: '11:00 AM – 3:00 PM' },
+  'birthday-evening': { name: 'Birthday – Evening',  time: '6:00 PM – 10:00 PM' },
+};
 document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () => {
   if (s.classList.contains('slot-disabled')) return;
   document.querySelectorAll('.slot').forEach(x => x.classList.remove('sel'));
@@ -1802,7 +2231,16 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
   document.getElementById('selSlot').value = s.dataset.slot;
   document.getElementById('selPrice').value = s.dataset.price;
   updateAdvanceDisplay(parseInt(s.dataset.price));
+  // Update form summary strip
+  const meta = SLOT_META[s.dataset.slot];
+  if (meta) {
+    const nameEl = document.getElementById('fssSlotName');
+    const timeEl = document.getElementById('fssSlotTime');
+    if (nameEl) nameEl.textContent = meta.name;
+    if (timeEl) timeEl.textContent = meta.time;
+  }
 }));
+
  
 /* ══════════════════════════════════════════════
    AVAILABILITY SYSTEM — Read-only data layer
@@ -1885,18 +2323,8 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
       } else {
         if (dateObj.getTime() === today.getTime()) cell.classList.add('today');
 
-        if (availCache && Object.keys(availCache).length > 0) {
-          const status = getDateStatus(dateStr);
-          cell.classList.add(status);
-          if (status === 'full') {
-            cell.title = 'Fully booked';
-          } else {
-            cell.addEventListener('click', () => selectDate(dateStr, cell));
-          }
-        } else {
-          cell.classList.add('nodata');
-          cell.addEventListener('click', () => selectDate(dateStr, cell));
-        }
+        cell.classList.add('selectable');
+        cell.addEventListener('click', () => selectDate(dateStr, cell));
 
         if (dateStr === calSelectedDate) cell.classList.add('selected');
       }
@@ -1933,62 +2361,7 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
   }
 
   function updateSlotUI(dateStr) {
-    const s = getSlotStatus(dateStr);
-    const slotKeys = { noon: s.noon, evening: s.evening, fullday: s.fullday };
-    let freeCount = Object.values(slotKeys).filter(Boolean).length;
-
-    document.querySelectorAll('.slot').forEach(card => {
-      const key    = card.dataset.slot;
-      const isAvail = slotKeys[key];
-      const badge  = document.getElementById('sstatus-' + key);
-
-      if (isAvail) {
-        card.classList.remove('slot-disabled');
-        if (badge) { badge.textContent = 'Available'; badge.className = 'slot-status badge-avail'; }
-      } else {
-        card.classList.add('slot-disabled');
-        if (badge) { badge.textContent = 'Booked'; badge.className = 'slot-status badge-booked'; }
-
-        // If this disabled slot was selected, auto-pick first free slot
-        if (card.classList.contains('sel')) {
-          card.classList.remove('sel');
-          let picked = false;
-          document.querySelectorAll('.slot').forEach(c => {
-            if (!picked && !c.classList.contains('slot-disabled')) {
-              c.classList.add('sel');
-              document.getElementById('selSlot').value = c.dataset.slot;
-              document.getElementById('selPrice').value = c.dataset.price;
-              updateAdvanceDisplay(parseInt(c.dataset.price));
-              picked = true;
-            }
-          });
-        }
-      }
-    });
-
-    // Info bar
-    const info = document.getElementById('dateAvailInfo');
-    if (!info) return;
-    info.style.display = 'block';
-
-    if (!availCache || Object.keys(availCache).length === 0) {
-      info.style.display = 'none'; return;
-    }
-
-    if (freeCount === 3) {
-      info.className = 'info-avail';
-      info.innerHTML = '<i class="fas fa-check-circle" style="margin-right:.45rem"></i>All slots available for this date — choose your preferred time above.';
-    } else if (freeCount === 0) {
-      info.className = 'info-full';
-      info.innerHTML = '<i class="fas fa-ban" style="margin-right:.45rem"></i>This date is <strong>fully booked</strong>. Please select a different date.';
-    } else {
-      const free = [];
-      if (s.noon)    free.push('Noon');
-      if (s.evening) free.push('Evening');
-      if (s.fullday) free.push('Full Day');
-      info.className = 'info-partial';
-      info.innerHTML = `<i class="fas fa-clock" style="margin-right:.45rem"></i>Only <strong>${free.join(' &amp; ')}</strong> ${free.length === 1 ? 'slot is' : 'slots are'} available for this date.`;
-    }
+    // Availability removed - no-op
   }
 
   /* ── Wire up calendar controls ── */
@@ -2013,22 +2386,79 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
     const display = document.getElementById('calDisplay');
     const panel   = document.getElementById('calPanel');
 
+    // CRITICAL: Move panel to <body> so it escapes any ancestor
+    // transform/will-change/preserve-3d stacking context that would
+    // break position:fixed positioning.
+    document.body.appendChild(panel);
+
+    // Create a backdrop element for mobile
+    let backdrop = document.getElementById('calBackdrop');
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.id = 'calBackdrop';
+      document.body.appendChild(backdrop);
+    }
+    backdrop.onclick = closeCalendar;
+
+    function positionPanel() {
+      // On mobile (bottom sheet) — CSS handles position via media query
+      if (window.innerWidth <= 680) return;
+      const rect = display.getBoundingClientRect();
+      const panelW = 320;
+      const gap = 8;
+      let left = rect.left;
+      // Prevent going off right edge of viewport
+      if (left + panelW > window.innerWidth - 12) {
+        left = window.innerWidth - panelW - 12;
+      }
+      if (left < 8) left = 8;
+      // position:fixed is viewport-relative — DO NOT add scrollY
+      const spaceBelow = window.innerHeight - rect.bottom - gap;
+      const panelH = 340; // approximate calendar height
+      if (spaceBelow >= panelH || spaceBelow >= 200) {
+        // Open below the trigger
+        panel.style.top    = (rect.bottom + gap) + 'px';
+        panel.style.bottom = 'auto';
+      } else {
+        // Flip: open above the trigger
+        panel.style.top    = Math.max(8, rect.top - panelH - gap) + 'px';
+        panel.style.bottom = 'auto';
+      }
+      panel.style.left  = left + 'px';
+      panel.style.width = panelW + 'px';
+    }
+
+    function openCalendar() {
+      panel.classList.add('open');
+      display.classList.add('open');
+      display.setAttribute('aria-expanded', 'true');
+      positionPanel();
+      if (window.innerWidth <= 680) {
+        backdrop.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeCalendar() {
+      panel.classList.remove('open');
+      display.classList.remove('open');
+      display.setAttribute('aria-expanded', 'false');
+      backdrop.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
     display.addEventListener('click', e => {
       e.stopPropagation();
-      const opening = !panel.classList.contains('open');
-      panel.classList.toggle('open', opening);
-      display.classList.toggle('open', opening);
-      display.setAttribute('aria-expanded', opening);
+      if (panel.classList.contains('open')) { closeCalendar(); } else { openCalendar(); }
     });
     display.addEventListener('keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); display.click(); }
-      if (e.key === 'Escape') { panel.classList.remove('open'); display.classList.remove('open'); }
+      if (e.key === 'Escape') closeCalendar();
     });
     panel.addEventListener('click', e => e.stopPropagation());
-    document.addEventListener('click', () => {
-      panel.classList.remove('open');
-      display.classList.remove('open');
-    });
+    document.addEventListener('click', closeCalendar);
+    window.addEventListener('resize', () => { if (panel.classList.contains('open')) positionPanel(); }, { passive: true });
+    window.addEventListener('scroll', () => { if (panel.classList.contains('open')) positionPanel(); }, { passive: true });
   }
 
   /* ── Expose slot-guard for booking form ── */
@@ -2504,6 +2934,128 @@ document.querySelectorAll('.faq-q').forEach(btn => btn.addEventListener('click',
   }, {passive:true});
 })();
  
+
+/* ── TERMS & CONDITIONS LOGIC ── */
+/*
+ * AUTH INTEGRATION GUIDE (for when real backend is ready):
+ * ─────────────────────────────────────────────────────────
+ * Replace the showTermsModal() function body with:
+ *
+ *   async function showTermsModal() {
+ *     try {
+ *       const res = await fetch('/api/user/tc-status', { credentials: 'include' });
+ *       const data = await res.json();
+ *       if (data.tc_accepted) return;  // Returning user — skip modal
+ *     } catch(e) { /* network error — show modal to be safe *\/ }
+ *     _openTcOverlay();
+ *   }
+ *
+ * Your backend endpoint should:
+ *   GET /api/user/tc-status  → { tc_accepted: true/false, accepted_at: ISO_date }
+ *   POST /api/tc-consent     → save { user_id, accepted_at, ip, user_agent }
+ *
+ * Until then, modal shows on every visit (correct behaviour for no-auth state).
+ */
+function showTermsModal() {
+  // ── NO-AUTH MODE (current): always show on every page load / refresh ──
+  // When real auth + backend is added, replace this entire function
+  // with the async version in the guide above.
+  _openTcOverlay();
+}
+
+function _openTcOverlay() {
+  // Reset checkbox and button state for a fresh display
+  const checkbox = document.getElementById('tcConsent');
+  const acceptBtn = document.getElementById('tcAcceptBtn');
+  if (checkbox) checkbox.checked = false;
+  if (acceptBtn) {
+    acceptBtn.disabled = true;
+    acceptBtn.innerHTML = '<i class="fas fa-check"></i> I Accept &amp; Proceed';
+  }
+
+  const overlay = document.getElementById('tcOverlay');
+  overlay.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => overlay.classList.add('tc-visible'));
+  });
+}
+
+// Enable/disable Accept button based on checkbox
+document.addEventListener('DOMContentLoaded', () => {
+  const checkbox = document.getElementById('tcConsent');
+  const acceptBtn = document.getElementById('tcAcceptBtn');
+  if (checkbox && acceptBtn) {
+    checkbox.addEventListener('change', () => {
+      acceptBtn.disabled = !checkbox.checked;
+    });
+  }
+});
+
+function tcAccept() {
+  const checkbox = document.getElementById('tcConsent');
+  if (!checkbox || !checkbox.checked) return;
+
+  const acceptBtn = document.getElementById('tcAcceptBtn');
+  acceptBtn.disabled = true;
+  acceptBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Recording...';
+
+  // Record acceptance with timestamp
+  const record = {
+    accepted: true,
+    timestamp: new Date().toISOString(),
+    userAgent: navigator.userAgent,
+    language: navigator.language,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    page: window.location.href,
+    version: 'MJC-TC-v1.0'
+  };
+
+  // Save to sessionStorage (current session)
+  sessionStorage.setItem('mjc_tc_accepted', JSON.stringify(record));
+  // Save to localStorage (persists across sessions)
+  localStorage.setItem('mjc_tc_accepted', JSON.stringify(record));
+
+  // Log to console for backend reference
+  console.log('✅ MJ Culture T&C Accepted:', record);
+
+  // Simulate a brief confirmation delay, then close
+  setTimeout(() => {
+    const overlay = document.getElementById('tcOverlay');
+    overlay.classList.remove('tc-visible');
+    overlay.classList.add('tc-hidden');
+    document.body.style.overflow = '';
+    setTimeout(() => { overlay.style.display = 'none'; }, 600);
+    // Optionally: send to backend via fetch
+    // fetch('/api/tc-consent', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(record) })
+    //   .catch(err => console.warn('T&C backend log failed:', err));
+  }, 800);
+
+  acceptBtn.innerHTML = '<i class="fas fa-check-circle"></i> Accepted!';
+}
+
+function tcDecline() {
+  // Log decline
+  const record = {
+    accepted: false,
+    timestamp: new Date().toISOString(),
+    userAgent: navigator.userAgent
+  };
+  console.log('❌ MJ Culture T&C Declined:', record);
+  sessionStorage.setItem('mjc_tc_declined', JSON.stringify(record));
+
+  // Hide modal, show rejection screen
+  const overlay = document.getElementById('tcOverlay');
+  overlay.classList.remove('tc-visible');
+  overlay.classList.add('tc-hidden');
+  setTimeout(() => {
+    overlay.style.display = 'none';
+    const rejected = document.getElementById('tcRejected');
+    rejected.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }, 400);
+}
+
 </script>
 </body>
 </html>
