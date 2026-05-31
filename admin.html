@@ -255,7 +255,6 @@
     .pay-input{width:100px;background:rgba(255,255,255,.04);border:1px solid rgba(201,169,110,.2);border-radius:4px;padding:.35rem .6rem;color:var(--cream);font-size:.8rem;outline:none;}
     .pay-input:focus{border-color:rgba(201,169,110,.4);}
   </style>
-  <script src="js/config.js"></script>
 </head>
 <body>
 
@@ -528,7 +527,7 @@
 </div>
 
 <script>
-  
+  const BACKEND_URL = 'http://localhost:5000'; // ← change to your API URL
 
   /* ── ADMIN AUTH ── */
   const ADMIN_CREDENTIALS = { username: 'admin', password: 'mjculture2026' }; // Change this!
@@ -552,7 +551,7 @@
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner spinner"></i> Signing in…';
     err.style.display = 'none';
 
-    fetch(API_BASE_URL + '/api/admin/login', {
+    fetch(BACKEND_URL + '/api/admin/login', {
       method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({username: u, password: p})
     }).then(r => r.json()).then(data => {
@@ -641,18 +640,12 @@
 
   /* ── API HELPER ── */
   async function api(path, method='GET', body=null) {
-    try {
-      const opts = {method, headers:{'Content-Type':'application/json'}};
-      const tok = sessionStorage.getItem('mjc_admin_token');
-      if (tok) opts.headers['Authorization'] = 'Bearer ' + tok;
-      if (body) opts.body = JSON.stringify(body);
-      const res = await fetch(API_BASE_URL + path, opts);
-      return await res.json();
-    } catch (err) {
-      console.error('API Error:', err);
-      toast('Network error. Check backend connection.', 'error');
-      throw err;
-    }
+    const opts = {method, headers:{'Content-Type':'application/json'}};
+    const tok = sessionStorage.getItem('mjc_admin_token');
+    if (tok) opts.headers['Authorization'] = 'Bearer ' + tok;
+    if (body) opts.body = JSON.stringify(body);
+    const res = await fetch(BACKEND_URL + path, opts);
+    return res.json();
   }
 
   /* ── MODAL ── */
@@ -751,10 +744,92 @@
       <td>${b.occasion||'—'}</td>
       <td><span class="badge badge-${sCls}">${b.status||'pending'}</span></td>
       <td><div style="display:flex;gap:.4rem;flex-wrap:wrap">
-        ${b.status==='pending' ? `<button class="btn-action approve" onclick="verifyAdvance('${id}')" title="Verify 30% Advance & Confirm"><i class="fas fa-check"></i></button>
-        <button class="btn-action reject" onclick="updateBookingStatus('${id}','rejected')"><i class="fas fa-times"></i></button>` : 
-        (b.status==='confirmed' && b.paymentStatus!=='fully_paid') ? `<button class="btn-action approve" onclick="collectCash('${id}')" title="Collect 70% Cash"><i class="fas fa-money-bill-wave"></i></button>` : 
-        (b.paymentStatus==='fully_paid') ? `<span class="badge badge-paid">Fully Paid ✅</span>` : ''}
+       ${b.status==='pending' ? `
+
+<button class="btn-action approve" onclick="verifyAdvance('${id}')">
+  <i class="fas fa-check"></i>
+  Approve
+</button>
+
+<button class="btn-action reject" onclick="updateBookingStatus('${id}','rejected')">
+  <i class="fas fa-times"></i>
+  Reject
+</button>
+
+<button 
+  class="btn-action"
+  onclick="sendWhatsApp(
+    '${b.phone}',
+    'pending',
+    '${b.customer_name || b.name}'
+  )">
+
+  <i class="fab fa-whatsapp"></i>
+  WhatsApp
+
+</button>
+
+` : 
+
+(b.status==='confirmed' && b.paymentStatus!=='fully_paid') ? `
+
+<button class="btn-action approve" onclick="collectCash('${id}')">
+  <i class="fas fa-money-bill-wave"></i>
+  Collect Remaining 70%
+</button>
+
+<button 
+  class="btn-action"
+  onclick="sendWhatsApp(
+    '${b.phone}',
+    'confirmed',
+    '${b.customer_name || b.name}'
+  )">
+
+  <i class="fab fa-whatsapp"></i>
+  WhatsApp
+
+</button>
+
+` : 
+
+(b.paymentStatus==='fully_paid') ? `
+
+<span class="badge badge-paid" style="font-size:.65rem">
+  Fully Paid ✅
+</span>
+
+<button 
+  class="btn-action"
+  onclick="sendWhatsApp(
+    '${b.phone}',
+    'confirmed',
+    '${b.customer_name || b.name}'
+  )">
+
+  <i class="fab fa-whatsapp"></i>
+  WhatsApp
+
+</button>
+
+` : 
+
+(b.status==='rejected') ? `
+
+<button 
+  class="btn-action reject"
+  onclick="sendWhatsApp(
+    '${b.phone}',
+    'rejected',
+    '${b.customer_name || b.name}'
+  )">
+
+  <i class="fab fa-whatsapp"></i>
+  WhatsApp
+
+</button>
+
+` : ''}
       </div></td>
     </tr>`;
     return `<tr>
@@ -1183,6 +1258,49 @@
   });
 
   function sendWhatsApp(phone, status, name) {
+
+  let msg = "";
+
+  if(status === "confirmed") {
+
+    msg =
+`Hello ${name},
+
+Your booking at MJ Culture has been CONFIRMED ✅
+
+Thank you for choosing us.`;
+
+  }
+
+  else if(status === "rejected") {
+
+    msg =
+`Hello ${name},
+
+We are sorry to inform you that your booking request has been rejected ❌
+
+Your advance payment will be refunded shortly.`;
+
+  }
+
+  else {
+
+    msg =
+`Hello ${name},
+
+Your booking request is currently under review.
+
+Our team will contact you within 24 hours regarding confirmation.`;
+
+  }
+
+  const url =
+`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`;
+
+  window.open(url, "_blank");
+}
+
+function sendWhatsApp(phone, status, name) {
 
   let msg = "";
 
