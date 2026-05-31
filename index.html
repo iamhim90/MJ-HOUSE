@@ -726,7 +726,1299 @@
       .pb-inner h3{font-size:1.8rem}
     }
  
-    
+    /* ═══════════════════════════════════════════════
+       3D ANIMATION ADDITIONS — purely visual layer
+       no layout, color, or UX changes below
+    ═══════════════════════════════════════════════ */
+ 
+    /* 3D floating particles in hero */
+    .hero-particles {
+      position:absolute; inset:0; z-index:1; pointer-events:none; overflow:hidden;
+    }
+    .hero-particle {
+      position:absolute; border-radius:50%;
+      background:radial-gradient(circle, rgba(201,169,110,0.6) 0%, transparent 70%);
+      animation:float3d linear infinite;
+      will-change:transform;
+    }
+    @keyframes float3d {
+      0%   { transform:translateY(110vh) translateX(0px) scale(0) rotateZ(0deg); opacity:0; }
+      5%   { opacity:1; }
+      95%  { opacity:.4; }
+      100% { transform:translateY(-10vh) translateX(var(--drift)) scale(1) rotateZ(360deg); opacity:0; }
+    }
+ 
+    /* 3D tilt on amenity cards */
+    .amen {
+      transform-style:preserve-3d;
+      will-change:transform;
+    }
+    .amen .amen-icon {
+      transition:transform .4s ease;
+      transform:translateZ(0px);
+      display:block;
+    }
+    .amen:hover .amen-icon {
+      transform:translateZ(16px) scale(1.15);
+    }
+ 
+    /* 3D tilt on testimonial cards */
+    .testi-card {
+      transform-style:preserve-3d;
+      will-change:transform;
+    }
+    .testi-card .testi-quote {
+      transform:translateZ(0px);
+      transition:transform .4s ease;
+      display:block;
+    }
+    .testi-card:hover .testi-quote {
+      transform:translateZ(20px);
+    }
+ 
+    /* 3D tilt on announcement cards */
+    .ann-card {
+      transform-style:preserve-3d;
+      will-change:transform;
+    }
+ 
+    /* 3D perspective tilt on slot cards */
+    .slot {
+      transform-style:preserve-3d;
+      will-change:transform;
+    }
+    .slot-price {
+      transition:transform .4s ease;
+      display:block;
+    }
+    .slot:hover .slot-price {
+      transform:translateZ(18px) scale(1.04);
+    }
+ 
+    /* 3D depth badge on about section */
+    .about-badge {
+      transition:transform .4s cubic-bezier(.34,1.56,.64,1), box-shadow .4s ease;
+      transform-style:preserve-3d;
+    }
+    .about-img-wrap:hover .about-badge {
+      transform:translateZ(28px) translateY(-4px) rotate(-1deg);
+      box-shadow:0 24px 48px rgba(0,0,0,.45), 0 0 0 1px rgba(201,169,110,.3);
+    }
+ 
+    /* 3D orbit gold orbs in parallax band */
+    .pb-orb {
+      position:absolute; border-radius:50%; pointer-events:none;
+      background:radial-gradient(circle, rgba(201,169,110,0.18) 0%, transparent 70%);
+      animation:orbFloat ease-in-out infinite;
+      will-change:transform;
+    }
+    @keyframes orbFloat {
+      0%,100% { transform:translate(0,0) scale(1); }
+      33%      { transform:translate(var(--ox),var(--oy)) scale(1.08); }
+      66%      { transform:translate(calc(var(--ox) * -0.5),var(--oy)) scale(.95); }
+    }
+ 
+    /* 3D shimmer sweep on btn-gold */
+    .btn-gold::after {
+      content:'';
+      position:absolute; top:0; left:-120%; width:60%; height:100%;
+      background:linear-gradient(105deg, transparent, rgba(255,255,255,.22), transparent);
+      transform:skewX(-18deg);
+      transition:left .55s ease;
+      pointer-events:none;
+    }
+    .btn-gold:hover::after { left:160%; }
+ 
+    /* 3D depth on QR card — perspective tilt */
+    .qr-card {
+      transform-style:preserve-3d;
+      will-change:transform;
+      transition:transform .4s ease, box-shadow .4s ease;
+    }
+    .qr-image-wrap {
+      transform:translateZ(0px);
+      transition:transform .4s ease;
+    }
+    .qr-card:hover .qr-image-wrap {
+      transform:translateZ(24px);
+    }
+ 
+    /* 3D stat number float */
+    .stat-num {
+      display:block;
+      transition:transform .4s cubic-bezier(.34,1.56,.64,1), text-shadow .4s ease;
+    }
+    .stat-item:hover .stat-num {
+      transform:translateY(-4px) scale(1.06);
+      text-shadow:0 12px 28px rgba(201,169,110,.35);
+    }
+ 
+    /* 3D flip on social icons */
+    .soc {
+      transform-style:preserve-3d;
+      transition:transform .4s cubic-bezier(.34,1.56,.64,1), border-color .2s, color .2s;
+    }
+    .soc:hover {
+      transform:translateY(-3px) rotateY(20deg) rotateX(-10deg) scale(1.1);
+    }
+ 
+    /* depth glow ring on about image */
+    .about-img-frame::before {
+      content:'';
+      position:absolute; inset:-1px; z-index:1; border-radius:2px;
+      background:linear-gradient(135deg,rgba(201,169,110,.0),rgba(201,169,110,.25),rgba(201,169,110,.0));
+      opacity:0;
+      transition:opacity .6s ease;
+      pointer-events:none;
+    }
+    .about-img-frame:hover::before { opacity:1; }
+ 
+    /* floating ring accent on hero */
+    .hero-ring {
+      position:absolute; border-radius:50%; pointer-events:none;
+      border:1px solid rgba(201,169,110,0.08);
+      animation:ringExpand ease-out infinite;
+      will-change:transform, opacity;
+    }
+    @keyframes ringExpand {
+      0%   { transform:translate(-50%,-50%) scale(.6); opacity:.6; }
+      100% { transform:translate(-50%,-50%) scale(1.8); opacity:0; }
+    }
+ 
+    /* 3D depth on form wrap on hover */
+    .form-wrap {
+      transition:transform .4s ease, box-shadow .4s ease;
+    }
+    .form-wrap:hover {
+      transform:translateY(-2px);
+      box-shadow:0 24px 60px rgba(0,0,0,.25), 0 0 0 1px rgba(201,169,110,.15);
+    }
+ 
+    /* marquee-like float on hero logo */
+    .hero-logo img {
+      animation:logoBob 4s ease-in-out infinite;
+      will-change:transform;
+    }
+    @keyframes logoBob {
+      0%,100% { transform:translateY(0) rotate(0deg); filter:drop-shadow(0 8px 20px rgba(201,169,110,.3)); }
+      50%      { transform:translateY(-6px) rotate(.5deg); filter:drop-shadow(0 20px 32px rgba(201,169,110,.5)); }
+    }
+ 
+    /* 3D nav logo hover */
+    .nav-logo {
+      transition:transform .4s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease;
+    }
+    .nav-brand:hover .nav-logo {
+      transform:perspective(200px) rotateY(-12deg) rotateX(6deg) scale(1.05);
+      box-shadow:6px 6px 20px rgba(0,0,0,.3);
+    }
+ 
+    /* ── CALENDAR SYSTEM ── */
+    .cal-trigger { position:relative; }
+    .cal-display {
+      background:rgba(255,255,255,.04); border:1px solid rgba(201,169,110,.15);
+      border-radius:6px; padding:.8rem .9rem; color:var(--cream);
+      font-family:'DM Sans',sans-serif; font-size:.85rem; cursor:pointer;
+      display:flex; align-items:center; justify-content:space-between;
+      transition:border-color .2s,background .2s; user-select:none;
+    }
+    .cal-display:hover, .cal-display.open { border-color:rgba(201,169,110,.5); background:rgba(201,169,110,.04); }
+    .cal-placeholder { color:rgba(245,240,232,.2); }
+    .cal-selected-text { color:var(--cream); }
+    .cal-icon { color:var(--wheat); font-size:.8rem; opacity:.7; flex-shrink:0; }
+
+    /* ── CALENDAR PANEL — fixed so it is never clipped by parent column ── */
+    .cal-panel {
+      position:fixed;
+      background:linear-gradient(160deg,#1e1509 0%,#120d06 100%);
+      border:1px solid rgba(201,169,110,.25);
+      border-radius:14px;
+      padding:1rem;
+      z-index:60000;
+      box-shadow:0 28px 80px rgba(0,0,0,.75), 0 0 0 1px rgba(201,169,110,.06) inset;
+      -webkit-backdrop-filter:blur(24px); backdrop-filter:blur(24px);
+      width:320px;
+      display:none;
+      overflow:visible;
+    }
+    .cal-panel.open { display:block; animation:fadeUp .18s ease; }
+
+    /* Mobile overlay backdrop */
+    #calBackdrop {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,.55); z-index:59999;
+      -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
+    }
+    #calBackdrop.active { display:block; }
+
+    .cal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:.8rem; gap:.5rem; }
+    .cal-month-label { font-family:'Cinzel',serif; font-size:.72rem; letter-spacing:2px; color:var(--wheat); text-transform:uppercase; flex:1; text-align:center; }
+    .cal-nav {
+      background:none; border:1px solid rgba(201,169,110,.2); border-radius:50%;
+      width:28px; height:28px; color:var(--wheat); cursor:pointer;
+      display:flex; align-items:center; justify-content:center; font-size:.6rem;
+      transition:all .15s; flex-shrink:0;
+    }
+    .cal-nav:hover { background:rgba(201,169,110,.12); border-color:rgba(201,169,110,.5); }
+    .cal-nav:active { background:rgba(201,169,110,.2); }
+
+    .cal-weekdays { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:.4rem; }
+    .cal-weekday { text-align:center; font-size:.58rem; letter-spacing:.5px; text-transform:uppercase; color:rgba(245,240,232,.35); padding:.3rem 0; }
+
+    .cal-days {
+      display:grid; grid-template-columns:repeat(7,1fr); gap:2px;
+      margin-bottom:.8rem; width:100%; box-sizing:border-box;
+    }
+    .cal-day {
+      width:100%; aspect-ratio:1;
+      display:flex; align-items:center; justify-content:center;
+      border-radius:6px; font-size:.78rem; cursor:pointer;
+      transition:all .12s; position:relative; border:1px solid transparent;
+      user-select:none; -webkit-user-select:none;
+      box-sizing:border-box; font-family:'DM Sans',sans-serif;
+      min-height:36px;
+    }
+    .cal-day.empty { cursor:default; }
+    .cal-day.past { color:rgba(245,240,232,.12); cursor:not-allowed; }
+    .cal-day.today { border-color:rgba(201,169,110,.35); color:var(--wheat); font-weight:600; }
+    .cal-day.today::after { content:''; position:absolute; bottom:3px; left:50%; transform:translateX(-50%); width:3px; height:3px; border-radius:50%; background:var(--wheat); }
+    .cal-day.selectable { color:rgba(245,240,232,.7); }
+    .cal-day.selectable:hover { background:rgba(201,169,110,.08); }
+    .cal-day.selectable:active { background:rgba(201,169,110,.15); }
+    .cal-day.selected {
+      background:var(--wheat) !important; color:var(--soil) !important;
+      font-weight:700; border-color:transparent !important;
+      box-shadow:0 2px 12px rgba(201,169,110,.4);
+    }
+
+    /* ── MOBILE: full-width bottom sheet ── */
+    @media(max-width:680px) {
+      .cal-panel {
+        position:fixed !important;
+        bottom:0 !important; left:0 !important; right:0 !important; top:auto !important;
+        width:100% !important; border-radius:20px 20px 0 0;
+        padding:1.2rem 1rem 2rem;
+        max-height:80vh; overflow-y:auto;
+      }
+      .cal-day { font-size:.82rem; min-height:40px; }
+      .cal-weekday { font-size:.6rem; }
+      .cal-nav { width:32px; height:32px; font-size:.65rem; }
+      .cal-month-label { font-size:.75rem; }
+      .cal-days { gap:3px; }
+    }
+    @media(max-width:400px) {
+      .cal-day { font-size:.75rem; min-height:36px; }
+      .cal-days { gap:2px; }
+    }
+
+    /* ── SLOT STATUS BADGES ── */
+    .slot-status {
+      display:none; /* hidden until date is selected */
+      font-size:.52rem; letter-spacing:1.5px; text-transform:uppercase;
+      padding:.22rem .55rem; border-radius:2px; font-weight:600;
+      position:absolute; top:.5rem; left:.6rem;
+      transition:all .25s;
+    }
+
+
+    /* ── BOOKING MESSAGE BOX ── */
+    #bookingMessage {
+      display:none; margin-top:1.2rem; padding:1.2rem 1.4rem;
+      border-radius:7px; font-size:.88rem; line-height:1.7;
+      border:1px solid; text-align:left; animation:fadeUp .4s ease;
+    }
+    #bookingMessage.msg-success {
+      background:rgba(74,222,128,.08); border-color:rgba(74,222,128,.3); color:#86efac;
+    }
+    #bookingMessage.msg-error {
+      background:rgba(251,113,133,.08); border-color:rgba(251,113,133,.3); color:#fca5a5;
+    }
+    #bookingMessage.msg-warn {
+      background:rgba(251,191,36,.07); border-color:rgba(251,191,36,.25); color:#fcd34d;
+    }
+    #bookingMessage .msg-icon { font-size:1.1rem; margin-right:.4rem; }
+    #bookingMessage .msg-title { font-weight:600; font-size:.95rem; margin-bottom:.5rem; display:flex; align-items:center; gap:.4rem; }
+    #bookingMessage .msg-detail { color:inherit; opacity:.8; font-size:.82rem; margin-top:.3rem; }
+    #bookingMessage .msg-row { display:flex; gap:.5rem; align-items:baseline; margin:.2rem 0; flex-wrap:wrap; }
+    #bookingMessage .msg-label { opacity:.55; min-width:110px; font-size:.78rem; flex-shrink:0; }
+    #bookingMessage .msg-val { font-size:.82rem; word-break:break-all; overflow-wrap:anywhere; max-width:100%; }
+
+    /* 3D effects now work on mobile too via touch events */
+
+    /* ── TERMS & CONDITIONS MODAL ── */
+    #tcOverlay {
+      position:fixed; inset:0; z-index:999999;
+      background:rgba(8,5,3,0.96);
+      display:flex; align-items:center; justify-content:center;
+      padding:1rem;
+      opacity:0; transition:opacity .55s ease;
+      -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+    }
+    #tcOverlay.tc-visible { opacity:1; }
+    #tcOverlay.tc-hidden { opacity:0; pointer-events:none; }
+
+    .tc-modal {
+      background:linear-gradient(160deg,#1e150a 0%,#120d06 100%);
+      border:1px solid rgba(201,169,110,0.28);
+      border-radius:16px;
+      max-width:700px; width:100%;
+      max-height:90vh;
+      display:flex; flex-direction:column;
+      box-shadow:0 40px 100px rgba(0,0,0,0.7), 0 0 0 1px rgba(201,169,110,0.08) inset;
+      overflow:hidden;
+      transform:translateY(30px) scale(0.97);
+      transition:transform .55s cubic-bezier(.34,1.56,.64,1);
+    }
+    #tcOverlay.tc-visible .tc-modal { transform:translateY(0) scale(1); }
+
+    .tc-header {
+      padding:2rem 2.4rem 1.6rem;
+      border-bottom:1px solid rgba(201,169,110,0.12);
+      flex-shrink:0;
+      background:linear-gradient(135deg,rgba(201,169,110,0.06),transparent);
+      position:relative;
+    }
+    .tc-header::before {
+      content:'';
+      position:absolute; top:0; left:0; right:0; height:2px;
+      background:linear-gradient(90deg,transparent,var(--wheat),transparent);
+    }
+    .tc-seal {
+      display:inline-flex; align-items:center; gap:.5rem;
+      font-size:.58rem; letter-spacing:4px; text-transform:uppercase;
+      color:rgba(201,169,110,0.6); margin-bottom:.8rem;
+    }
+    .tc-seal::before,.tc-seal::after { content:''; width:16px; height:1px; background:rgba(201,169,110,0.3); }
+    .tc-header h2 {
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(1.5rem,3.5vw,2rem);
+      font-weight:300; color:var(--cream);
+      letter-spacing:1px; line-height:1.2;
+    }
+    .tc-header p {
+      font-size:.75rem; color:rgba(245,240,232,0.35);
+      margin-top:.4rem; letter-spacing:.4px; line-height:1.6;
+    }
+
+    .tc-body {
+      flex:1; overflow-y:auto; padding:1.8rem 2.4rem;
+      scrollbar-width:thin; scrollbar-color:rgba(201,169,110,0.2) transparent;
+    }
+    .tc-body::-webkit-scrollbar { width:4px; }
+    .tc-body::-webkit-scrollbar-track { background:transparent; }
+    .tc-body::-webkit-scrollbar-thumb { background:rgba(201,169,110,0.2); border-radius:2px; }
+
+    .tc-clause {
+      margin-bottom:1.6rem;
+      padding:1.4rem 1.6rem;
+      background:rgba(255,255,255,0.025);
+      border:1px solid rgba(201,169,110,0.1);
+      border-radius:10px;
+      transition:border-color .3s;
+    }
+    .tc-clause:hover { border-color:rgba(201,169,110,0.22); }
+    .tc-clause-num {
+      font-family:'Cinzel',serif;
+      font-size:.62rem; letter-spacing:3px; text-transform:uppercase;
+      color:var(--wheat); margin-bottom:.5rem; display:flex; align-items:center; gap:.5rem;
+    }
+    .tc-clause-num::after { content:''; flex:1; height:1px; background:rgba(201,169,110,0.12); }
+    .tc-clause h4 {
+      font-family:'Cormorant Garamond',serif;
+      font-size:1.05rem; font-weight:400; color:rgba(245,240,232,0.85);
+      margin-bottom:.5rem;
+    }
+    .tc-clause p {
+      font-size:.83rem; color:rgba(245,240,232,0.45);
+      line-height:1.85;
+    }
+    .tc-clause p strong { color:rgba(201,169,110,0.85); font-weight:500; }
+
+    .tc-authority {
+      margin-bottom:1.6rem;
+      padding:1.4rem 1.6rem;
+      background:linear-gradient(135deg,rgba(201,169,110,0.08),rgba(201,169,110,0.03));
+      border:1px solid rgba(201,169,110,0.25);
+      border-radius:10px;
+      text-align:center;
+    }
+    .tc-authority .janab-title {
+      font-family:'Cinzel',serif;
+      font-size:.65rem; letter-spacing:4px; text-transform:uppercase;
+      color:rgba(201,169,110,0.5); margin-bottom:.4rem;
+    }
+    .tc-authority h4 {
+      font-family:'Cormorant Garamond',serif;
+      font-size:1.2rem; color:var(--wheat); font-weight:400; margin-bottom:.4rem;
+    }
+    .tc-authority p {
+      font-size:.78rem; color:rgba(245,240,232,0.4); line-height:1.7;
+    }
+
+    .tc-checkbox-row {
+      display:flex; align-items:flex-start; gap:.8rem;
+      padding:1rem 0; margin-bottom:.5rem;
+    }
+    .tc-checkbox {
+      width:18px; height:18px; flex-shrink:0; margin-top:2px;
+      accent-color:var(--wheat); cursor:pointer;
+    }
+    .tc-checkbox-label {
+      font-size:.8rem; color:rgba(245,240,232,0.5); line-height:1.6; cursor:pointer;
+    }
+    .tc-checkbox-label strong { color:rgba(245,240,232,0.75); }
+
+    .tc-footer {
+      padding:1.4rem 2.4rem 1.8rem;
+      border-top:1px solid rgba(201,169,110,0.1);
+      flex-shrink:0;
+      display:flex; flex-direction:column; gap:.8rem;
+    }
+    .tc-footer-note {
+      font-size:.68rem; color:rgba(245,240,232,0.25);
+      text-align:center; letter-spacing:.3px; line-height:1.5;
+    }
+    .tc-btn-row { display:flex; gap:.8rem; }
+    #tcAcceptBtn {
+      flex:2; background:var(--wheat); color:var(--soil);
+      border:none; border-radius:6px;
+      padding:1rem 1.6rem; font-size:.8rem; font-weight:600;
+      letter-spacing:1.5px; text-transform:uppercase;
+      cursor:pointer; transition:all .25s;
+      box-shadow:0 8px 24px rgba(201,169,110,0.25);
+      display:flex; align-items:center; justify-content:center; gap:.5rem;
+      position:relative; overflow:hidden; opacity:0.4;
+    }
+    #tcAcceptBtn::before {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent);
+    }
+    #tcAcceptBtn:not(:disabled) { opacity:1; cursor:pointer; }
+    #tcAcceptBtn:hover:not(:disabled) { background:var(--gold); transform:translateY(-2px); box-shadow:0 14px 36px rgba(201,169,110,0.35); }
+    #tcAcceptBtn:disabled { opacity:0.4; cursor:not-allowed; }
+    #tcDeclineBtn {
+      flex:1; background:transparent; color:rgba(245,240,232,0.4);
+      border:1px solid rgba(245,240,232,0.12); border-radius:6px;
+      padding:1rem 1.2rem; font-size:.78rem;
+      letter-spacing:1px; text-transform:uppercase;
+      cursor:pointer; transition:all .25s;
+    }
+    #tcDeclineBtn:hover { border-color:rgba(239,68,68,0.4); color:rgba(239,68,68,0.7); background:rgba(239,68,68,0.05); }
+
+    /* Decline rejection screen */
+    #tcRejected {
+      display:none; position:fixed; inset:0; z-index:9999999;
+      background:#0a0603;
+      align-items:center; justify-content:center;
+      text-align:center; padding:2rem;
+      flex-direction:column;
+    }
+    #tcRejected.active { display:flex; }
+    .tc-rej-icon { font-size:3.5rem; margin-bottom:1.2rem; opacity:.5; }
+    .tc-rej-title {
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(1.6rem,4vw,2.4rem); font-weight:300;
+      color:rgba(245,240,232,0.7); margin-bottom:.8rem;
+    }
+    .tc-rej-sub {
+      font-size:.85rem; color:rgba(245,240,232,0.3);
+      line-height:1.8; max-width:420px; margin:0 auto 2rem;
+    }
+    .tc-rej-line {
+      width:48px; height:1px;
+      background:linear-gradient(90deg,transparent,rgba(201,169,110,0.3),transparent);
+      margin:0 auto 2rem;
+    }
+    .tc-rej-close {
+      font-size:.68rem; letter-spacing:2px; text-transform:uppercase;
+      color:rgba(245,240,232,0.2); cursor:pointer; border:none;
+      background:none; padding:.5rem 1.2rem;
+      border:1px solid rgba(245,240,232,0.08); border-radius:4px;
+      transition:all .2s;
+    }
+    .tc-rej-close:hover { color:rgba(245,240,232,0.5); border-color:rgba(245,240,232,0.2); }
+
+    @media(max-width:600px) {
+      .tc-header, .tc-body, .tc-footer { padding-left:1.4rem; padding-right:1.4rem; }
+      .tc-btn-row { flex-direction:column-reverse; }
+      #tcAcceptBtn, #tcDeclineBtn { flex:unset; width:100%; }
+    }
+  </style>
+  <script src="js/config.js"></script>
+</head>
+<body>
+ 
+<!-- PROGRESS BAR -->
+<div id="progress"></div>
+ 
+<!-- LOADER -->
+<div id="loader">
+  <div class="l-ornament">Est. Dahod, Gujarat</div>
+  <div class="l-title">MJ Culture</div>
+  <div class="l-sub">Farmhouse &amp; Events</div>
+  <div class="l-line"></div>
+  <div class="l-bar"><div class="l-fill"></div></div>
+</div>
+
+<!-- TERMS & CONDITIONS MODAL -->
+<div id="tcOverlay" role="dialog" aria-modal="true" aria-labelledby="tcModalTitle" style="display:none;">
+  <div class="tc-modal">
+    <div class="tc-header">
+      <div class="tc-seal">Official Document</div>
+      <h2 id="tcModalTitle">Terms &amp; Conditions of Booking</h2>
+      <p>MJ Culture Farmhouse &amp; Events &mdash; Dahod, Gujarat &bull; Please read carefully before proceeding</p>
+    </div>
+    <div class="tc-body" id="tcBody">
+
+      <!-- Clause 1: Security Deposit -->
+      <div class="tc-clause">
+        <div class="tc-clause-num">Article I</div>
+        <h4>Security Deposit — Refundable Assurance</h4>
+        <p>Upon confirmation of any booking, a mandatory <strong>refundable security deposit of ₹10,000 (Rupees Ten Thousand)</strong> shall be collected from the guest. This deposit serves exclusively as a financial assurance against any damage, breakage, misuse, or loss of property belonging to MJ Culture Farmhouse. The deposit shall be returned in full upon inspection and clearance of the premises after the event. Any deductions shall be made strictly on the basis of documented damages, and a detailed account shall be provided to the guest accordingly.</p>
+      </div>
+
+      <!-- Clause 2: Cancellation Policy -->
+      <div class="tc-clause">
+        <div class="tc-clause-num">Article II</div>
+        <h4>Cancellation &amp; Refund Policy</h4>
+        <p>In the event of cancellation of a confirmed booking, the following policy shall apply: <strong>Cancellations made 10 (ten) or more days prior to the scheduled event date</strong> shall attract a deduction of <strong>20% (Twenty Percent) of the total advance payment</strong> made at the time of booking. Cancellations made within 10 days of the event date shall be subject to a separate forfeiture policy as communicated at the time of booking. All refund requests must be submitted in writing via official channels and shall be processed within 7–10 working days.</p>
+      </div>
+
+      <!-- Clause 3: Premises Maintenance -->
+      <div class="tc-clause">
+        <div class="tc-clause-num">Article III</div>
+        <h4>Premises Maintenance &amp; Code of Conduct</h4>
+        <p>The guest and all attendees are required to maintain the farmhouse premises in a clean, orderly, and respectful condition throughout the duration of their event. <strong>MJ Culture Farmhouse must be returned in the same condition as received.</strong> Any wilful damage, vandalism, littering, or failure to maintain decorum shall result in deductions from the security deposit and may result in immediate termination of the event without refund. Guests are fully responsible for the conduct of all individuals present at their event.</p>
+      </div>
+
+      <!-- Clause 4: Alcohol-Free & No Nuisance -->
+      <div class="tc-clause">
+        <div class="tc-clause-num">Article IV</div>
+        <h4>Alcohol-Free Premises &amp; Zero Nuisance Policy</h4>
+        <p>MJ Culture Farmhouse operates as a <strong>strictly alcohol-free venue.</strong> The possession, consumption, or distribution of any alcoholic beverages or prohibited substances on or around the premises is <strong>strictly forbidden</strong> and constitutes grounds for immediate termination of the event and forfeiture of all payments. Additionally, all guests are expected to conduct themselves with the utmost respect and dignity. Any behaviour causing disturbance, nuisance, or inconvenience to staff, neighbours, or the surrounding community shall not be tolerated under any circumstances.</p>
+      </div>
+
+      <!-- Clause 5: Janab Saab Authority -->
+      <div class="tc-authority">
+        <div class="janab-title">Supreme Authority</div>
+        <h4>Mandatory Approval of Janab Saab</h4>
+        <p>The explicit prior approval of <strong>Janab Saab</strong> — the designated authority and principal overseer of MJ Culture — is <strong>mandatory and non-negotiable</strong> for all bookings, events, and matters pertaining to the farmhouse. No booking shall be deemed confirmed, and no event shall proceed, without the express consent and authorisation of Janab Saab. This clause supersedes all other conditions and applies universally across all categories of events, packages, and arrangements.</p>
+      </div>
+
+      <!-- Consent checkbox -->
+      <div class="tc-checkbox-row">
+        <input type="checkbox" id="tcConsent" class="tc-checkbox">
+        <label for="tcConsent" class="tc-checkbox-label">
+          I have read, understood, and agree to comply with all the <strong>Terms &amp; Conditions</strong> stated above. I acknowledge that violation of any clause may result in termination of the event and/or financial deductions from my security deposit.
+        </label>
+      </div>
+
+    </div><!-- /tc-body -->
+    <div class="tc-footer">
+      <p class="tc-footer-note">By clicking "I Accept", you acknowledge that you have read and understood all terms above and agree to be legally bound by them. Your acceptance will be recorded with a timestamp.</p>
+      <div class="tc-btn-row">
+        <button id="tcDeclineBtn" onclick="tcDecline()"><i class="fas fa-times"></i> Decline</button>
+        <button id="tcAcceptBtn" onclick="tcAccept()" disabled><i class="fas fa-check"></i> I Accept &amp; Proceed</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DECLINE REJECTION SCREEN -->
+<div id="tcRejected">
+  <div class="tc-rej-icon">🚫</div>
+  <h2 class="tc-rej-title">This Farmhouse Is Not For You</h2>
+  <div class="tc-rej-line"></div>
+  <p class="tc-rej-sub">You have chosen not to accept the Terms &amp; Conditions of MJ Culture Farmhouse. We respect your decision. However, access to our booking services and facilities is exclusively available to guests who agree to our terms.<br><br>We hope to welcome you another time.</p>
+  <button class="tc-rej-close" onclick="window.location.href='about:blank'">Close &amp; Exit</button>
+</div>
+
+<!-- CURSOR -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
+ 
+<!-- NAVIGATION -->
+<nav id="nav">
+  <a class="nav-brand" href="#home">
+    <div class="nav-logo"><img src="assets/logo-clean.png" alt="MJ Culture logo"></div>
+    <span class="nav-name">MJ Culture</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#announcements">Updates</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#booking">Book Now</a></li>
+    <li><a href="#payment">Pay</a></li>
+  </ul>
+  <button class="ham" id="ham" aria-label="Menu"><i class="fas fa-bars"></i></button>
+</nav>
+<div class="mob-nav" id="mobNav">
+  <a href="#about" onclick="closeMob()">About</a>
+  <a href="#gallery" onclick="closeMob()">Gallery</a>
+  <a href="#announcements" onclick="closeMob()">Updates</a>
+  <a href="#faq" onclick="closeMob()">FAQ</a>
+  <a href="#booking" onclick="closeMob()">Book Now</a>
+  <a href="#payment" onclick="closeMob()">Pay</a>
+</div>
+ 
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-overlay"></div>
+  <!-- 3D FLOATING PARTICLES -->
+  <div class="hero-particles" id="heroParticles"></div>
+  <!-- 3D EXPANDING RINGS -->
+  <div class="hero-ring" id="heroRing1" style="width:400px;height:400px;left:50%;top:50%;animation-duration:4s;animation-delay:0s;"></div>
+  <div class="hero-ring" id="heroRing2" style="width:400px;height:400px;left:50%;top:50%;animation-duration:4s;animation-delay:1.3s;"></div>
+  <div class="hero-ring" id="heroRing3" style="width:400px;height:400px;left:50%;top:50%;animation-duration:4s;animation-delay:2.6s;"></div>
+  <div class="hero-bottom-fade"></div>
+  <div class="hero-inner">
+    <div class="hero-logo"><img src="assets/logo-clean.png" alt="MJ Culture logo"></div>
+    <div class="hero-eyebrow">Farmhouse &amp; Events &bull; Dahod, Gujarat</div>
+    <h1>Where Every<br><em>Celebration</em><br>Begins</h1>
+    <p class="hero-sub">An exclusive farmhouse retreat crafted for weddings, birthdays, and life's most cherished gatherings — nestled in the heart of Dahod.</p>
+    <div class="hero-ctas">
+      <a href="#booking" class="btn-gold"><i class="fas fa-calendar-alt"></i> Book Your Date</a>
+      <a href="#gallery" class="btn-ghost"><i class="fas fa-images"></i> View Gallery</a>
+    </div>
+  </div>
+</section>
+ 
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-item fade-in">
+      <span class="stat-num" data-count="250">0</span>
+      <span class="stat-label">Events Hosted</span>
+    </div>
+    <div class="stat-item fade-in d1">
+      <span class="stat-num" data-count="5000">0</span>
+      <span class="stat-label">Square Feet</span>
+    </div>
+    <div class="stat-item fade-in d2">
+      <span class="stat-num" data-count="1">0</span>
+      <span class="stat-label">Years of Excellence</span>
+    </div>
+    <div class="stat-item fade-in d3">
+      <span class="stat-num" data-count="1000">0</span>
+      <span class="stat-label">Happy guests</span>
+    </div>
+  </div>
+</div>
+ 
+<!-- ABOUT -->
+<section class="sec" id="about">
+  <div class="about-grid">
+    <div class="about-img-wrap reveal">
+      <div class="about-img-frame">
+        <img src="assets/event-photo.jpeg" alt="Event hosted at MJ Culture" loading="lazy">
+      </div>
+      <div class="about-img-border"></div>
+      <div class="about-badge">
+        <div class="big">250+</div>
+        <div class="small">Events Hosted</div>
+      </div>
+    </div>
+    <div>
+      <div class="fade-in">
+        <span class="sec-tag">Our Story</span>
+        <h2 class="sec-h">A Venue as Elegant<br>as Your Occasion</h2>
+        <div class="rule"></div>
+        <p class="sec-p">MJ Culture is Dahod's premier farmhouse venue — a sanctuary where lush gardens, premium facilities, and warm hospitality combine to create unforgettable celebrations. From intimate gatherings to grand weddings, we craft every event with precision and grace.</p>
+        <p class="sec-p" style="margin-top:1rem">Located on Ukardi Road, our venue spans across beautifully manicured grounds, featuring an iconic dolphin fountain, premium indoor halls, and open-air lawns bathed in golden light.</p>
+      </div>
+      <div class="fade-in d1" style="margin-top:2rem">
+        <span class="sec-tag" style="margin-bottom:1rem;display:block">What We Offer</span>
+        <div class="amenities">
+          <div class="amen"><div class="amen-icon"><i class="fas fa-car"></i></div><h4>Ample Parking</h4></div>
+          <div class="amen"><div class="amen-icon"><i class="fas fa-camera"></i></div><h4>Photo Spots</h4></div>
+          <div class="amen"><div class="amen-icon"><i class="fas fa-utensils"></i></div><h4>Catering(optional)</h4></div>
+          <div class="amen"><div class="amen-icon"><i class="fas fa-lightbulb"></i></div><h4>Premium Lighting</h4></div>
+          <div class="amen"><div class="amen-icon"><i class="fas fa-tree"></i></div><h4>Lush Gardens</h4></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- GALLERY -->
+<section class="gallery-section" id="gallery">
+  <div class="gallery-inner">
+    <div class="gallery-header fade-in">
+      <div>
+        <span class="sec-tag">Visual Tour</span>
+        <h2 class="sec-h">The Venue, Up Close</h2>
+        <div class="rule"></div>
+      </div>
+      <p>Step inside MJ Culture — from golden afternoons to magical evenings, every hour here is beautiful.</p>
+    </div>
+    <div class="slider-wrap fade-in d1">
+      <div class="slider" id="mainSlider">
+        <div class="slide" onclick="openLightbox(0)"><img src="assets/gallery1.jpeg" alt="Open-air lawn" loading="lazy"><div class="slide-badge">Outdoor</div><div class="slide-caption"><h4>Open-Air Event Lawn</h4><p>Expansive lawns with a beautifully adorned stage — perfect for your grandest celebrations.</p></div></div>
+        <div class="slide" onclick="openLightbox(1)"><img src="assets/gallery2.jpeg" alt="Ridas Boutique" loading="lazy"><div class="slide-badge">Boutique</div><div class="slide-caption"><h4>Ridas Boutique</h4><p>Curated Dawoodi Bohra Rida collection — elegance tailored for every special occasion.</p></div></div>
+        <div class="slide" onclick="openLightbox(2)"><img src="assets/gallery3.jpeg" alt="Venue Entrance" loading="lazy"><div class="slide-badge">Evenings</div><div class="slide-caption"><h4>Glowing Venue Entrance</h4><p>Warm lamps, sculpted art, and a welcoming glow as the sun sets.</p></div></div>
+        <div class="slide" onclick="openLightbox(3)"><img src="assets/gallery4.jpeg" alt="Dolphin Fountain" loading="lazy"><div class="slide-badge">Signature</div><div class="slide-caption"><h4>Dolphin Fountain at Dusk</h4><p>Our iconic fountain bathed in gold light — a breathtaking backdrop for evening events.</p></div></div>
+        <div class="slide" onclick="openLightbox(4)"><img src="assets/gallery5.jpeg" alt="Nikah Stage" loading="lazy"><div class="slide-badge">Nikah</div><div class="slide-caption"><h4>Celestial Nikah Stage</h4><p>Royal blue velvet and Islamic calligraphy — where vows become memories.</p></div></div>
+        <div class="slide" onclick="openLightbox(5)"><img src="assets/gallery6.jpeg" alt="Birthday Hall" loading="lazy"><div class="slide-badge">Birthday</div><div class="slide-caption"><h4>Whimsical Birthday Hall</h4><p>A magical indoor hall transformed with a carnival backdrop and a gleaming golden runway.</p></div></div>
+        <div class="slide" onclick="openLightbox(6)"><img src="assets/gallery7.jpeg" alt="Bridal Seating" loading="lazy"><div class="slide-badge">Bridal</div><div class="slide-caption"><h4>Golden Bridal Seating</h4><p>A shimmering gold canopy and floral moon arch crafting a fairytale for the bride.</p></div></div>
+        <div class="slide" onclick="openLightbox(7)"><img src="assets/gallery9.jpeg" alt="Night Courtyard" loading="lazy"><div class="slide-badge">Night</div><div class="slide-caption"><h4>Serene Night Courtyard</h4><p>Stroll through our lit courtyard under a canopy of stars.</p></div></div>
+        <div class="slide" onclick="openLightbox(8)"><img src="assets/gallery10.jpeg" alt="White Nikah Stage" loading="lazy"><div class="slide-badge">Nikah</div><div class="slide-caption"><h4>Pure White Nikah Stage</h4><p>A pristine white-themed Nikah setup adorned with fairy lights.</p></div></div>
+      </div>
+      <div class="slider-controls">
+        <div class="slider-dots" id="sliderDots"></div>
+        <div class="slider-arrows">
+          <button class="arrow-btn" id="prevSlide" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
+          <button class="arrow-btn" id="nextSlide" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+      <div class="thumb-strip" id="thumbStrip">
+        <div class="thumb active" data-index="0"><img src="assets/gallery1.jpeg" alt="t1" loading="lazy"></div>
+        <div class="thumb" data-index="1"><img src="assets/gallery2.jpeg" alt="t2" loading="lazy"></div>
+        <div class="thumb" data-index="2"><img src="assets/gallery3.jpeg" alt="t3" loading="lazy"></div>
+        <div class="thumb" data-index="3"><img src="assets/gallery4.jpeg" alt="t4" loading="lazy"></div>
+        <div class="thumb" data-index="4"><img src="assets/gallery5.jpeg" alt="t5" loading="lazy"></div>
+        <div class="thumb" data-index="5"><img src="assets/gallery6.jpeg" alt="t6" loading="lazy"></div>
+        <div class="thumb" data-index="6"><img src="assets/gallery7.jpeg" alt="t7" loading="lazy"></div>
+        <div class="thumb" data-index="7"><img src="assets/gallery9.jpeg" alt="t8" loading="lazy"></div>
+        <div class="thumb" data-index="8"><img src="assets/gallery10.jpeg" alt="t9" loading="lazy"></div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- LIGHTBOX -->
+<div id="lightbox">
+  <button class="lb-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+  <button class="lb-nav" id="lb-prev" onclick="lbNav(-1)"><i class="fas fa-chevron-left"></i></button>
+  <img id="lbImg" src="" alt="Gallery image">
+  <button class="lb-nav" id="lb-next" onclick="lbNav(1)"><i class="fas fa-chevron-right"></i></button>
+</div>
+ 
+<!-- PARALLAX BAND -->
+<div class="parallax-band">
+  <!-- 3D orbiting gold orbs -->
+  <div class="pb-orb" style="width:300px;height:300px;left:10%;top:20%;animation-duration:7s;animation-delay:0s;--ox:40px;--oy:-20px;"></div>
+  <div class="pb-orb" style="width:200px;height:200px;right:15%;bottom:10%;animation-duration:9s;animation-delay:-3s;--ox:-30px;--oy:25px;"></div>
+  <div class="pb-orb" style="width:150px;height:150px;right:30%;top:15%;animation-duration:6s;animation-delay:-1.5s;--ox:20px;--oy:30px;"></div>
+  <div class="pb-inner fade-in">
+    <span class="pb-eyebrow">The MJ Experience</span>
+    <h3>Every Detail, <em>Perfected</em><br>Every Memory, Eternal</h3>
+    <p>Open for bookings &bull; Dahod, Gujarat</p>
+    <a href="#booking" class="btn-gold">Reserve Your Date &rarr;</a>
+  </div>
+</div>
+ 
+<!-- TESTIMONIALS -->
+<section class="testi-section">
+  <div class="testi-inner">
+    <div class="fade-in">
+      <span class="sec-tag">Client Stories</span>
+      <h2 class="sec-h">What Our Guests Say</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <div class="testi-quote">&ldquo;</div>
+        <p class="testi-text">The venue was absolutely stunning. Every detail was perfect — from the golden lighting to the impeccable service. Our wedding felt like a dream.</p>
+        <div class="testi-author"><div class="testi-avatar">A</div><div><div class="testi-name">Arshiya Mithiborwala</div><div class="testi-event">Wedding, Feb 2026</div></div></div>
+      </div>
+      <div class="testi-card reveal" style="transition-delay:.1s">
+        <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <div class="testi-quote">&ldquo;</div>
+        <p class="testi-text">We hosted our daughter's birthday here and the entire team was so helpful. The pool area was a huge hit with the kids. Highly recommend!</p>
+        <div class="testi-author"><div class="testi-avatar">F</div><div><div class="testi-name">Fatema Shergadwala</div><div class="testi-event">Birthday, Jan 2026</div></div></div>
+      </div>
+      <div class="testi-card reveal" style="transition-delay:.2s">
+        <div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <div class="testi-quote">&ldquo;</div>
+        <p class="testi-text">MJ Culture is the best venue in Dahod by far. The Nikah stage they set up for us was breathtaking. Guests are still talking about it months later.</p>
+        <div class="testi-author"><div class="testi-avatar">Z</div><div><div class="testi-name">Zainab Patanwala</div><div class="testi-event">Nikah Ceremony, Dec 2025</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ANNOUNCEMENTS -->
+<div class="announce-section" id="announcements">
+  <div class="announce-inner">
+    <div class="announce-header reveal">
+      <div>
+        <span class="sec-tag">Latest Updates</span>
+        <h2 class="sec-h">Announcements</h2>
+        <div class="rule"></div>
+      </div>
+      <div class="a-live"><span></span>Live from MJ Culture</div>
+    </div>
+    <div class="cards reveal" id="annCards"></div>
+    <div class="ann-footer reveal"><p>More coming soon &mdash; follow us on Instagram @mjculturecenterofficial</p></div>
+  </div>
+</div>
+ 
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="faq-inner">
+    <div class="fade-in" style="text-align:center;margin-bottom:0">
+      <span class="sec-tag" style="justify-content:center">Got Questions?</span>
+      <h2 class="sec-h" style="text-align:center;color:var(--cream)">Frequently Asked</h2>
+      <div class="rule" style="margin:0.5rem auto 0"></div>
+    </div>
+    <div class="faq-list fade-in d1">
+      <div class="faq-item">
+        <button class="faq-q">How far in advance should I book? <span class="faq-icon"><i class="fas fa-plus"></i></span></button>
+        <div class="faq-a"><div class="faq-a-inner">We recommend booking at least 2–4 weeks in advance, especially for weekends and festival dates. Popular months like March–May and November–January fill up quickly. Contact us on WhatsApp for real-time availability.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Is catering included in the booking price? <span class="faq-icon"><i class="fas fa-plus"></i></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Catering is available as an add-on. We have trusted catering partners who offer a range of menus — from traditional Bohra cuisine to multi-cuisine spreads. Ask us for a custom quote when booking.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What is the maximum guest capacity? <span class="faq-icon"><i class="fas fa-plus"></i></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Our lawn can comfortably accommodate up to 500 guests for open-air events. For seated dinners, capacity is around 200–250 guests depending on the table layout. We can adjust setups to suit your needs.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Can I visit the venue before booking? <span class="faq-icon"><i class="fas fa-plus"></i></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Absolutely! We welcome site visits. Just call or WhatsApp us to schedule a time. We also have an Open House Viewing Day on May 15, 2026 — free entry, no booking needed.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What is the cancellation policy? <span class="faq-icon"><i class="fas fa-plus"></i></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Cancellations made 7+ days before the event receive a full refund of the advance. Cancellations within 7 days are subject to a 50% charge. Please contact us directly for emergency reschedules — we try our best to accommodate.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- BOOKING -->
+<section class="booking-section" id="booking">
+  <div class="booking-inner">
+    <!-- Section header -->
+    <div class="reveal" style="max-width:560px;margin-bottom:0">
+      <span class="sec-tag">Reserve Your Date</span>
+      <h2 class="sec-h">Book the Farmhouse</h2>
+      <div class="rule"></div>
+      <p class="sec-p">Choose your time slot, fill in your details — your booking is confirmed instantly.</p>
+    </div>
+
+    <!-- TWO-COLUMN SPLIT -->
+    <div class="booking-split">
+
+      <!-- ══ LEFT: SLOT PICKER ══ -->
+      <div class="slots-panel reveal" style="transition-delay:.1s">
+
+        <!-- ① FULL DAY -->
+        <div class="slot-category">
+          <div class="slot-cat-header">
+            <div class="slot-cat-left">
+              <div class="slot-cat-icon"><i class="fas fa-sun"></i></div>
+              <div>
+                <div class="slot-cat-title">Full Day</div>
+                <div class="slot-cat-sub">9 AM &ndash; 10 PM &bull; 13 hours of exclusive access</div>
+              </div>
+            </div>
+            <span class="slot-cat-badge">Best Value</span>
+          </div>
+          <div class="slot-grid cols-1" id="slots">
+            <div class="slot sel" data-slot="fullday" data-price="30000">
+              <span class="slot-badge">Most Popular</span>
+              <span class="slot-status" id="sstatus-fullday"></span>
+              <div class="slot-inner">
+                <div class="slot-left">
+                  <div class="slot-name"><span class="sel-dot"></span>Full Day Exclusive</div>
+                  <div class="slot-time"><i class="fas fa-clock" style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>9:00 AM &ndash; 10:00 PM</div>
+                </div>
+                <div class="slot-right">
+                  <div class="slot-price">30,000</div>
+                  <div class="slot-advance">Advance: &#8377;9,000</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ② HALF DAY -->
+        <div class="slot-category">
+          <div class="slot-cat-header">
+            <div class="slot-cat-left">
+              <div class="slot-cat-icon"><i class="fas fa-adjust"></i></div>
+              <div>
+                <div class="slot-cat-title">Half Day</div>
+                <div class="slot-cat-sub">6 hours of access &bull; Morning or Evening</div>
+              </div>
+            </div>
+            <span class="slot-cat-badge">2 Options</span>
+          </div>
+          <div class="slot-grid cols-2">
+            <div class="slot" data-slot="hday-morning" data-price="20000">
+              <span class="slot-status" id="sstatus-hday-morning"></span>
+              <div class="slot-inner">
+                <div class="slot-left">
+                  <div class="slot-name"><span class="sel-dot"></span>Morning</div>
+                  <div class="slot-time"><i class="fas fa-clock" style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>9 AM &ndash; 3 PM</div>
+                </div>
+                <div class="slot-right">
+                  <div class="slot-price">20,000</div>
+                  <div class="slot-advance">Adv: &#8377;6,000</div>
+                </div>
+              </div>
+            </div>
+            <div class="slot" data-slot="hday-evening" data-price="20000">
+              <span class="slot-status" id="sstatus-hday-evening"></span>
+              <div class="slot-inner">
+                <div class="slot-left">
+                  <div class="slot-name"><span class="sel-dot"></span>Evening</div>
+                  <div class="slot-time"><i class="fas fa-clock" style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>3:30 PM &ndash; 10:30 PM</div>
+                </div>
+                <div class="slot-right">
+                  <div class="slot-price">20,000</div>
+                  <div class="slot-advance">Adv: &#8377;6,000</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ③ SPECIAL OCCASION -->
+        <div class="slot-category">
+          <div class="slot-cat-header">
+            <div class="slot-cat-left">
+              <div class="slot-cat-icon"><i class="fas fa-star"></i></div>
+              <div>
+                <div class="slot-cat-title">Special Occasion</div>
+                <div class="slot-cat-sub">Daris & Birthday packages &bull; 3&ndash;4 hour slots</div>
+              </div>
+            </div>
+            <span class="slot-cat-badge">4 Options</span>
+          </div>
+
+          <!-- Daris -->
+          <div class="slot-sub-label"><i class="fas fa-mosque" style="opacity:.4;font-size:.65rem"></i> Daris</div>
+          <div class="slot-grid cols-2">
+            <div class="slot" data-slot="daris-morning" data-price="12000">
+              <span class="slot-status" id="sstatus-daris-morning"></span>
+              <div class="slot-inner">
+                <div class="slot-left">
+                  <div class="slot-name"><span class="sel-dot"></span>Morning</div>
+                  <div class="slot-time"><i class="fas fa-clock" style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>11 AM &ndash; 2 PM</div>
+                </div>
+                <div class="slot-right">
+                  <div class="slot-price">12,000</div>
+                  <div class="slot-advance">Adv: &#8377;3,600</div>
+                </div>
+              </div>
+            </div>
+            <div class="slot" data-slot="daris-evening" data-price="12000">
+              <span class="slot-status" id="sstatus-daris-evening"></span>
+              <div class="slot-inner">
+                <div class="slot-left">
+                  <div class="slot-name"><span class="sel-dot"></span>Evening</div>
+                  <div class="slot-time"><i class="fas fa-clock" style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>7 PM &ndash; 10 PM</div>
+                </div>
+                <div class="slot-right">
+                  <div class="slot-price">12,000</div>
+                  <div class="slot-advance">Adv: &#8377;3,600</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Birthday -->
+          <div class="slot-sub-label" style="border-top:1px solid rgba(201,169,110,.06);margin-top:.3rem"><i class="fas fa-birthday-cake" style="opacity:.4;font-size:.65rem"></i> Birthday</div>
+          <div class="slot-grid cols-2">
+            <div class="slot" data-slot="birthday-morning" data-price="12000">
+              <span class="slot-status" id="sstatus-birthday-morning"></span>
+              <div class="slot-inner">
+                <div class="slot-left">
+                  <div class="slot-name"><span class="sel-dot"></span>Morning</div>
+                  <div class="slot-time"><i class="fas fa-clock" style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>11 AM &ndash; 3 PM</div>
+                </div>
+                <div class="slot-right">
+                  <div class="slot-price">12,000</div>
+                  <div class="slot-advance">Adv: &#8377;3,600</div>
+                </div>
+              </div>
+            </div>
+            <div class="slot" data-slot="birthday-evening" data-price="12000">
+              <span class="slot-status" id="sstatus-birthday-evening"></span>
+              <div class="slot-inner">
+                <div class="slot-left">
+                  <div class="slot-name"><span class="sel-dot"></span>Evening</div>
+                  <div class="slot-time"><i class="fas fa-clock" style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>6 PM &ndash; 10 PM</div>
+                </div>
+                <div class="slot-right">
+                  <div class="slot-price">12,000</div>
+                  <div class="slot-advance">Adv: &#8377;3,600</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Availability info bar -->
+        <div id="dateAvailInfo" role="status" aria-live="polite"></div>
+
+      </div><!-- /slots-panel -->
+
+      <!-- ══ RIGHT: STICKY FORM ══ -->
+      <div class="form-panel reveal" style="transition-delay:.2s">
+        <div class="form-wrap">
+          <div class="form-head">
+            <h2>Your Details</h2>
+            <p>All fields marked * are required</p>
+          </div>
+          <div class="form-body">
+
+            <!-- Selected slot summary -->
+            <div class="form-slot-summary" id="formSlotSummary">
+              <div class="fss-left">
+                <strong id="fssSlotName">Full Day Exclusive</strong>
+                <span id="fssSlotTime">9:00 AM &ndash; 10:00 PM</span>
+              </div>
+              <div class="fss-right">
+                <div class="fss-price" id="fssPriceDisplay">30,000</div>
+                <div class="fss-advance">Adv: &#8377;<span id="advanceBannerAmt">9,000</span></div>
+              </div>
+            </div>
+
+            <form id="bookForm" novalidate>
+              <input type="hidden" id="selSlot" value="fullday">
+              <input type="hidden" id="selPrice" value="30000">
+              <div class="frow">
+                <div class="ff"><label for="bName">Full Name *</label><input type="text" id="bName" placeholder="Your full name" required></div>
+                <div class="ff"><label for="bPhone">Mobile Number *</label><input type="tel" id="bPhone" placeholder="10-digit number" required maxlength="10"></div>
+              </div>
+              <div class="frow">
+                <div class="ff"><label for="bEmail">Email Address</label><input type="email" id="bEmail" placeholder="your@email.com"></div>
+                <div class="ff">
+                  <label>Event Date *</label>
+                  <input type="hidden" id="bDate">
+                  <div class="cal-trigger" id="calTrigger">
+                    <div class="cal-display" id="calDisplay" tabindex="0" role="button" aria-haspopup="true" aria-label="Open date picker">
+                      <span id="calPlaceholder" class="cal-placeholder">Choose a date</span>
+                      <i class="fas fa-calendar-alt cal-icon"></i>
+                    </div>
+                    <div class="cal-panel" id="calPanel" role="dialog" aria-label="Date picker">
+                      <div class="cal-header">
+                        <button class="cal-nav" id="calPrev" type="button" aria-label="Previous month"><i class="fas fa-chevron-left"></i></button>
+                        <span class="cal-month-label" id="calMonthLabel"></span>
+                        <button class="cal-nav" id="calNext" type="button" aria-label="Next month"><i class="fas fa-chevron-right"></i></button>
+                      </div>
+                      <div class="cal-weekdays">
+                        <div class="cal-weekday">Su</div><div class="cal-weekday">Mo</div>
+                        <div class="cal-weekday">Tu</div><div class="cal-weekday">We</div>
+                        <div class="cal-weekday">Th</div><div class="cal-weekday">Fr</div>
+                        <div class="cal-weekday">Sa</div>
+                      </div>
+                      <div class="cal-days" id="calDays"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="frow">
+                <div class="ff">
+                  <label for="bOccasion">Occasion *</label>
+                  <select id="bOccasion" required>
+                    <option value="">Select occasion&hellip;</option>
+                    <option>Wedding</option><option>Birthday</option><option>Family Event</option>
+                    <option>Engagement</option><option>Nikah</option><option>Corporate Event</option>
+                    <option>Photoshoot</option><option>Other</option>
+                  </select>
+                </div>
+                <div class="ff"><label for="bGuests">Approx. Guests *</label><input type="number" id="bGuests" placeholder="e.g. 80" min="10" max="500" required></div>
+              </div>
+              <div class="frow full">
+                <div class="ff"><label for="bNotes">Special Requirements</label><textarea id="bNotes" placeholder="Decorations, catering preferences, accessibility needs&hellip;"></textarea></div>
+              </div>
+              <button type="submit" id="submitBtn" class="btn-wa"><i class="fas fa-calendar-check"></i>Confirm Booking</button>
+              <div id="bookingMessage" role="alert" aria-live="polite"></div>
+              <p class="wa-note"><i class="fas fa-database" style="font-size:.62rem;margin-right:3px"></i>Data saved securely in our system</p>
+            </form>
+          </div>
+        </div>
+      </div><!-- /form-panel -->
+
+    </div><!-- /booking-split -->
+
+    <!-- Booking Status Tracker (shown after submit) -->
+    <div id="bookingStatusTracker"></div>
+
+  </div>
+</section>
+ 
+<!-- QR PAYMENT SECTION -->
+<section class="qr-section" id="payment">
+  <div class="qr-inner">
+    <div class="fade-in">
+      <span class="sec-tag">Secure Payments</span>
+      <h2 class="sec-h">Pay with Ease</h2>
+      <div class="rule"></div>
+      <p class="sec-p">Only <strong style="color:var(--wheat)">30% advance</strong> is required to confirm your booking. Scan the QR or use UPI ID to pay instantly via GPay, PhonePe, Paytm, and more.</p>
+    </div>
+    <div class="qr-grid">
+      <div class="qr-info reveal">
+        <h3>Simple, Secure &amp;<br>Instant Payments</h3>
+        <p>Pay only <strong style="color:var(--wheat)">30% advance</strong> to confirm your slot. The remaining 70% is collected after your event. All major UPI apps accepted.</p>
+        <div class="qr-steps">
+          <div class="qr-step">
+            <div class="qr-step-num">1</div>
+            <div class="qr-step-text"><strong>Select your plan above</strong><span>Your 30% advance amount is calculated automatically</span></div>
+          </div>
+          <div class="qr-step">
+            <div class="qr-step-num">2</div>
+            <div class="qr-step-text"><strong>Scan the QR code</strong><span>Open GPay, PhonePe, Paytm or any UPI app</span></div>
+          </div>
+          <div class="qr-step">
+            <div class="qr-step-num">3</div>
+            <div class="qr-step-text"><strong>Enter your advance amount</strong><span>Add your name &amp; event date in the remarks</span></div>
+          </div>
+          <div class="qr-step">
+            <div class="qr-step-num">4</div>
+            <div class="qr-step-text"><strong>Share screenshot on WhatsApp</strong><span>Send payment proof to confirm your booking</span></div>
+          </div>
+        </div>
+        <div class="qr-upi-pill">
+          <i class="fas fa-at"></i>
+          <span>UPI ID:</span>
+          <strong>8758457909@omni</strong>
+        </div>
+      </div>
+      <div class="qr-card-wrap reveal" style="transition-delay:.15s">
+        <div class="qr-card" id="qrCard3d">
+          <div class="qr-card-header">
+            <div class="brand">MJ Culture</div>
+            <p>Scan &amp; Pay &bull; All UPI Apps Accepted</p>
+            <p style="font-size:0.7rem;color:rgba(245,240,232,.4);margin-top:0.8rem;letter-spacing:0.5px">Tap the QR to pay using UPI apps →</p>
+          </div>
+          <div class="qr-image-wrap">
+            <a id="upiPayLink" href="upi://pay?pa=8758457909@omni&pn=MJ%20Culture&am=3600&cu=INR&tn=MJ%20Culture%20Booking%20Advance" style="display:block;width:100%;height:100%;position:relative;border-radius:12px;overflow:hidden;text-decoration:none">
+              <img src="assets/payment-qr.png" alt="Tap to pay using UPI" style="width:100%;height:100%">
+              <div class="qr-scan-anim"></div>
+            </a>
+          </div>
+          <div style="text-align:center;margin-top:.8rem;padding:.6rem .8rem;background:rgba(201,169,110,.08);border-radius:6px;border:1px solid rgba(201,169,110,.18)">
+            <div style="font-size:.65rem;letter-spacing:1.2px;text-transform:uppercase;color:rgba(201,169,110,.6);margin-bottom:.2rem">Advance Due (30%)</div>
+            <div id="qrAdvanceAmt" style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:var(--wheat)">₹3,600</div>
+          </div>
+          <div class="qr-card-footer" style="margin-top:.8rem">
+            <strong>MJ Culture Farmhouse</strong><br>
+            Dahod, Gujarat &bull; 9313846266
+          </div>
+          <div class="qr-badges">
+            <span class="qr-badge">GPay</span>
+            <span class="qr-badge">PhonePe</span>
+            <span class="qr-badge">Paytm</span>
+            <span class="qr-badge">BHIM</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ BOOKING STATUS TRACKER (hidden, shown after form submit) ═══ -->
+    <div id="bookingStatusTracker">
+      <div class="bst-header">
+        <h3>Your Booking Status</h3>
+        <p id="bstBookingId"></p>
+      </div>
+      <div class="bst-summary" id="bstSummary"></div>
+      <div class="bst-stepper">
+        <div class="bst-step done" id="bstStep1"><span class="step-dot"></span>Submitted</div>
+        <i class="fas fa-chevron-right bst-arrow"></i>
+        <div class="bst-step" id="bstStep2"><span class="step-dot"></span>Paid</div>
+        <i class="fas fa-chevron-right bst-arrow"></i>
+        <div class="bst-step" id="bstStep3"><span class="step-dot"></span>Approved</div>
+      </div>
+      <div class="bst-action" id="bstAction">
+        <p class="bst-msg">Pay the <strong>30% advance</strong> using the QR code above, then click the button below.</p>
+        <button id="bstPayDoneBtn"><i class="fas fa-check-circle"></i> I Have Completed Payment</button>
+      </div>
+      <div class="bst-waiting" id="bstWaiting">
+        <div class="bst-waiting-icon"></div>
+        <p><strong>Waiting for owner approval…</strong></p>
+        <p style="font-size:.72rem;color:rgba(245,240,232,.3);margin-top:.4rem">This usually takes a few minutes. This page updates automatically.</p>
+      </div>
+      <div class="bst-result confirmed" id="bstConfirmed">
+        <div class="bst-result-icon"><i class="fas fa-check-circle"></i></div>
+        <h4>Booking Confirmed!</h4>
+        <p>Your booking has been approved. We look forward to hosting your event! 🎉</p>
+      </div>
+      <div class="bst-result rejected" id="bstRejected">
+        <div class="bst-result-icon"><i class="fas fa-times-circle"></i></div>
+        <h4>Booking Not Approved</h4>
+        <p>Unfortunately your booking was not approved. Please contact us on WhatsApp for assistance.</p>
+        <a href="https://wa.me/919313846266" target="_blank" style="display:inline-flex;align-items:center;gap:.5rem;margin-top:1rem;color:var(--wa);font-size:.82rem;text-decoration:none"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+ 
+<!-- FOOTER -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-brand">
+      <h2>MJ Culture</h2>
+      <span class="tag">Where Everything Begins</span>
+      <p>A serene farmhouse retreat in Dahod, Gujarat — designed for life's most cherished celebrations and moments.</p>
+      <div class="socials">
+        <a href="https://www.instagram.com/mjculturecenterofficial" target="_blank" class="soc" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="soc" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://wa.me/919313846266" class="soc" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a href="mailto:moizdhilawala99@gmail.com" class="soc" aria-label="Email"><i class="fas fa-envelope"></i></a>
+      </div>
+    </div>
+    <div class="foot-col">
+      <h4>Navigate</h4>
+      <ul>
+        <li><a href="#home"><i class="fas fa-chevron-right"></i>Home</a></li>
+        <li><a href="#about"><i class="fas fa-chevron-right"></i>About</a></li>
+        <li><a href="#gallery"><i class="fas fa-chevron-right"></i>Gallery</a></li>
+        <li><a href="#announcements"><i class="fas fa-chevron-right"></i>Announcements</a></li>
+        <li><a href="#booking"><i class="fas fa-chevron-right"></i>Book Farmhouse</a></li>
+        <li><a href="#payment"><i class="fas fa-chevron-right"></i>Payment</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h4>Contact</h4>
+      <p><i class="fas fa-map-marker-alt"></i>Ukardi Road, opp. Sidharth Nursery, Dahod, Gujarat 389151</p>
+      <p><i class="fas fa-phone-alt"></i><a href="tel:9313846266">9313846266</a></p>
+      <p><i class="fas fa-envelope"></i>moizdhilawala99@gmail.com</p>
+      <div style="margin-top:1.2rem; padding-top:1rem; border-top:1px solid rgba(201,169,110,0.1)">
+        <p style="display:block; font-size:.8rem; color:var(--wheat); margin-bottom:.3rem; text-transform:uppercase; letter-spacing:1px">
+          <i class="fas fa-clock" style="margin-right:.4rem; color:rgba(201,169,110,0.6)"></i><strong>Contact Hours</strong>
+        </p>
+        <p style="display:block; font-size:.8rem; color:rgba(245,240,232,0.7); margin-bottom:.3rem; margin-left:1.2rem">9 AM &ndash; 1 PM &nbsp;|&nbsp; 4 PM &ndash; 8 PM</p>
+        <p style="display:block; font-size:.7rem; color:rgba(245,240,232,0.4); line-height:1.4; margin-left:1.2rem">Contact us directly for custom or separate slot bookings.</p>
+      </div>
+      <div class="foot-map">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3676.7573427052284!2d74.2542251753525!3d22.848465479296213!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39611d005839d671%3A0x5e84fe06368774dd!2sMJ%20Culture!5e0!3m2!1sen!2sin!4v1776348805815!5m2!1sen!2sin" width="100%" height="200" style="border:0;display:block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <p>&copy; 2026 MJ Culture. All Rights Reserved.</p>
+    <p>Crafted with &#10084; in Dahod, Gujarat</p>
+  </div>
+</footer>
+ 
+<!-- WHATSAPP FLOAT -->
+<a href="https://wa.me/919313846266" class="wa-float" target="_blank" aria-label="WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+ 
+<!-- SCROLL TO TOP -->
+<button id="topBtn" aria-label="Scroll to top"><i class="fas fa-chevron-up"></i></button>
+ 
+
+<script>
+  /* ══════════════════════════════════════════════
+     BACKEND CONFIG — Change this to your Render URL before deploying
+     e.g. 'https://mj-culture-api.onrender.com'
+  ══════════════════════════════════════════════ */
+  // Use localhost for development, production URL for deployed version
+  const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:5000'
+    : 'https://mj-cult.onrender.com';
 /* ── LOADER ── */
 window.addEventListener('load', () => {
   const bg = document.getElementById('heroBg');
