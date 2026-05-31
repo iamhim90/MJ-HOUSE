@@ -69,6 +69,23 @@ app.get('/api/bookings', async (req, res) => {
 });
 
 // GET /api/bookings/:id - Get specific booking by ID
+// Availability Endpoint
+app.get('/api/bookings/availability', async (req, res) => {
+  try {
+    const result = await pool.query("SELECT check_in as date, slot, status FROM bookings WHERE status IN ('confirmed', 'pending', 'waiting')");
+    const availability = {};
+    result.rows.forEach(r => {
+      const d = r.date.split('T')[0];
+      if (!availability[d]) availability[d] = {};
+      availability[d][r.slot] = 'booked';
+    });
+    res.json({ success: true, availability });
+  } catch(e) {
+    console.log(e);
+    res.json({ success: false, availability: {} });
+  }
+});
+
 app.get('/api/bookings/:id', async (req, res) => {
   try {
     const { id } = req.params;
