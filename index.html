@@ -1187,14 +1187,15 @@
       cursor:pointer; transition:all .25s;
       box-shadow:0 8px 24px rgba(201,169,110,0.25);
       display:flex; align-items:center; justify-content:center; gap:.5rem;
-      position:relative; overflow:hidden;
+      position:relative; overflow:hidden; opacity:0.4;
     }
     #tcAcceptBtn::before {
       content:''; position:absolute; inset:0;
       background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent);
     }
-    #tcAcceptBtn:hover { background:var(--gold); transform:translateY(-2px); box-shadow:0 14px 36px rgba(201,169,110,0.35); }
-    #tcAcceptBtn:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+    #tcAcceptBtn:not(:disabled) { opacity:1; cursor:pointer; }
+    #tcAcceptBtn:hover:not(:disabled) { background:var(--gold); transform:translateY(-2px); box-shadow:0 14px 36px rgba(201,169,110,0.35); }
+    #tcAcceptBtn:disabled { opacity:0.4; cursor:not-allowed; }
     #tcDeclineBtn {
       flex:1; background:transparent; color:rgba(245,240,232,0.4);
       border:1px solid rgba(245,240,232,0.12); border-radius:6px;
@@ -1859,7 +1860,7 @@
         <p>Pay only <strong style="color:var(--wheat)">30% advance</strong> to confirm your slot. The remaining 70% is collected after your event. All major UPI apps accepted.</p>
         <div class="qr-steps">
           <div class="qr-step">
-            <div class="qr-step-num">1</div>
+            <div class="qr-step-num">1</div<form>
             <div class="qr-step-text"><strong>Select your plan above</strong><span>Your 30% advance amount is calculated automatically</span></div>
           </div>
           <div class="qr-step">
@@ -2007,7 +2008,10 @@
      BACKEND CONFIG — Change this to your Render URL before deploying
      e.g. 'https://mj-culture-api.onrender.com'
   ══════════════════════════════════════════════ */
-  const BACKEND_URL = 'https://mj-cult.onrender.com';
+  // Use localhost for development, production URL for deployed version
+  const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:5000'
+    : 'https://mj-cult.onrender.com';
 /* ── LOADER ── */
 window.addEventListener('load', () => {
   const bg = document.getElementById('heroBg');
@@ -2973,6 +2977,13 @@ function _openTcOverlay() {
     acceptBtn.innerHTML = '<i class="fas fa-check"></i> I Accept &amp; Proceed';
   }
 
+  // Attach checkbox listener to ensure it works
+  if (checkbox && acceptBtn) {
+    checkbox.addEventListener('change', function() {
+      acceptBtn.disabled = !checkbox.checked;
+    });
+  }
+
   const overlay = document.getElementById('tcOverlay');
   overlay.style.display = 'flex';
   document.body.style.overflow = 'hidden';
@@ -2981,16 +2992,6 @@ function _openTcOverlay() {
   });
 }
 
-// Enable/disable Accept button based on checkbox
-document.addEventListener('DOMContentLoaded', () => {
-  const checkbox = document.getElementById('tcConsent');
-  const acceptBtn = document.getElementById('tcAcceptBtn');
-  if (checkbox && acceptBtn) {
-    checkbox.addEventListener('change', () => {
-      acceptBtn.disabled = !checkbox.checked;
-    });
-  }
-});
 
 function tcAccept() {
   const checkbox = document.getElementById('tcConsent');
@@ -3025,7 +3026,14 @@ function tcAccept() {
     overlay.classList.remove('tc-visible');
     overlay.classList.add('tc-hidden');
     document.body.style.overflow = '';
-    setTimeout(() => { overlay.style.display = 'none'; }, 600);
+    setTimeout(() => {
+      overlay.style.display = 'none';
+      // Scroll to booking section after T&C accepted
+      const bookingSection = document.getElementById('booking');
+      if (bookingSection) {
+        bookingSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 600);
     // Optionally: send to backend via fetch
     // fetch('/api/tc-consent', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(record) })
     //   .catch(err => console.warn('T&C backend log failed:', err));
