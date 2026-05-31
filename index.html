@@ -1860,7 +1860,7 @@
         <p>Pay only <strong style="color:var(--wheat)">30% advance</strong> to confirm your slot. The remaining 70% is collected after your event. All major UPI apps accepted.</p>
         <div class="qr-steps">
           <div class="qr-step">
-            <div class="qr-step-num">1</div<form>
+            <div class="qr-step-num">1</div>
             <div class="qr-step-text"><strong>Select your plan above</strong><span>Your 30% advance amount is calculated automatically</span></div>
           </div>
           <div class="qr-step">
@@ -2554,6 +2554,8 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
       }
     }
 
+
+
     const slotLabel = slot==='noon'?'12 PM – 3 PM':slot==='evening'?'6 PM – 9 PM':'12 AM – 10 PM';
     const formattedDate = new Date(date).toLocaleDateString('en-IN', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
@@ -2606,6 +2608,26 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
         document.querySelector('[data-slot="fullday"]').classList.add('sel');
         updateAdvanceDisplay(30000);
         hideMsg();
+
+        // Show premium systematic popup message
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;inset:0;background:rgba(10,12,16,0.9);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:1rem;opacity:0;transition:opacity 0.3s ease;';
+        overlay.innerHTML = `
+          <div style="background:#11151c;border:1px solid rgba(201,169,110,0.3);padding:2.5rem 2rem;border-radius:12px;max-width:420px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,0.6);transform:translateY(20px);transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275)">
+            <i class="fas fa-check-circle" style="font-size:3.5rem;color:#86efac;margin-bottom:1.2rem"></i>
+            <h3 style="font-family:'Cinzel',serif;color:var(--wheat);margin-bottom:1rem;font-size:1.5rem">Request Received</h3>
+            <p style="color:rgba(245,240,232,0.85);font-size:0.95rem;line-height:1.6;margin-bottom:1.8rem">
+              Your request has been successfully taken. To secure your slot, <strong>please pay the 30% advance</strong> now via the QR code. Your booking will be officially confirmed by the admin once the payment is verified.
+            </p>
+            <button onclick="const o = this.parentElement.parentElement; o.style.opacity='0'; setTimeout(()=>o.remove(),300)" style="background:var(--wheat);color:#111;border:none;padding:.85rem 2.2rem;border-radius:30px;font-weight:600;font-size:.95rem;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 4px 15px rgba(201,169,110,0.2)">Proceed to Payment</button>
+          </div>
+        `;
+        document.body.appendChild(overlay);
+        // Trigger animations
+        requestAnimationFrame(() => {
+          overlay.style.opacity = '1';
+          overlay.firstElementChild.style.transform = 'translateY(0)';
+        });
 
         // Populate status tracker
         document.getElementById('bstBookingId').textContent = 'Ref: ' + bookingId;

@@ -59,7 +59,7 @@ app.post('/api/bookings', async (req, res) => {
 app.get('/api/bookings', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT * FROM bookings ORDER BY created_at DESC'
+      'SELECT *, advance_paid as "advancePaid", payment_status as "paymentStatus", payment_notes as "paymentNotes" FROM bookings ORDER BY created_at DESC'
     );
     res.json(result.rows);
   } catch (err) {
@@ -113,6 +113,163 @@ app.patch('/api/bookings/:id/paydone', async (req, res) => {
     });
   } catch (err) {
     console.error('❌ Error updating booking:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PATCH /api/bookings/:id/status - Update booking status
+app.patch('/api/bookings/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    console.log(`📝 Status update - ID: ${id} -> ${status}`);
+
+    const result = await pool.query(
+      'UPDATE bookings SET status = $1 WHERE id = $2 RETURNING *',
+      [status, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    console.log(`✅ Booking ${status} - ID: ${id}`);
+    res.json({
+      success: true,
+      message: `Booking status updated to ${status}`,
+      booking: result.rows[0]
+    });
+  } catch (err) {
+    console.error('❌ Error updating booking status:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- PAYMENTS ---
+app.patch('/api/bookings/:id/payment', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { advancePaid, paymentStatus, paymentNotes } = req.body;
+    const result = await pool.query(
+      'UPDATE bookings SET advance_paid = $1, payment_status = $2, payment_notes = $3 WHERE id = $4 RETURNING *',
+      [advancePaid, paymentStatus, paymentNotes, id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Booking not found' });
+    res.json({ success: true, booking: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PATCH /api/bookings/:id/verify-advance
+app.patch('/api/bookings/:id/verify-advance', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const current = await pool.query('SELECT total_amount FROM bookings WHERE id = $1', [id]);
+    if (current.rows.length === 0) return res.status(404).json({ error: 'Booking not found' });
+    
+    const total = parseFloat(current.rows[0].total_amount) || 0;
+    const advancePaid = total * 0.3;
+
+    const result = await pool.query(
+      'UPDATE bookings SET status = $1, payment_status = $2, advance_paid = $3 WHERE id = $4 RETURNING *',
+      ['confirmed', 'advance_paid', advancePaid, id]
+    );
+    res.json({ success: true, booking: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PATCH /api/bookings/:id/collect-cash
+app.patch('/api/bookings/:id/collect-cash', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(
+      'UPDATE bookings SET payment_status = $1 WHERE id = $2 RETURNING *',
+      ['fully_paid', id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Booking not found' });
+    res.json({ success: true, booking: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- STAFF ---
+app.get('/api/staff', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id as _id, name, role, salary, salary_status as "salaryStatus", created_at FROM staff ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/staff', async (req, res) => {
+  try {
+    const { name, role, salary, salaryStatus } = req.body;
+    const result = await pool.query(
+      'INSERT INTO staff (name, role, salary, salary_status) VALUES ($1, $2, $3, $4) RETURNING id as _id, *',
+      [name, role, salary, salaryStatus]
+    );
+    res.json({ success: true, staff: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.patch('/api/staff/:id', async (req, res) => {
+  try {
+    const { salaryStatus } = req.body;
+    const result = await pool.query(
+      'UPDATE staff SET salary_status = $1 WHERE id = $2 RETURNING id as _id, *',
+      [salaryStatus, req.params.id]
+    );
+    res.json({ success: true, staff: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/staff/:id', async (req, res) => {
+  try {
+    await pool.query('DELETE FROM staff WHERE id = $1', [req.params.id]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- EXPENSES ---
+app.get('/api/expenses', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id as _id, category, amount, date, status, notes, created_at FROM expenses ORDER BY date DESC');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/expenses', async (req, res) => {
+  try {
+    const { category, amount, date, status, notes } = req.body;
+    const result = await pool.query(
+      'INSERT INTO expenses (category, amount, date, status, notes) VALUES ($1, $2, $3, $4, $5) RETURNING id as _id, *',
+      [category, amount, date, status, notes]
+    );
+    res.json({ success: true, expense: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/expenses/:id', async (req, res) => {
+  try {
+    await pool.query('DELETE FROM expenses WHERE id = $1', [req.params.id]);
+    res.json({ success: true });
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
