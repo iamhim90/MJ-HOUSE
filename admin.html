@@ -255,6 +255,7 @@
     .pay-input{width:100px;background:rgba(255,255,255,.04);border:1px solid rgba(201,169,110,.2);border-radius:4px;padding:.35rem .6rem;color:var(--cream);font-size:.8rem;outline:none;}
     .pay-input:focus{border-color:rgba(201,169,110,.4);}
   </style>
+  <script src="js/config.js"></script>
 </head>
 <body>
 
@@ -527,7 +528,7 @@
 </div>
 
 <script>
-  const BACKEND_URL = 'http://localhost:5000'; // ← change to your API URL
+  
 
   /* ── ADMIN AUTH ── */
   const ADMIN_CREDENTIALS = { username: 'admin', password: 'mjculture2026' }; // Change this!
@@ -551,7 +552,7 @@
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner spinner"></i> Signing in…';
     err.style.display = 'none';
 
-    fetch(BACKEND_URL + '/api/admin/login', {
+    fetch(API_BASE_URL + '/api/admin/login', {
       method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({username: u, password: p})
     }).then(r => r.json()).then(data => {
@@ -640,12 +641,18 @@
 
   /* ── API HELPER ── */
   async function api(path, method='GET', body=null) {
-    const opts = {method, headers:{'Content-Type':'application/json'}};
-    const tok = sessionStorage.getItem('mjc_admin_token');
-    if (tok) opts.headers['Authorization'] = 'Bearer ' + tok;
-    if (body) opts.body = JSON.stringify(body);
-    const res = await fetch(BACKEND_URL + path, opts);
-    return res.json();
+    try {
+      const opts = {method, headers:{'Content-Type':'application/json'}};
+      const tok = sessionStorage.getItem('mjc_admin_token');
+      if (tok) opts.headers['Authorization'] = 'Bearer ' + tok;
+      if (body) opts.body = JSON.stringify(body);
+      const res = await fetch(API_BASE_URL + path, opts);
+      return await res.json();
+    } catch (err) {
+      console.error('API Error:', err);
+      toast('Network error. Check backend connection.', 'error');
+      throw err;
+    }
   }
 
   /* ── MODAL ── */
