@@ -9,14 +9,16 @@ app.use(cors());
 app.use(express.json());
 
 // Health Endpoints
-app.get('/', (req, res) => res.send('MJ Farmhouse Backend Running'));
-app.get('/health', async (req, res) => {
-  try {
-    await pool.query('SELECT 1');
-    res.json({ server: 'ok', database: 'ok' });
-  } catch (err) {
-    res.status(500).json({ server: 'ok', database: 'error', message: err.message });
-  }
+app.get("/", (req, res) => {
+  res.send("MJ Farmhouse Backend Running");
+});
+
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    service: "MJ Farmhouse Backend",
+    time: new Date().toISOString(),
+  });
 });
 
 
