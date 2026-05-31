@@ -20,7 +20,8 @@
   <meta name="twitter:description" content="Book MJ Culture Farmhouse for your next celebration. Instant confirmation. Dahod, Gujarat.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Cinzel:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Cinzel:wght@400;500&display=swap&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Cinzel:wght@400;500&display=swap" rel="stylesheet"></noscript>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
   <style>
@@ -149,13 +150,14 @@
  
     /* ── HERO ── */
     .hero {
-      height:100vh; min-height:640px; position:relative;
+      height:100svh; min-height:580px; position:relative;
       display:flex; align-items:center; justify-content:center; text-align:center;
       overflow:hidden;
+      contain:layout;
     }
     .hero-bg {
       position:absolute; inset:0;
-      background:url('farmhouse.JPEG') center/cover no-repeat;
+      background:url('assets/gallery1.jpeg') center/cover no-repeat;
       transform:scale(1.04); transition:transform 8s ease;
       will-change:transform;
     }
@@ -241,7 +243,7 @@
     .stat-item:not(:last-child)::after { content:''; position:absolute; right:0; top:20%; height:60%; width:1px; background:rgba(201,169,110,.12); }
     .stat-num { font-family:'Cormorant Garamond',serif; font-size:3rem; font-weight:300; color:var(--wheat); line-height:1; display:block; }
     .stat-label { font-size:.64rem; letter-spacing:2.5px; text-transform:uppercase; color:rgba(245,240,232,.35); margin-top:.5rem; display:block; }
-    @media(max-width:600px){.stats-inner{grid-template-columns:repeat(2,1fr)}.stat-item:nth-child(2)::after{display:none}}
+    @media(max-width:600px){.stats-inner{grid-template-columns:repeat(2,1fr)}.stat-item:nth-child(2)::after{display:none}.stat-num{font-size:2.2rem}}
  
     /* ── ABOUT ── */
     .about-grid { display:grid; grid-template-columns:1fr 1fr; gap:6rem; align-items:center; }
@@ -282,8 +284,8 @@
     .gallery-header .sec-h { color:var(--cream); }
     .gallery-header p { color:rgba(245,240,232,.4); font-size:.85rem; max-width:360px; line-height:1.7; }
     .slider-wrap { position:relative; overflow:hidden; border-radius:4px; }
-    .slider { display:flex; gap:1.5rem; will-change:transform; touch-action:pan-y; }
-    .slide { flex:0 0 100%; position:relative; border-radius:4px; overflow:hidden; cursor:pointer; }
+    .slider { display:flex; gap:1.5rem; touch-action:pan-y; }
+    .slide { flex:0 0 100%; position:relative; border-radius:4px; overflow:hidden; cursor:pointer; contain:layout; }
     .slide img { width:100%; height:540px; object-fit:cover; display:block; transition:transform .7s ease; }
     .slide:hover img { transform:scale(1.03); }
     .slide-caption {
@@ -327,7 +329,7 @@
     #lb-prev { left:1.5rem; } #lb-next { right:1.5rem; }
  
     /* ── PARALLAX BAND ── */
-    .parallax-band { height:58vh; background:url('farmhouse.JPEG') center/cover fixed; display:flex; align-items:center; justify-content:center; position:relative; }
+    .parallax-band { height:58vh; background:url('assets/gallery1.jpeg') center/cover fixed; display:flex; align-items:center; justify-content:center; position:relative; }
     .parallax-band::before { content:''; position:absolute; inset:0; background:linear-gradient(160deg,rgba(10,7,4,.8) 0%,rgba(42,60,38,.55) 100%); }
     .pb-inner { position:relative; z-index:2; text-align:center; color:#fff; padding:1rem 1.5rem; max-width:660px; }
     .pb-inner .pb-eyebrow { font-size:.6rem; letter-spacing:5px; text-transform:uppercase; color:rgba(201,169,110,.7); margin-bottom:1.5rem; display:block; }
@@ -716,22 +718,43 @@
     @media(max-width:768px){
       .nav-links{display:none} .ham{display:block}
       nav{padding:0 1.2rem}
-      .sec{padding:5rem 1rem}
+      .sec{padding:4rem 1rem}
       .pricing-row{grid-template-columns:1fr}
       .form-body{padding:1.2rem}
+      .hero-inner{padding:0 1rem}
+      .hero h1{font-size:clamp(2.4rem,10vw,4rem);letter-spacing:-0.5px}
+      .hero-sub{font-size:.9rem;margin-bottom:2rem}
+      .hero-ctas{gap:.7rem}
+      .btn-gold,.btn-ghost{padding:.8rem 1.6rem;font-size:.72rem}
+      .gallery-header{flex-direction:column;gap:.8rem}
+      .gallery-header p{max-width:100%}
+      .stats-bar{padding:2rem 1rem}
+      .booking-section{padding:4rem 1rem}
+      .testi-section{padding:4rem 1rem}
+      .announce-section{padding:4rem 1rem}
+      .faq-section{padding:4rem 1rem}
+      .qr-section{padding:4rem 1rem}
+      footer .foot-inner{padding:3rem 1rem 2rem}
+      .wa-float{bottom:1.2rem;right:1.2rem;width:48px;height:48px;font-size:1.2rem}
+      #topBtn{bottom:1.2rem;left:1.2rem}
     }
     @media(max-width:600px){
-      .slide img{height:380px}
+      .slide img{height:260px}
       .parallax-band{background-attachment:scroll}
       .pb-inner h3{font-size:1.8rem}
+      .frow{grid-template-columns:1fr}
+      .slot-grid.cols-2{grid-template-columns:1fr}
     }
- 
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+    
     /* ═══════════════════════════════════════════════
-       3D ANIMATION ADDITIONS — purely visual layer
-       no layout, color, or UX changes below
-    ═══════════════════════════════════════════════ */
- 
-    /* 3D floating particles in hero */
+    /* ════════════════════════════════════════════
+       3D ANIMATION ADDITIONS — desktop only
+    ════════════════════════════════════════════ */
+
+    /* 3D floating particles in hero — desktop only */
     .hero-particles {
       position:absolute; inset:0; z-index:1; pointer-events:none; overflow:hidden;
     }
@@ -739,7 +762,6 @@
       position:absolute; border-radius:50%;
       background:radial-gradient(circle, rgba(201,169,110,0.6) 0%, transparent 70%);
       animation:float3d linear infinite;
-      will-change:transform;
     }
     @keyframes float3d {
       0%   { transform:translateY(110vh) translateX(0px) scale(0) rotateZ(0deg); opacity:0; }
@@ -747,11 +769,10 @@
       95%  { opacity:.4; }
       100% { transform:translateY(-10vh) translateX(var(--drift)) scale(1) rotateZ(360deg); opacity:0; }
     }
- 
-    /* 3D tilt on amenity cards */
+
+    /* 3D tilt on amenity cards — desktop only */
     .amen {
       transform-style:preserve-3d;
-      will-change:transform;
     }
     .amen .amen-icon {
       transition:transform .4s ease;
@@ -761,14 +782,12 @@
     .amen:hover .amen-icon {
       transform:translateZ(16px) scale(1.15);
     }
- 
-    /* 3D tilt on testimonial cards */
+
+    /* 3D tilt on testimonial cards — desktop only */
     .testi-card {
       transform-style:preserve-3d;
-      will-change:transform;
     }
     .testi-card .testi-quote {
-      transform:translateZ(0px);
       transition:transform .4s ease;
       display:block;
     }
@@ -776,16 +795,14 @@
       transform:translateZ(20px);
     }
  
-    /* 3D tilt on announcement cards */
+    /* 3D tilt on announcement cards — desktop only */
     .ann-card {
       transform-style:preserve-3d;
-      will-change:transform;
     }
  
-    /* 3D perspective tilt on slot cards */
+    /* 3D perspective tilt on slot cards — desktop only */
     .slot {
       transform-style:preserve-3d;
-      will-change:transform;
     }
     .slot-price {
       transition:transform .4s ease;
@@ -829,14 +846,12 @@
     }
     .btn-gold:hover::after { left:160%; }
  
-    /* 3D depth on QR card — perspective tilt */
+    /* 3D depth on QR card — perspective tilt — desktop only */
     .qr-card {
       transform-style:preserve-3d;
-      will-change:transform;
       transition:transform .4s ease, box-shadow .4s ease;
     }
     .qr-image-wrap {
-      transform:translateZ(0px);
       transition:transform .4s ease;
     }
     .qr-card:hover .qr-image-wrap {
@@ -873,12 +888,11 @@
     }
     .about-img-frame:hover::before { opacity:1; }
  
-    /* floating ring accent on hero */
+    /* floating ring accent on hero — desktop only */
     .hero-ring {
       position:absolute; border-radius:50%; pointer-events:none;
       border:1px solid rgba(201,169,110,0.08);
       animation:ringExpand ease-out infinite;
-      will-change:transform, opacity;
     }
     @keyframes ringExpand {
       0%   { transform:translate(-50%,-50%) scale(.6); opacity:.6; }
@@ -897,7 +911,6 @@
     /* marquee-like float on hero logo */
     .hero-logo img {
       animation:logoBob 4s ease-in-out infinite;
-      will-change:transform;
     }
     @keyframes logoBob {
       0%,100% { transform:translateY(0) rotate(0deg); filter:drop-shadow(0 8px 20px rgba(201,169,110,.3)); }
@@ -991,24 +1004,82 @@
       box-shadow:0 2px 12px rgba(201,169,110,.4);
     }
 
-    /* ── MOBILE: full-width bottom sheet ── */
+    /* ── MOBILE: full-width bottom sheet with slide-up animation ── */
+    @keyframes calSlideUp {
+      from { transform:translateY(100%); }
+      to   { transform:translateY(0); }
+    }
     @media(max-width:680px) {
       .cal-panel {
         position:fixed !important;
         bottom:0 !important; left:0 !important; right:0 !important; top:auto !important;
         width:100% !important; border-radius:20px 20px 0 0;
-        padding:1.2rem 1rem 2rem;
-        max-height:80vh; overflow-y:auto;
+        padding:1.2rem 1rem calc(1.5rem + env(safe-area-inset-bottom));
+        max-height:82vh; overflow-y:auto; overflow-x:hidden;
+        -webkit-overflow-scrolling:touch;
+        /* Prevent scroll bleed from panel into page */
+        overscroll-behavior:contain;
       }
-      .cal-day { font-size:.82rem; min-height:40px; }
-      .cal-weekday { font-size:.6rem; }
-      .cal-nav { width:32px; height:32px; font-size:.65rem; }
-      .cal-month-label { font-size:.75rem; }
-      .cal-days { gap:3px; }
+      .cal-panel.open { animation:calSlideUp .28s cubic-bezier(.32,0,.65,1) both; }
+      .cal-day { font-size:.88rem; min-height:44px; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+      .cal-weekday { font-size:.62rem; padding:.4rem 0; }
+      .cal-nav { width:38px; height:38px; font-size:.72rem; }
+      .cal-month-label { font-size:.8rem; }
+      .cal-days { gap:4px; }
+      .cal-header { margin-bottom:1rem; padding:0 .2rem; }
     }
     @media(max-width:400px) {
-      .cal-day { font-size:.75rem; min-height:36px; }
-      .cal-days { gap:2px; }
+      .cal-day { font-size:.75rem; min-height:40px; }
+      .cal-days { gap:3px; }
+    }
+
+    /* ── MOBILE PERFORMANCE: Disable expensive GPU effects on touch devices ── */
+    @media (pointer:coarse), (hover:none) {
+      /* Kill will-change everywhere — it wastes GPU RAM on mobile */
+      * { will-change: auto !important; }
+      /* Disable backdrop-filter on non-critical overlays — very expensive on mobile */
+      .mob-nav, .amen, .testi-card, .ann-card, .form-wrap,
+      .qr-card, .bst-wrap { -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+      /* Disable 3D preserve-3d on card containers */
+      .amen, .testi-card, .ann-card, .slot, .qr-card {
+        transform-style:flat !important;
+        transform:none !important;
+      }
+      /* Hero rings & particles are desktop-only decorations */
+      .hero-ring, .hero-particles { display:none !important; }
+      /* Hero logo bob animation — keep but simplify */
+      .hero-logo img { animation:none; }
+      /* Disable parallax band fixed bg — causes jank on iOS */
+      .parallax-band { background-attachment:scroll !important; }
+      /* Hero bg — remove the scale transform to prevent CLS on paint */
+      .hero-bg { transform:none !important; transition:none !important; }
+      /* pb-orbs */
+      .pb-orb { display:none !important; }
+      /* Reduce noise texture opacity on mobile */
+      body::before { opacity:.25; }
+      /* Simplify form hover effects */
+      .form-wrap:hover { transform:none; box-shadow:none; }
+      /* Calendar */
+      .cal-day.selectable:active { background:rgba(201,169,110,.15); }
+      /* Touch targets — make them larger */
+      .cal-day { min-height:44px; }
+      .faq-q { padding:1.6rem 0; }
+      .mob-nav a { padding:1.2rem 0; }
+    }
+
+    /* ── PREVENT LAYOUT SHIFT: size reservations ── */
+    .about-img-frame { min-height:280px; }
+    .slide img { display:block; }
+
+    /* ── REDUCE MOTION: respect user preference ── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+      .hero-bg { transform:none !important; transition:none !important; }
+      .hero-particle, .hero-ring, .pb-orb { display:none !important; }
     }
 
     /* ── SLOT STATUS BADGES ── */
@@ -2014,12 +2085,14 @@
 /* ── LOADER ── */
 window.addEventListener('load', () => {
   const bg = document.getElementById('heroBg');
-  bg.style.backgroundImage = "url('farmhouse.JPEG')";
-  bg.style.backgroundSize = 'cover';
-  bg.style.backgroundPosition = 'center';
-  bg.style.backgroundRepeat = 'no-repeat';
-  requestAnimationFrame(() => bg.classList.add('loaded'));
+  const isMobile = window.matchMedia('(pointer:coarse)').matches;
+  // On desktop trigger the subtle zoom animation; on mobile skip it (already no transform)
+  if (!isMobile) {
+    requestAnimationFrame(() => bg.classList.add('loaded'));
+  }
  
+  // Shorter delay on mobile for faster perceived load
+  const loaderDelay = isMobile ? 1200 : 1800;
   setTimeout(() => {
     const l = document.getElementById('loader');
     l.classList.add('done');
@@ -2027,8 +2100,8 @@ window.addEventListener('load', () => {
       l.style.display = 'none';
       // Show Terms & Conditions modal after loader hides
       showTermsModal();
-    }, 800);
-  }, 1800);
+    }, 600);
+  }, loaderDelay);
 });
  
 /* ── CURSOR ── */
@@ -2348,9 +2421,15 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
     ph.textContent = label;
     ph.className = 'cal-selected-text';
 
-    // Close panel
-    document.getElementById('calPanel').classList.remove('open');
-    document.getElementById('calDisplay').classList.remove('open');
+    // Close panel — also restore overflow and backdrop on mobile
+    const calPanel   = document.getElementById('calPanel');
+    const calDisplay = document.getElementById('calDisplay');
+    const calBackdrop = document.getElementById('calBackdrop');
+    calPanel.classList.remove('open');
+    calDisplay.classList.remove('open');
+    calDisplay.setAttribute('aria-expanded', 'false');
+    if (calBackdrop) calBackdrop.classList.remove('active');
+    document.body.style.overflow = '';
 
     // Re-render to show selected highlight
     renderCalendar();
@@ -2460,8 +2539,20 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
     });
     panel.addEventListener('click', e => e.stopPropagation());
     document.addEventListener('click', closeCalendar);
-    window.addEventListener('resize', () => { if (panel.classList.contains('open')) positionPanel(); }, { passive: true });
-    window.addEventListener('scroll', () => { if (panel.classList.contains('open')) positionPanel(); }, { passive: true });
+    window.addEventListener('resize', () => {
+      if (panel.classList.contains('open')) positionPanel();
+    }, { passive: true });
+    // On mobile: close calendar on scroll (bottom sheet doesn't need repositioning)
+    // On desktop: reposition on scroll so it stays anchored to the trigger
+    window.addEventListener('scroll', () => {
+      if (!panel.classList.contains('open')) return;
+      if (window.innerWidth <= 680) {
+        // On mobile, close on scroll to prevent glitch
+        closeCalendar();
+      } else {
+        positionPanel();
+      }
+    }, { passive: true });
   }
 
   /* ── Expose slot-guard for booking form ── */
@@ -2787,12 +2878,13 @@ document.querySelectorAll('.faq-q').forEach(btn => btn.addEventListener('click',
   }
 })();
  
-/* — 3D mouse-tilt on cards (perspective tilt effect) — */
+/* — 3D mouse-tilt on cards (perspective tilt effect — desktop only) — */
 (function init3DTilt() {
+  // Skip on touch devices — touch events on cards cause scroll jank and visual glitches
+  if (window.matchMedia('(pointer:coarse)').matches) return;
+
   const TILT_MAX = 12; /* degrees */
   const TILT_SCALE = 1.03;
-  const isTouchDevice = () => window.matchMedia('(pointer:coarse)').matches;
-  let touchActive = false;
 
   function attachTilt(selector, maxDeg, scale) {
     document.querySelectorAll(selector).forEach(card => {
@@ -2813,7 +2905,6 @@ document.querySelectorAll('.faq-q').forEach(btn => btn.addEventListener('click',
         });
       }
 
-      // Desktop: Mouse events
       card.addEventListener('mousemove', e => {
         applyTilt(e.clientX, e.clientY);
       }, {passive:true});
@@ -2828,29 +2919,6 @@ document.querySelectorAll('.faq-q').forEach(btn => btn.addEventListener('click',
       card.addEventListener('mouseenter', () => {
         card.style.transition = 'transform .1s ease';
       }, {passive:true});
-
-      // Mobile: Touch events
-      card.addEventListener('touchstart', e => {
-        card.style.transition = 'transform .05s ease';
-        touchActive = true;
-        if (e.touches.length === 1) {
-          applyTilt(e.touches[0].clientX, e.touches[0].clientY);
-        }
-      }, {passive:true});
-
-      card.addEventListener('touchmove', e => {
-        if (touchActive && e.touches.length === 1) {
-          applyTilt(e.touches[0].clientX, e.touches[0].clientY);
-        }
-      }, {passive:true});
-
-      card.addEventListener('touchend', () => {
-        touchActive = false;
-        card.style.transition = 'transform .4s cubic-bezier(.34,1.56,.64,1)';
-        card.style.transform  = 'perspective(700px) rotateX(0) rotateY(0) scale(1) translateZ(0)';
-        setTimeout(() => card.style.transition = '', 400);
-        if (rafId) cancelAnimationFrame(rafId);
-      }, {passive:true});
     });
   }
 
@@ -2861,8 +2929,11 @@ document.querySelectorAll('.faq-q').forEach(btn => btn.addEventListener('click',
   attachTilt('.qr-card',     TILT_MAX * 0.5, 1.02);
 })();
  
-/* — 3D parallax depth on hero as mouse moves — */
+/* — 3D parallax depth on hero as mouse moves (desktop only) — */
 (function heroParallax() {
+  // Skip on mobile — touch parallax causes hero to glitch/jump during scroll
+  if (window.matchMedia('(pointer:coarse)').matches) return;
+
   const hero = document.querySelector('.hero');
   const inner = document.querySelector('.hero-inner');
   if (!hero || !inner) return;
@@ -2877,25 +2948,12 @@ document.querySelectorAll('.faq-q').forEach(btn => btn.addEventListener('click',
     inner.style.transition = 'transform .1s ease';
   }
 
-  // Desktop: Mouse
   hero.addEventListener('mousemove', e => {
     applyParallax(e.clientX, e.clientY);
   }, {passive:true});
 
   hero.addEventListener('mouseleave', () => {
     inner.style.transition = 'transform .7s cubic-bezier(.34,1.56,.64,1)';
-    inner.style.transform  = 'perspective(900px) rotateX(0) rotateY(0) translateZ(0)';
-  }, {passive:true});
-
-  // Mobile: Touch
-  hero.addEventListener('touchmove', e => {
-    if (e.touches.length === 1) {
-      applyParallax(e.touches[0].clientX, e.touches[0].clientY);
-    }
-  }, {passive:true});
-
-  hero.addEventListener('touchend', () => {
-    inner.style.transition = 'transform .6s cubic-bezier(.34,1.56,.64,1)';
     inner.style.transform  = 'perspective(900px) rotateX(0) rotateY(0) translateZ(0)';
   }, {passive:true});
 })();
