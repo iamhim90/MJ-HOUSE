@@ -8,6 +8,18 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Health Endpoints
+app.get('/', (req, res) => res.send('MJ Farmhouse Backend Running'));
+app.get('/health', async (req, res) => {
+  try {
+    await pool.query('SELECT 1');
+    res.json({ server: 'ok', database: 'ok' });
+  } catch (err) {
+    res.status(500).json({ server: 'ok', database: 'error', message: err.message });
+  }
+});
+
+
 // POST /api/bookings - Create new booking
 app.post('/api/bookings', async (req, res) => {
   try {
@@ -51,7 +63,8 @@ app.post('/api/bookings', async (req, res) => {
     });
   } catch (err) {
     console.error('❌ Database error:', err.message);
-    res.status(500).json({ success: false, error: err.message });
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message, stack: err.stack });
   }
 });
 
@@ -64,7 +77,8 @@ app.get('/api/bookings', async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     console.error('❌ Error fetching bookings:', err.message);
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -102,7 +116,8 @@ app.get('/api/bookings/:id', async (req, res) => {
     res.json(result.rows[0]);
   } catch (err) {
     console.error('❌ Error fetching booking:', err.message);
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -130,7 +145,8 @@ app.patch('/api/bookings/:id/paydone', async (req, res) => {
     });
   } catch (err) {
     console.error('❌ Error updating booking:', err.message);
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -159,7 +175,8 @@ app.patch('/api/bookings/:id/status', async (req, res) => {
     });
   } catch (err) {
     console.error('❌ Error updating booking status:', err.message);
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -175,7 +192,8 @@ app.patch('/api/bookings/:id/payment', async (req, res) => {
     if (result.rows.length === 0) return res.status(404).json({ error: 'Booking not found' });
     res.json({ success: true, booking: result.rows[0] });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -195,7 +213,8 @@ app.patch('/api/bookings/:id/verify-advance', async (req, res) => {
     );
     res.json({ success: true, booking: result.rows[0] });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -210,7 +229,8 @@ app.patch('/api/bookings/:id/collect-cash', async (req, res) => {
     if (result.rows.length === 0) return res.status(404).json({ error: 'Booking not found' });
     res.json({ success: true, booking: result.rows[0] });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -220,7 +240,8 @@ app.get('/api/staff', async (req, res) => {
     const result = await pool.query('SELECT id as _id, name, role, salary, salary_status as "salaryStatus", created_at FROM staff ORDER BY created_at DESC');
     res.json(result.rows);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -233,7 +254,8 @@ app.post('/api/staff', async (req, res) => {
     );
     res.json({ success: true, staff: result.rows[0] });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -246,7 +268,8 @@ app.patch('/api/staff/:id', async (req, res) => {
     );
     res.json({ success: true, staff: result.rows[0] });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -255,7 +278,8 @@ app.delete('/api/staff/:id', async (req, res) => {
     await pool.query('DELETE FROM staff WHERE id = $1', [req.params.id]);
     res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -265,7 +289,8 @@ app.get('/api/expenses', async (req, res) => {
     const result = await pool.query('SELECT id as _id, category, amount, date, status, notes, created_at FROM expenses ORDER BY date DESC');
     res.json(result.rows);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -278,7 +303,8 @@ app.post('/api/expenses', async (req, res) => {
     );
     res.json({ success: true, expense: result.rows[0] });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 });
 
@@ -287,9 +313,15 @@ app.delete('/api/expenses/:id', async (req, res) => {
     await pool.query('DELETE FROM expenses WHERE id = $1', [req.params.id]);
     res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ message: err.message, stack: err.stack });
   }
 });
+
+
+pool.query('SELECT NOW()')
+  .then(() => console.log('✅ Database connected successfully'))
+  .catch(err => console.error('❌ Database connection failed:', err.message));
 
 app.listen(process.env.PORT || 5000, () => {
   console.log(`🚀 Server running on port ${process.env.PORT || 5000}`);

@@ -6,7 +6,27 @@ async function migrate() {
     console.log('🔄 Starting database migration...');
     await client.query('BEGIN');
 
-    // 1. Add new columns to bookings table
+    // 1. Create bookings table if it doesn't exist (CRITICAL FOR NEW DEPLOYS)
+    console.log('Ensuring bookings table exists...');
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS bookings (
+        id SERIAL PRIMARY KEY,
+        customer_name VARCHAR(255) NOT NULL,
+        phone VARCHAR(50) NOT NULL,
+        email VARCHAR(255),
+        check_in DATE NOT NULL,
+        check_out DATE NOT NULL,
+        guests INTEGER NOT NULL,
+        total_amount NUMERIC NOT NULL,
+        occasion VARCHAR(255),
+        notes TEXT,
+        slot VARCHAR(50),
+        status VARCHAR(50) DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // 1.1 Add new columns to bookings table (for older schemas)
     console.log('Adding columns to bookings table...');
     await client.query(`
       ALTER TABLE bookings 
