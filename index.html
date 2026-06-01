@@ -2353,22 +2353,24 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
 
   /* ── Slot-level logic ── */
   function getSlotStatus(dateStr) {
-    const booked = (availCache && availCache[dateStr]) ? availCache[dateStr] : [];
+    const bookedObj = (availCache && availCache[dateStr]) ? availCache[dateStr] : {};
+    const booked = Array.isArray(bookedObj) ? bookedObj : Object.keys(bookedObj);
+    
     const fulldayBooked = booked.includes('fullday');
-    const noonBooked    = booked.includes('noon');
-    const eveningBooked = booked.includes('evening');
+    const morningBooked = booked.some(s => s.includes('morning') || s === 'noon');
+    const eveningBooked = booked.some(s => s.includes('evening'));
+    
     return {
-      noon:    !fulldayBooked && !noonBooked,
+      morning: !fulldayBooked && !morningBooked,
       evening: !fulldayBooked && !eveningBooked,
-      // fullday requires all 3 sub-slots free (noon + evening + fullday none booked)
-      fullday: !fulldayBooked && !noonBooked && !eveningBooked
+      fullday: !fulldayBooked && !morningBooked && !eveningBooked
     };
   }
 
   /* ── Date-level status ── */
   function getDateStatus(dateStr) {
     const s = getSlotStatus(dateStr);
-    const freeCount = [s.noon, s.evening, s.fullday].filter(Boolean).length;
+    const freeCount = [s.morning, s.evening, s.fullday].filter(Boolean).length;
     if (freeCount === 3) return 'avail';
     if (freeCount === 0) return 'full';
     return 'partial';
@@ -2643,8 +2645,17 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
     // ── Smart booking prevention: guard against already-booked slot ──
     if (window._availCache && window._availCache() && Object.keys(window._availCache()).length > 0) {
       const slotStatus = window._getSlotStatus(date);
-      const slotMap = { noon: slotStatus.noon, evening: slotStatus.evening, fullday: slotStatus.fullday };
-      if (!slotMap[slot]) {
+      
+      let isAvailable = true;
+      if (slot === 'fullday') {
+        isAvailable = slotStatus.fullday;
+      } else if (slot.includes('morning') || slot === 'noon') {
+        isAvailable = slotStatus.morning;
+      } else if (slot.includes('evening')) {
+        isAvailable = slotStatus.evening;
+      }
+
+      if (!isAvailable) {
         console.log("🚫 FRONTEND GUARD: Slot already booked for selected date");
         showMsg('error',
           '<div class="msg-title"><span class="msg-icon">🚫</span>This slot is already booked for the selected date.</div>' +
