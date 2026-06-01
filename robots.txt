@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://mjculture.in/sitemap.xml
+Sitemap: https://iamhim90.github.io/MJ-HOUSE/sitemap.xml
