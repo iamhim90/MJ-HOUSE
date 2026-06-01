@@ -786,7 +786,102 @@
       <td>${slotStr}</td>
       <td>${b.occasion||'—'}</td>
       <td><span class="badge badge-${sCls}">${b.status||'pending'}</span></td>
+<<<<<<< HEAD
       <td><div style="display:flex;gap:.4rem;flex-wrap:wrap">${actions}</div></td>
+=======
+      <td><div style="display:flex;gap:.4rem;flex-wrap:wrap">
+       ${b.status==='pending' ? `
+
+<button class="btn-action approve" onclick="verifyAdvance('${id}')">
+  <i class="fas fa-check"></i>
+  Approve
+</button>
+
+<button class="btn-action reject" onclick="updateBookingStatus('${id}','rejected')">
+  <i class="fas fa-times"></i>
+  Reject
+</button>
+
+<button 
+  class="btn-action"
+  onclick="sendWhatsApp(
+    '${b.phone}',
+    'pending',
+    '${b.customer_name || b.name}',
+    '${String(date).replace(/'/g, "\\'")}'
+  )">
+
+  <i class="fab fa-whatsapp"></i>
+  WhatsApp
+
+</button>
+
+` : 
+
+(b.status==='confirmed' && b.paymentStatus!=='fully_paid') ? `
+
+<button class="btn-action approve" onclick="collectCash('${id}')">
+  <i class="fas fa-money-bill-wave"></i>
+  Collect Remaining 70%
+</button>
+
+<button 
+  class="btn-action"
+  onclick="sendWhatsApp(
+    '${b.phone}',
+    'confirmed',
+    '${b.customer_name || b.name}',
+    '${String(date).replace(/'/g, "\\'")}'
+  )">
+
+  <i class="fab fa-whatsapp"></i>
+  WhatsApp
+
+</button>
+
+` : 
+
+(b.paymentStatus==='fully_paid') ? `
+
+<span class="badge badge-paid" style="font-size:.65rem">
+  Fully Paid ✅
+</span>
+
+<button 
+  class="btn-action"
+  onclick="sendWhatsApp(
+    '${b.phone}',
+    'confirmed',
+    '${b.customer_name || b.name}',
+    '${String(date).replace(/'/g, "\\'")}'
+  )">
+
+  <i class="fab fa-whatsapp"></i>
+  WhatsApp
+
+</button>
+
+` : 
+
+(b.status==='rejected') ? `
+
+<button 
+  class="btn-action reject"
+  onclick="sendWhatsApp(
+    '${b.phone}',
+    'rejected',
+    '${b.customer_name || b.name}',
+    '${String(date).replace(/'/g, "\\'")}'
+  )">
+
+  <i class="fab fa-whatsapp"></i>
+  WhatsApp
+
+</button>
+
+` : ''}
+      </div></td>
+>>>>>>> 463190347d0eb29c99a4014ae926b4228c2cf066
     </tr>`;
     return `<tr>
       <td style="font-size:.65rem;color:rgba(245,240,232,.3)">${sid}</td>
@@ -800,7 +895,84 @@
       <td>₹${parseFloat(b.total_amount||b.price||0).toLocaleString('en-IN')}</td>
       <td><span class="badge badge-${sCls}">${b.status||'pending'}</span></td>
       <td style="max-width:150px;white-space:normal;font-size:.7rem">${b.notes||'—'}</td>
+<<<<<<< HEAD
       <td><div style="display:flex;gap:.35rem;flex-wrap:wrap">${actions}</div></td>
+=======
+      <td><div style="display:flex;gap:.35rem;flex-wrap:wrap">
+      ${b.status==='pending' ? `
+
+<button class="btn-action approve" onclick="verifyAdvance('${id}')">
+  <i class="fas fa-check"></i>
+  Approve
+</button>
+
+<button class="btn-action reject" onclick="updateBookingStatus('${id}','rejected')">
+  <i class="fas fa-times"></i>
+  Reject
+</button>
+
+<button 
+  class="btn-action"
+  onclick="sendWhatsApp(
+    '${b.phone}',
+    '${b.status}',
+    '${b.customer_name || b.name}',
+    '${String(date).replace(/'/g, "\\'")}'
+  )">
+
+  <i class="fab fa-whatsapp"></i>
+  WhatsApp
+
+</button>
+
+` : 
+
+(b.status==='confirmed' && b.paymentStatus!=='fully_paid') ? `
+
+<button class="btn-action approve" onclick="collectCash('${id}')">
+  <i class="fas fa-money-bill-wave"></i>
+  Collect Remaining 70%
+</button>
+
+<button 
+  class="btn-action"
+  onclick="sendWhatsApp(
+    '${b.phone}',
+    'confirmed',
+    '${b.customer_name || b.name}',
+    '${String(date).replace(/'/g, "\\'")}'
+  )">
+
+  <i class="fab fa-whatsapp"></i>
+  WhatsApp
+
+</button>
+
+` : 
+
+(b.paymentStatus==='fully_paid') ? `
+
+<span class="badge badge-paid" style="font-size:.65rem">
+  Fully Paid ✅
+</span>
+
+<button 
+  class="btn-action"
+  onclick="sendWhatsApp(
+    '${b.phone}',
+    'confirmed',
+    '${b.customer_name || b.name}',
+    '${String(date).replace(/'/g, "\\'")}'
+  )">
+
+  <i class="fab fa-whatsapp"></i>
+  WhatsApp
+
+</button>
+
+` : ''}
+      </div></td>
+>>>>>>> 463190347d0eb29c99a4014ae926b4228c2cf066
     </tr>`;
   }
 
@@ -1143,12 +1315,16 @@
     el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
   });
 
+<<<<<<< HEAD
   // ── WHATSAPP ── Sends automated message with full booking details
   function sendWhatsApp(phone, status, name, date, slot, occasion, guests, total) {
     if (!phone) { toast('No phone number available for this booking.', 'err'); return; }
     // Clean phone: remove country code prefix if already present
     let cleanPhone = String(phone).replace(/[^0-9]/g,'');
     if (cleanPhone.startsWith('91') && cleanPhone.length > 10) cleanPhone = cleanPhone.slice(2);
+=======
+  function sendWhatsApp(phone, status, name, bookingDate) {
+>>>>>>> 463190347d0eb29c99a4014ae926b4228c2cf066
 
     const bookingInfo = `
 ━━━━━━━━━━━━━━━━━━━━
@@ -1169,12 +1345,22 @@
 Great news! 🎉 Your booking at *MJ Culture Farmhouse* has been *CONFIRMED* ✅
 ${bookingInfo}
 
+<<<<<<< HEAD
 Please ensure the remaining balance is paid on the day of the event.
 For any queries, feel free to contact us.
 
 — MJ Culture Team 🏡`;
     } else if (status === 'rejected') {
       msg = `Hello ${name||''},
+=======
+Greetings from MJ Culture ✨
+
+We are pleased to inform you that your booking for ${bookingDate} has been successfully CONFIRMED ✅
+
+Our team looks forward to hosting your special occasion.
+
+Thank you for choosing MJ Culture.`;
+>>>>>>> 463190347d0eb29c99a4014ae926b4228c2cf066
 
 We regret to inform you that your booking request at *MJ Culture Farmhouse* has been *rejected* ❌
 ${bookingInfo}
@@ -1207,6 +1393,90 @@ Your request is currently *under review*. Our team will contact you within 24 ho
     window.open(url, '_blank');
   }
 
+<<<<<<< HEAD
+=======
+  else if(status === "rejected") {
+
+      msg =
+`Hello ${name},
+
+Thank you for considering MJ Culture.
+
+Unfortunately, we are unable to confirm your booking request for ${bookingDate} ❌
+
+Our team will process your advance refund shortly.
+
+We appreciate your understanding.`;
+
+  }
+
+  else {
+
+    msg =
+`Hello ${name},
+
+Thank you for submitting your booking request to MJ Culture ✨
+
+Your booking request for ${bookingDate} is currently under review.
+
+Our team will contact you within 24 hours regarding confirmation.`;
+
+  }
+
+  const url =
+`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`;
+
+  window.open(url, "_blank");
+}
+
+function sendWhatsApp(phone, status, name) {
+
+  let msg = "";
+
+  if(status === "confirmed") {
+
+    msg =
+`Hello ${name},
+
+Greetings from MJ Culture ✨
+
+We are pleased to inform you that your booking for ${bookingDate} has been successfully CONFIRMED ✅
+
+Our team looks forward to hosting your special occasion.
+
+Thank you for choosing MJ Culture.`;
+
+  }
+
+  else if(status === "rejected") {
+
+    msg =
+`Hello ${name},
+
+We are sorry to inform you that your booking request has been rejected ❌
+
+Your advance payment will be refunded shortly.`;
+
+  }
+
+  else {
+
+    msg =
+`Hello ${name},
+
+Your booking request is currently under review.
+
+Our team will contact you within 24 hours regarding confirmation.`;
+
+  }
+
+  const url =
+`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`;
+
+  window.open(url, "_blank");
+}
+
+>>>>>>> 463190347d0eb29c99a4014ae926b4228c2cf066
 </script>
 </body>
 </html>
