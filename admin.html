@@ -762,7 +762,7 @@
     '${b.phone}',
     'pending',
     '${b.customer_name || b.name}',
-    '${date}'
+    '${String(date).replace(/'/g, "\\'")}'
   )">
 
   <i class="fab fa-whatsapp"></i>
@@ -785,7 +785,7 @@
     '${b.phone}',
     'confirmed',
     '${b.customer_name || b.name}',
-    '${date}'
+    '${String(date).replace(/'/g, "\\'")}'
   )">
 
   <i class="fab fa-whatsapp"></i>
@@ -807,7 +807,7 @@
     '${b.phone}',
     'confirmed',
     '${b.customer_name || b.name}',
-    '${date}'
+    '${String(date).replace(/'/g, "\\'")}'
   )">
 
   <i class="fab fa-whatsapp"></i>
@@ -825,7 +825,7 @@
     '${b.phone}',
     'rejected',
     '${b.customer_name || b.name}',
-    '${date}'
+    '${String(date).replace(/'/g, "\\'")}'
   )">
 
   <i class="fab fa-whatsapp"></i>
@@ -867,7 +867,7 @@
     '${b.phone}',
     '${b.status}',
     '${b.customer_name || b.name}',
-    '${date}'
+    '${String(date).replace(/'/g, "\\'")}'
   )">
 
   <i class="fab fa-whatsapp"></i>
@@ -890,7 +890,7 @@
     '${b.phone}',
     'confirmed',
     '${b.customer_name || b.name}',
-    '${date}'
+    '${String(date).replace(/'/g, "\\'")}'
   )">
 
   <i class="fab fa-whatsapp"></i>
@@ -912,7 +912,7 @@
     '${b.phone}',
     'confirmed',
     '${b.customer_name || b.name}',
-    '${date}'
+    '${String(date).replace(/'/g, "\\'")}'
   )">
 
   <i class="fab fa-whatsapp"></i>
