@@ -19,18 +19,25 @@ app.use(helmet());
    CORS — restrict to allowed origin only
 ═══════════════════════════════════════════ */
 const allowedOrigins = [
-  process.env.ALLOWED_ORIGIN,
   'http://127.0.0.1:5500',  // local live-server dev
   'http://127.0.0.1:5501',
   'http://localhost:5500',
   'http://localhost:5501',
-].filter(Boolean);
+];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // allow requests with no origin (curl, Render health checks)
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) return callback(null, true);
+    
+    // Forgiving check for user-defined ALLOWED_ORIGIN
+    if (process.env.ALLOWED_ORIGIN) {
+      const allowedEnv = process.env.ALLOWED_ORIGIN.trim().toLowerCase();
+      if (origin === allowedEnv || allowedEnv.startsWith(origin)) {
+        return callback(null, true);
+      }
+    }
+    
     callback(new Error('Not allowed by CORS'));
   },
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
