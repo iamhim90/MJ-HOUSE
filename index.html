@@ -2295,7 +2295,7 @@ function updateAdvanceDisplay(price) {
   // UPI deep link — pre-fill advance amount
   const upiLink = document.getElementById('upiPayLink');
   if (upiLink) {
-    upiLink.href = 'upi://pay?pa=8758457909@omni&pn=MJ%20Culture&am=' + advance + '&cu=INR&tn=MJ%20Culture%20Booking%20Advance';
+    upiLink.href = 'upi://pay?pa=9099847718-3@ybl&pn=MJ%20Culture&am=' + advance + '&cu=INR&tn=MJ%20Culture%20Booking%20Advance';
   }
 }
 
@@ -2642,28 +2642,7 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
       return;
     }
 
-    // ── Smart booking prevention: guard against already-booked slot ──
-    if (window._availCache && window._availCache() && Object.keys(window._availCache()).length > 0) {
-      const slotStatus = window._getSlotStatus(date);
-      
-      let isAvailable = true;
-      if (slot === 'fullday') {
-        isAvailable = slotStatus.fullday;
-      } else if (slot.includes('morning') || slot === 'noon') {
-        isAvailable = slotStatus.morning;
-      } else if (slot.includes('evening')) {
-        isAvailable = slotStatus.evening;
-      }
 
-      if (!isAvailable) {
-        console.log("🚫 FRONTEND GUARD: Slot already booked for selected date");
-        showMsg('error',
-          '<div class="msg-title"><span class="msg-icon">🚫</span>This slot is already booked for the selected date.</div>' +
-          '<div class="msg-detail">Please choose a different time slot or pick another date.</div>'
-        );
-        return;
-      }
-    }
 
 
 
