@@ -820,8 +820,8 @@
 
     // Safe values for WhatsApp (no quotes that break onclick)
     var phone = (b.phone||'').replace(/[^0-9]/g,'');
-    var name = (b.customer_name||b.name||'Guest').replace(/"/g,'').replace(var name = escapeHTML(b.customer_name||b.name||'Guest');
-    var occasion = (b.occasion||'General').replace(/"/g,'').replace(var occasion = escapeHTML(b.occasion||'General');
+    var name = escapeHTML(b.customer_name||b.name||'Guest');
+    var occasion = escapeHTML(b.occasion||'General');
     var guests = String(b.guests||'—');
     var total = '₹'+parseFloat(b.total_amount||b.price||0).toLocaleString('en-IN');
     var safeDate = dateStr.replace(/'/g,'');
