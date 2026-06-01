@@ -3128,11 +3128,6 @@ function tcAccept() {
     document.body.style.overflow = '';
     setTimeout(() => {
       overlay.style.display = 'none';
-      // Scroll to booking section after T&C accepted
-      const bookingSection = document.getElementById('booking');
-      if (bookingSection) {
-        bookingSection.scrollIntoView({ behavior: 'smooth' });
-      }
     }, 600);
     // Optionally: send to backend via fetch
     // fetch('/api/tc-consent', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(record) })
