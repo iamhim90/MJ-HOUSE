@@ -546,28 +546,23 @@
 <script src="js/config.js"></script>
 <script>
   /* ══════════════════════════════════════
-     ADMIN AUTH
+     ADMIN AUTH — backend-only, no secrets in frontend
   ══════════════════════════════════════ */
   var BACKEND_URL = (typeof API_BASE_URL !== 'undefined') ? API_BASE_URL : '';
-  var ADMIN_USER = 'admin';
-  var ADMIN_PASS = 'mjculture2026';
 
   function doAdminLogin() {
     var u = document.getElementById('adminUser').value.trim();
     var p = document.getElementById('adminPass').value;
     var err = document.getElementById('loginErr');
+    var btn = document.getElementById('loginBtn2');
     err.style.display = 'none';
 
-    if (u === ADMIN_USER && p === ADMIN_PASS) {
-      sessionStorage.setItem('mjc_admin', '1');
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('app').style.display = 'flex';
-      loadDashboard();
+    if (!u || !p) {
+      err.textContent = 'Please enter username and password.';
+      err.style.display = 'block';
       return;
     }
 
-    // Try backend
-    var btn = document.getElementById('loginBtn2');
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner spinner"></i> Signing in…';
 
@@ -576,18 +571,18 @@
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({username: u, password: p})
     }).then(function(r){ return r.json(); }).then(function(data){
-      if (data.token || data.success) {
+      if (data.token) {
         sessionStorage.setItem('mjc_admin', '1');
-        if (data.token) sessionStorage.setItem('mjc_admin_token', data.token);
+        sessionStorage.setItem('mjc_admin_token', data.token);
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('app').style.display = 'flex';
         loadDashboard();
       } else {
-        err.textContent = data.message || 'Invalid credentials.';
+        err.textContent = data.error || 'Invalid credentials.';
         err.style.display = 'block';
       }
     }).catch(function(){
-      err.textContent = 'Wrong username or password.';
+      err.textContent = 'Could not reach server. Check your connection.';
       err.style.display = 'block';
     }).finally(function(){
       btn.disabled = false;
@@ -682,11 +677,23 @@
   ══════════════════════════════════════ */
   function api(path, method, body) {
     method = method || 'GET';
-    var opts = {method: method, headers: {'Content-Type': 'application/json'}};
     var tok = sessionStorage.getItem('mjc_admin_token');
-    if (tok) opts.headers['Authorization'] = 'Bearer ' + tok;
+    var opts = {
+      method: method,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': tok ? 'Bearer ' + tok : ''
+      }
+    };
     if (body) opts.body = JSON.stringify(body);
-    return fetch(BACKEND_URL + path, opts).then(function(r){ return r.json(); });
+    return fetch(BACKEND_URL + path, opts).then(function(r){
+      // If token expired / invalid — force re-login
+      if (r.status === 401) {
+        adminLogout();
+        return { error: 'Session expired. Please log in again.' };
+      }
+      return r.json();
+    });
   }
 
   function openModal(id){ document.getElementById(id).classList.add('open'); }
