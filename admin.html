@@ -257,7 +257,21 @@
     </div>
     <div class="lf">
       <label>Password</label>
-      <input type="password" id="adminPass" placeholder="Your admin password" autocomplete="current-password">
+      <div style="position: relative;">
+        <input type="password" id="adminPass" placeholder="Your admin password" autocomplete="current-password" style="width: 100%; padding-right: 40px;">
+        <i class="fas fa-eye" id="togglePassword" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #a39581;" onclick="
+          var x = document.getElementById('adminPass');
+          if (x.type === 'password') {
+            x.type = 'text';
+            this.classList.remove('fa-eye');
+            this.classList.add('fa-eye-slash');
+          } else {
+            x.type = 'password';
+            this.classList.remove('fa-eye-slash');
+            this.classList.add('fa-eye');
+          }
+        "></i>
+      </div>
     </div>
     <button id="loginBtn2" onclick="doAdminLogin()"><i class="fas fa-sign-in-alt"></i> Enter Admin Panel</button>
     <div id="loginErr">Invalid credentials. Please try again.</div>
