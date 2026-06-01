@@ -650,6 +650,26 @@
         (id==='export' && t.includes('export'))
       ) n.classList.add('active');
     });
+
+  function toggleSidebar(){ document.querySelector('.sidebar').classList.toggle('active'); }
+  function logout(){ adminLogout(); }
+
+  // Security: Prevent XSS
+  function escapeHTML(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+  }
+
+
+  // Security: Prevent XSS
+  function escapeHTML(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+  }
+
+  /* ══════════════════════════════════════
+     UI RENDERERS
+  ══════════════════════════════════════ */
     document.getElementById('sidebar').classList.remove('mob-open');
     if (id==='bookings') loadBookings();
     if (id==='payments') loadPayments();
@@ -786,8 +806,8 @@
 
     // Safe values for WhatsApp (no quotes that break onclick)
     var phone = (b.phone||'').replace(/[^0-9]/g,'');
-    var name = (b.customer_name||b.name||'Guest').replace(/"/g,'').replace(/'/g,'');
-    var occasion = (b.occasion||'General').replace(/"/g,'').replace(/'/g,'');
+    var name = (b.customer_name||b.name||'Guest').replace(/"/g,'').replace(var name = escapeHTML(b.customer_name||b.name||'Guest');
+    var occasion = (b.occasion||'General').replace(/"/g,'').replace(var occasion = escapeHTML(b.occasion||'General');
     var guests = String(b.guests||'—');
     var total = '₹'+parseFloat(b.total_amount||b.price||0).toLocaleString('en-IN');
     var safeDate = dateStr.replace(/'/g,'');
@@ -820,21 +840,21 @@
 
     if (compact) {
       return '<tr>' +
-        '<td>'+(b.customer_name||b.name||'—')+'</td>' +
+        '<td>'+escapeHTML(b.customer_name||b.name||'—')+'</td>' +
         '<td>'+dateStr+'</td>' +
         '<td>'+slotStr+'</td>' +
-        '<td>'+(b.occasion||'—')+'</td>' +
+        '<td>'+escapeHTML(b.occasion||'—')+'</td>' +
         '<td><span class="badge badge-'+sCls+'">'+status+'</span></td>' +
         '<td><div style="display:flex;gap:.4rem;flex-wrap:wrap">'+actions+'</div></td>' +
         '</tr>';
     }
     return '<tr>' +
       '<td style="font-size:.65rem;color:rgba(245,240,232,.3)">'+sid+'</td>' +
-      '<td>'+(b.customer_name||b.name||'—')+'</td>' +
+      '<td>'+escapeHTML(b.customer_name||b.name||'—')+'</td>' +
       '<td>'+(b.phone||'—')+'</td>' +
       '<td>'+(b.email||'—')+'</td>' +
       '<td>'+dateStr+'</td>' +
-      '<td>'+(b.occasion||'—')+'</td>' +
+      '<td>'+escapeHTML(b.occasion||'—')+'</td>' +
       '<td>'+(b.guests||'—')+'</td>' +
       '<td>'+slotStr+'</td>' +
       '<td>₹'+parseFloat(b.total_amount||b.price||0).toLocaleString('en-IN')+'</td>' +
@@ -1032,7 +1052,7 @@
         var id = b.id||b._id||b.bookingId||'';
         return '<tr>' +
           '<td style="font-size:.7rem;color:rgba(245,240,232,.4)">'+String(id).slice(-6)+'</td>' +
-          '<td>'+(b.customer_name||b.name||'—')+'</td>' +
+          '<td>'+escapeHTML(b.customer_name||b.name||'—')+'</td>' +
           '<td>'+date+'</td>' +
           '<td style="color:var(--wheat)">₹'+total.toLocaleString('en-IN')+'</td>' +
           '<td style="color:#86efac">₹'+adv.toLocaleString('en-IN')+'</td>' +

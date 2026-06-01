@@ -40,15 +40,25 @@ app.use(cors({
 app.use(express.json({ limit: '10kb' })); // prevent huge payloads
 
 /* ═══════════════════════════════════════════
-   RATE LIMITING — admin login only
+   RATE LIMITING
 ═══════════════════════════════════════════ */
+// Admin login protection (max 10 attempts per 15 mins)
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10,                   // max 10 attempts per window
+  windowMs: 15 * 60 * 1000,
+  max: 10,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Too many login attempts. Please try again in 15 minutes.' },
   skipSuccessfulRequests: true,
+});
+
+// Booking spam protection (max 5 bookings per hour per IP)
+const bookingLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'You have exceeded the maximum number of booking requests. Please try again later.' },
 });
 
 /* ═══════════════════════════════════════════
@@ -114,7 +124,7 @@ app.post('/api/admin/login', loginLimiter, (req, res) => {
 ═══════════════════════════════════════════ */
 
 // POST /api/bookings — Create new booking (public)
-app.post('/api/bookings', async (req, res) => {
+app.post('/api/bookings', bookingLimiter, async (req, res) => {
   try {
     const { name, phone, email, date, timeSlot, occasion, price, guests, specialRequirements } = req.body;
 
