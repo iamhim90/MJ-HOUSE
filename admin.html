@@ -121,6 +121,7 @@
     .badge-confirmed{background:rgba(74,222,128,.1);color:#86efac;border:1px solid rgba(74,222,128,.25);}
     .badge-rejected{background:rgba(251,113,133,.1);color:#fca5a5;border:1px solid rgba(251,113,133,.25);}
     .badge-waiting{background:rgba(147,197,253,.1);color:#93c5fd;border:1px solid rgba(147,197,253,.25);}
+    .badge-hold{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.35);}
     .badge-paid{background:rgba(74,222,128,.1);color:#86efac;border:1px solid rgba(74,222,128,.25);}
     .badge-unpaid{background:rgba(251,113,133,.1);color:#fca5a5;border:1px solid rgba(251,113,133,.25);}
     .badge-partial{background:rgba(251,191,36,.1);color:#fcd34d;border:1px solid rgba(251,191,36,.25);}
@@ -347,6 +348,7 @@
           <option value="">All Statuses</option>
           <option value="pending">Pending</option>
           <option value="waiting">Waiting (Paid)</option>
+          <option value="hold">On Hold</option>
           <option value="confirmed">Confirmed</option>
           <option value="rejected">Rejected</option>
         </select>
@@ -580,7 +582,7 @@
     document.getElementById('app').style.display = 'none';
   }
 
-  // Check session on load
+  // Check session on load — ALWAYS show login screen for security
   window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('dashDate').textContent = new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
     // Set today's date in expense date field
@@ -593,11 +595,11 @@
       const label = d.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
       sel.innerHTML += `<option value="${val}">${label}</option>`;
     }
-    if (sessionStorage.getItem('mjc_admin')) {
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('app').style.display = 'flex';
-      loadDashboard();
-    }
+    // Always clear session and require fresh login for security
+    sessionStorage.removeItem('mjc_admin');
+    sessionStorage.removeItem('mjc_admin_token');
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
     
     // Auto-refresh every 30 seconds
     setInterval(() => {
@@ -734,103 +736,57 @@
       'evening': 'Evening'
     };
     const slotStr = slotMap[b.slot] || b.slot || 'Full Day';
-    const sCls = b.status==='confirmed'?'confirmed':b.status==='rejected'?'rejected':b.status==='waiting'?'waiting':'pending';
+    const sCls = b.status==='confirmed'?'confirmed':b.status==='rejected'?'rejected':b.status==='waiting'?'waiting':b.status==='hold'?'hold':'pending';
     const id = b.id || b._id || b.bookingId || '';
     const sid = String(id).length > 8 ? '…' + String(id).slice(-6) : id;
+    // Encode booking data for WhatsApp safely
+    const waPhone = (b.phone||'').replace(/[^0-9]/g,'');
+    const waName = (b.customer_name||b.name||'Guest').replace(/'/g,"'");
+    const waDate = date;
+    const waSlot = slotStr;
+    const waOccasion = b.occasion||'General';
+    const waGuests = b.guests||'—';
+    const waTotal = '₹'+parseFloat(b.total_amount||b.price||0).toLocaleString('en-IN');
+
+    // WhatsApp button generator with full booking details
+    const waBtn = (status, btnClass='') => `<button class="btn-action ${btnClass}" style="background:rgba(37,211,102,.12);border-color:rgba(37,211,102,.4);color:#25d166" onclick="sendWhatsApp('${waPhone}','${status}','${waName.replace(/'/g,"\\'")  }','${waDate}','${waSlot}','${waOccasion}','${waGuests}','${waTotal}')"><i class="fab fa-whatsapp"></i> WhatsApp</button>`;
+
+    // Actions for PENDING: Confirm, Hold, Reject, WhatsApp
+    const pendingActions = `
+      <button class="btn-action approve" onclick="verifyAdvance('${id}')"><i class="fas fa-check"></i> Confirm</button>
+      <button class="btn-action hold" onclick="updateBookingStatus('${id}','hold')"><i class="fas fa-pause"></i> Hold</button>
+      <button class="btn-action reject" onclick="updateBookingStatus('${id}','rejected')"><i class="fas fa-times"></i> Reject</button>
+      ${waBtn(b.status)}
+    `;
+    // Actions for HOLD: Confirm, Reject, WhatsApp
+    const holdActions = `
+      <button class="btn-action approve" onclick="verifyAdvance('${id}')"><i class="fas fa-check"></i> Confirm</button>
+      <button class="btn-action reject" onclick="updateBookingStatus('${id}','rejected')"><i class="fas fa-times"></i> Reject</button>
+      ${waBtn('hold')}
+    `;
+    // Actions for CONFIRMED
+    const confirmedActions = b.paymentStatus==='fully_paid' ? `
+      <span class="badge badge-paid" style="font-size:.65rem">Fully Paid ✅</span>
+      ${waBtn('confirmed')}
+    ` : `
+      <button class="btn-action approve" onclick="collectCash('${id}')"><i class="fas fa-money-bill-wave"></i> Collect Remaining</button>
+      ${waBtn('confirmed')}
+    `;
+    // Actions for REJECTED
+    const rejectedActions = waBtn('rejected', 'reject');
+
+    const actions = b.status==='pending' ? pendingActions
+      : b.status==='hold' ? holdActions
+      : b.status==='confirmed' ? confirmedActions
+      : b.status==='rejected' ? rejectedActions : '';
+
     if (compact) return `<tr>
       <td>${b.customer_name||b.name||'—'}</td>
       <td>${date}</td>
       <td>${slotStr}</td>
       <td>${b.occasion||'—'}</td>
       <td><span class="badge badge-${sCls}">${b.status||'pending'}</span></td>
-      <td><div style="display:flex;gap:.4rem;flex-wrap:wrap">
-       ${b.status==='pending' ? `
-
-<button class="btn-action approve" onclick="verifyAdvance('${id}')">
-  <i class="fas fa-check"></i>
-  Approve
-</button>
-
-<button class="btn-action reject" onclick="updateBookingStatus('${id}','rejected')">
-  <i class="fas fa-times"></i>
-  Reject
-</button>
-
-<button 
-  class="btn-action"
-  onclick="sendWhatsApp(
-    '${b.phone}',
-    'pending',
-    '${b.customer_name || b.name}'
-  )">
-
-  <i class="fab fa-whatsapp"></i>
-  WhatsApp
-
-</button>
-
-` : 
-
-(b.status==='confirmed' && b.paymentStatus!=='fully_paid') ? `
-
-<button class="btn-action approve" onclick="collectCash('${id}')">
-  <i class="fas fa-money-bill-wave"></i>
-  Collect Remaining 70%
-</button>
-
-<button 
-  class="btn-action"
-  onclick="sendWhatsApp(
-    '${b.phone}',
-    'confirmed',
-    '${b.customer_name || b.name}'
-  )">
-
-  <i class="fab fa-whatsapp"></i>
-  WhatsApp
-
-</button>
-
-` : 
-
-(b.paymentStatus==='fully_paid') ? `
-
-<span class="badge badge-paid" style="font-size:.65rem">
-  Fully Paid ✅
-</span>
-
-<button 
-  class="btn-action"
-  onclick="sendWhatsApp(
-    '${b.phone}',
-    'confirmed',
-    '${b.customer_name || b.name}'
-  )">
-
-  <i class="fab fa-whatsapp"></i>
-  WhatsApp
-
-</button>
-
-` : 
-
-(b.status==='rejected') ? `
-
-<button 
-  class="btn-action reject"
-  onclick="sendWhatsApp(
-    '${b.phone}',
-    'rejected',
-    '${b.customer_name || b.name}'
-  )">
-
-  <i class="fab fa-whatsapp"></i>
-  WhatsApp
-
-</button>
-
-` : ''}
-      </div></td>
+      <td><div style="display:flex;gap:.4rem;flex-wrap:wrap">${actions}</div></td>
     </tr>`;
     return `<tr>
       <td style="font-size:.65rem;color:rgba(245,240,232,.3)">${sid}</td>
@@ -844,77 +800,7 @@
       <td>₹${parseFloat(b.total_amount||b.price||0).toLocaleString('en-IN')}</td>
       <td><span class="badge badge-${sCls}">${b.status||'pending'}</span></td>
       <td style="max-width:150px;white-space:normal;font-size:.7rem">${b.notes||'—'}</td>
-      <td><div style="display:flex;gap:.35rem;flex-wrap:wrap">
-      ${b.status==='pending' ? `
-
-<button class="btn-action approve" onclick="verifyAdvance('${id}')">
-  <i class="fas fa-check"></i>
-  Approve
-</button>
-
-<button class="btn-action reject" onclick="updateBookingStatus('${id}','rejected')">
-  <i class="fas fa-times"></i>
-  Reject
-</button>
-
-<button 
-  class="btn-action"
-  onclick="sendWhatsApp(
-    '${b.phone}',
-    '${b.status}',
-    '${b.customer_name || b.name}'
-  )">
-
-  <i class="fab fa-whatsapp"></i>
-  WhatsApp
-
-</button>
-
-` : 
-
-(b.status==='confirmed' && b.paymentStatus!=='fully_paid') ? `
-
-<button class="btn-action approve" onclick="collectCash('${id}')">
-  <i class="fas fa-money-bill-wave"></i>
-  Collect Remaining 70%
-</button>
-
-<button 
-  class="btn-action"
-  onclick="sendWhatsApp(
-    '${b.phone}',
-    'confirmed',
-    '${b.customer_name || b.name}'
-  )">
-
-  <i class="fab fa-whatsapp"></i>
-  WhatsApp
-
-</button>
-
-` : 
-
-(b.paymentStatus==='fully_paid') ? `
-
-<span class="badge badge-paid" style="font-size:.65rem">
-  Fully Paid ✅
-</span>
-
-<button 
-  class="btn-action"
-  onclick="sendWhatsApp(
-    '${b.phone}',
-    'confirmed',
-    '${b.customer_name || b.name}'
-  )">
-
-  <i class="fab fa-whatsapp"></i>
-  WhatsApp
-
-</button>
-
-` : ''}
-      </div></td>
+      <td><div style="display:flex;gap:.35rem;flex-wrap:wrap">${actions}</div></td>
     </tr>`;
   }
 
@@ -1257,91 +1143,69 @@
     el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
   });
 
-  function sendWhatsApp(phone, status, name) {
+  // ── WHATSAPP ── Sends automated message with full booking details
+  function sendWhatsApp(phone, status, name, date, slot, occasion, guests, total) {
+    if (!phone) { toast('No phone number available for this booking.', 'err'); return; }
+    // Clean phone: remove country code prefix if already present
+    let cleanPhone = String(phone).replace(/[^0-9]/g,'');
+    if (cleanPhone.startsWith('91') && cleanPhone.length > 10) cleanPhone = cleanPhone.slice(2);
 
-  let msg = "";
+    const bookingInfo = `
+━━━━━━━━━━━━━━━━━━━━
+📋 *Booking Details*
+━━━━━━━━━━━━━━━━━━━━
+👤 Name: ${name||'—'}
+📅 Date: ${date||'—'}
+🕐 Slot: ${slot||'—'}
+🎉 Occasion: ${occasion||'—'}
+👥 Guests: ${guests||'—'}
+💰 Total Amount: ${total||'—'}
+━━━━━━━━━━━━━━━━━━━━`;
 
-  if(status === "confirmed") {
+    let msg = '';
+    if (status === 'confirmed') {
+      msg = `Hello ${name||''},
 
-    msg =
-`Hello ${name},
+Great news! 🎉 Your booking at *MJ Culture Farmhouse* has been *CONFIRMED* ✅
+${bookingInfo}
 
-Your booking at MJ Culture has been CONFIRMED ✅
+Please ensure the remaining balance is paid on the day of the event.
+For any queries, feel free to contact us.
 
-Thank you for choosing us.`;
+— MJ Culture Team 🏡`;
+    } else if (status === 'rejected') {
+      msg = `Hello ${name||''},
 
+We regret to inform you that your booking request at *MJ Culture Farmhouse* has been *rejected* ❌
+${bookingInfo}
+
+If an advance was paid, it will be refunded within 3–5 business days.
+We apologise for the inconvenience.
+
+— MJ Culture Team 🏡`;
+    } else if (status === 'hold') {
+      msg = `Hello ${name||''},
+
+Your booking request at *MJ Culture Farmhouse* is currently *ON HOLD* ⏳
+${bookingInfo}
+
+Our team is reviewing your booking and will get back to you shortly with a final decision. We appreciate your patience.
+
+— MJ Culture Team 🏡`;
+    } else {
+      msg = `Hello ${name||''},
+
+Thank you for your booking request at *MJ Culture Farmhouse*! 🏡
+${bookingInfo}
+
+Your request is currently *under review*. Our team will contact you within 24 hours regarding confirmation.
+
+— MJ Culture Team`;
+    }
+
+    const url = `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
   }
-
-  else if(status === "rejected") {
-
-    msg =
-`Hello ${name},
-
-We are sorry to inform you that your booking request has been rejected ❌
-
-Your advance payment will be refunded shortly.`;
-
-  }
-
-  else {
-
-    msg =
-`Hello ${name},
-
-Your booking request is currently under review.
-
-Our team will contact you within 24 hours regarding confirmation.`;
-
-  }
-
-  const url =
-`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`;
-
-  window.open(url, "_blank");
-}
-
-function sendWhatsApp(phone, status, name) {
-
-  let msg = "";
-
-  if(status === "confirmed") {
-
-    msg =
-`Hello ${name},
-
-Your booking at MJ Culture has been CONFIRMED ✅
-
-Thank you for choosing us.`;
-
-  }
-
-  else if(status === "rejected") {
-
-    msg =
-`Hello ${name},
-
-We are sorry to inform you that your booking request has been rejected ❌
-
-Your advance payment will be refunded shortly.`;
-
-  }
-
-  else {
-
-    msg =
-`Hello ${name},
-
-Your booking request is currently under review.
-
-Our team will contact you within 24 hours regarding confirmation.`;
-
-  }
-
-  const url =
-`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`;
-
-  window.open(url, "_blank");
-}
 
 </script>
 </body>
