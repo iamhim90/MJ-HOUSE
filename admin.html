@@ -761,7 +761,8 @@
   onclick="sendWhatsApp(
     '${b.phone}',
     'pending',
-    '${b.customer_name || b.name}'
+    '${b.customer_name || b.name}',
+    '${date}'
   )">
 
   <i class="fab fa-whatsapp"></i>
@@ -783,7 +784,8 @@
   onclick="sendWhatsApp(
     '${b.phone}',
     'confirmed',
-    '${b.customer_name || b.name}'
+    '${b.customer_name || b.name}',
+    '${date}'
   )">
 
   <i class="fab fa-whatsapp"></i>
@@ -804,7 +806,8 @@
   onclick="sendWhatsApp(
     '${b.phone}',
     'confirmed',
-    '${b.customer_name || b.name}'
+    '${b.customer_name || b.name}',
+    '${date}'
   )">
 
   <i class="fab fa-whatsapp"></i>
@@ -821,7 +824,8 @@
   onclick="sendWhatsApp(
     '${b.phone}',
     'rejected',
-    '${b.customer_name || b.name}'
+    '${b.customer_name || b.name}',
+    '${date}'
   )">
 
   <i class="fab fa-whatsapp"></i>
@@ -862,7 +866,8 @@
   onclick="sendWhatsApp(
     '${b.phone}',
     '${b.status}',
-    '${b.customer_name || b.name}'
+    '${b.customer_name || b.name}',
+    '${date}'
   )">
 
   <i class="fab fa-whatsapp"></i>
@@ -884,7 +889,8 @@
   onclick="sendWhatsApp(
     '${b.phone}',
     'confirmed',
-    '${b.customer_name || b.name}'
+    '${b.customer_name || b.name}',
+    '${date}'
   )">
 
   <i class="fab fa-whatsapp"></i>
@@ -905,7 +911,8 @@
   onclick="sendWhatsApp(
     '${b.phone}',
     'confirmed',
-    '${b.customer_name || b.name}'
+    '${b.customer_name || b.name}',
+    '${date}'
   )">
 
   <i class="fab fa-whatsapp"></i>
@@ -1257,7 +1264,7 @@
     el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
   });
 
-  function sendWhatsApp(phone, status, name) {
+  function sendWhatsApp(phone, status, name, bookingDate) {
 
   let msg = "";
 
@@ -1266,20 +1273,28 @@
     msg =
 `Hello ${name},
 
-Your booking at MJ Culture has been CONFIRMED ✅
+Greetings from MJ Culture ✨
 
-Thank you for choosing us.`;
+We are pleased to inform you that your booking for ${bookingDate} has been successfully CONFIRMED ✅
+
+Our team looks forward to hosting your special occasion.
+
+Thank you for choosing MJ Culture.`;
 
   }
 
   else if(status === "rejected") {
 
-    msg =
+      msg =
 `Hello ${name},
 
-We are sorry to inform you that your booking request has been rejected ❌
+Thank you for considering MJ Culture.
 
-Your advance payment will be refunded shortly.`;
+Unfortunately, we are unable to confirm your booking request for ${bookingDate} ❌
+
+Our team will process your advance refund shortly.
+
+We appreciate your understanding.`;
 
   }
 
@@ -1288,7 +1303,9 @@ Your advance payment will be refunded shortly.`;
     msg =
 `Hello ${name},
 
-Your booking request is currently under review.
+Thank you for submitting your booking request to MJ Culture ✨
+
+Your booking request for ${bookingDate} is currently under review.
 
 Our team will contact you within 24 hours regarding confirmation.`;
 
@@ -1309,9 +1326,13 @@ function sendWhatsApp(phone, status, name) {
     msg =
 `Hello ${name},
 
-Your booking at MJ Culture has been CONFIRMED ✅
+Greetings from MJ Culture ✨
 
-Thank you for choosing us.`;
+We are pleased to inform you that your booking for ${bookingDate} has been successfully CONFIRMED ✅
+
+Our team looks forward to hosting your special occasion.
+
+Thank you for choosing MJ Culture.`;
 
   }
 
