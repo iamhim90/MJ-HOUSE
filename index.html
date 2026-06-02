@@ -1925,7 +1925,7 @@
                 <div class="ff"><label for="bPhone">Mobile Number *</label><input type="tel" id="bPhone" placeholder="10-digit number" required maxlength="10"></div>
               </div>
                <p class="booking-note">
-  Please enter a WhatsApp-enabled mobile number for booking updates.
+  <i class="fab fa-whatsapp" style="color: #25d366; margin-right: 4px;"></i><strong>Important:</strong> Please provide an active WhatsApp number. All booking updates, confirmation, and payment details will be sent via WhatsApp.
 </p>
               <div class="frow">
                 <div class="ff"><label for="bEmail">Email Address</label><input type="email" id="bEmail" placeholder="your@email.com"></div>
@@ -3175,11 +3175,6 @@ function tcAccept() {
     document.body.style.overflow = '';
     setTimeout(() => {
       overlay.style.display = 'none';
-      // Scroll to booking section after T&C accepted
-      const bookingSection = document.getElementById('booking');
-      if (bookingSection) {
-        bookingSection.scrollIntoView({ behavior: 'smooth' });
-      }
     }, 600);
     // Optionally: send to backend via fetch
     // fetch('/api/tc-consent', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(record) })
