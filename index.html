@@ -1,6 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+   
+  <title>MJ Culture Farmhouse | Wedding, Birthday & Event Venue in Dahod</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="description" content="MJ Culture Farmhouse is a premium event venue in Dahod, Gujarat for weddings, birthdays, Islamic functions, family gatherings and special celebrations.">
+
+<meta name="keywords" content="Farmhouse Dahod, Wedding Venue Dahod, Birthday Party Venue Dahod, Islamic Function Venue Dahod, Event Venue Dahod, Farmhouse Booking Dahod, MJ Culture Farmhouse">
+
+<meta name="author" content="MJ Culture">
+
+<meta name="robots" content="index, follow">
+
+<link rel="canonical" href="https://iamhim90.github.io/MJ-HOUSE/">
+
+<link rel="icon" href="assets/logo-clean.png">
+
+<!-- Open Graph -->
+<meta property="og:title" content="MJ Culture Farmhouse | Dahod">
+<meta property="og:description" content="Premium venue for weddings, birthdays, Islamic functions and family celebrations in Dahod.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://iamhim90.github.io/MJ-HOUSE/">
+<meta property="og:image" content="assets/gallery1.jpeg">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MJ Culture Farmhouse">
+<meta name="twitter:description" content="Premium event venue in Dahod for weddings, birthdays and Islamic functions.">
+<meta name="twitter:image" content="assets/gallery1.jpeg">
+
+<!-- Local Business Schema -->
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"EventVenue",
+  "name":"MJ Culture Farmhouse",
+  "description":"Premium farmhouse and event venue in Dahod for weddings, birthdays, Islamic functions and family celebrations.",
+  "url":"https://iamhim90.github.io/MJ-HOUSE/",
+  "address":{
+    "@type":"PostalAddress",
+    "addressLocality":"Dahod",
+    "addressRegion":"Gujarat",
+    "addressCountry":"IN"
+  }
+}
+</script>
 
   <link rel="icon" href="assets/logo-clean.png">
   <meta charset="UTF-8">
@@ -1324,6 +1371,14 @@
       .tc-btn-row { flex-direction:column-reverse; }
       #tcAcceptBtn, #tcDeclineBtn { flex:unset; width:100%; }
     }
+
+    .booking-note{
+  margin-top:6px;
+  font-size:0.8rem;
+  color:rgba(245,240,232,.65);
+  line-height:1.4;
+}
+
   </style>
   <script src="js/config.js"></script>
 </head>
@@ -1869,6 +1924,9 @@
                 <div class="ff"><label for="bName">Full Name *</label><input type="text" id="bName" placeholder="Your full name" required></div>
                 <div class="ff"><label for="bPhone">Mobile Number *</label><input type="tel" id="bPhone" placeholder="10-digit number" required maxlength="10"></div>
               </div>
+               <p class="booking-note">
+  Please enter a WhatsApp-enabled mobile number for booking updates.
+</p>
               <div class="frow">
                 <div class="ff"><label for="bEmail">Email Address</label><input type="email" id="bEmail" placeholder="your@email.com"></div>
                 <div class="ff">
@@ -2295,7 +2353,7 @@ function updateAdvanceDisplay(price) {
   // UPI deep link — pre-fill advance amount
   const upiLink = document.getElementById('upiPayLink');
   if (upiLink) {
-    upiLink.href = 'upi://pay?pa=9099847718-3@ybl&pn=MJ%20Culture&am=' + advance + '&cu=INR&tn=MJ%20Culture%20Booking%20Advance';
+    upiLink.href = 'upi://pay?pa=8758457909@omni&pn=MJ%20Culture&am=' + advance + '&cu=INR&tn=MJ%20Culture%20Booking%20Advance';
   }
 }
 
@@ -2353,24 +2411,22 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
 
   /* ── Slot-level logic ── */
   function getSlotStatus(dateStr) {
-    const bookedObj = (availCache && availCache[dateStr]) ? availCache[dateStr] : {};
-    const booked = Array.isArray(bookedObj) ? bookedObj : Object.keys(bookedObj);
-    
+    const booked = (availCache && availCache[dateStr]) ? availCache[dateStr] : [];
     const fulldayBooked = booked.includes('fullday');
-    const morningBooked = booked.some(s => s.includes('morning') || s === 'noon');
-    const eveningBooked = booked.some(s => s.includes('evening'));
-    
+    const noonBooked    = booked.includes('noon');
+    const eveningBooked = booked.includes('evening');
     return {
-      morning: !fulldayBooked && !morningBooked,
+      noon:    !fulldayBooked && !noonBooked,
       evening: !fulldayBooked && !eveningBooked,
-      fullday: !fulldayBooked && !morningBooked && !eveningBooked
+      // fullday requires all 3 sub-slots free (noon + evening + fullday none booked)
+      fullday: !fulldayBooked && !noonBooked && !eveningBooked
     };
   }
 
   /* ── Date-level status ── */
   function getDateStatus(dateStr) {
     const s = getSlotStatus(dateStr);
-    const freeCount = [s.morning, s.evening, s.fullday].filter(Boolean).length;
+    const freeCount = [s.noon, s.evening, s.fullday].filter(Boolean).length;
     if (freeCount === 3) return 'avail';
     if (freeCount === 0) return 'full';
     return 'partial';
@@ -2642,7 +2698,19 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
       return;
     }
 
-
+    // ── Smart booking prevention: guard against already-booked slot ──
+    if (window._availCache && window._availCache() && Object.keys(window._availCache()).length > 0) {
+      const slotStatus = window._getSlotStatus(date);
+      const slotMap = { noon: slotStatus.noon, evening: slotStatus.evening, fullday: slotStatus.fullday };
+      if (!slotMap[slot]) {
+        console.log("🚫 FRONTEND GUARD: Slot already booked for selected date");
+        showMsg('error',
+          '<div class="msg-title"><span class="msg-icon">🚫</span>This slot is already booked for the selected date.</div>' +
+          '<div class="msg-detail">Please choose a different time slot or pick another date.</div>'
+        );
+        return;
+      }
+    }
 
 
 
@@ -3107,6 +3175,11 @@ function tcAccept() {
     document.body.style.overflow = '';
     setTimeout(() => {
       overlay.style.display = 'none';
+      // Scroll to booking section after T&C accepted
+      const bookingSection = document.getElementById('booking');
+      if (bookingSection) {
+        bookingSection.scrollIntoView({ behavior: 'smooth' });
+      }
     }, 600);
     // Optionally: send to backend via fetch
     // fetch('/api/tc-consent', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(record) })
