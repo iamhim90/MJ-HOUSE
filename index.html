@@ -2411,7 +2411,17 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
 
   /* ── Slot-level logic ── */
   function getSlotStatus(dateStr) {
-    const booked = (availCache && availCache[dateStr]) ? availCache[dateStr] : [];
+    let booked = (availCache && availCache[dateStr]) ? availCache[dateStr] : [];
+    
+    if (!Array.isArray(booked)) {
+      if (typeof booked === 'object' && booked !== null) {
+        booked = Object.keys(booked);
+      } else {
+        console.error('Expected booked to be an array:', booked);
+        booked = [];
+      }
+    }
+
     const fulldayBooked = booked.includes('fullday');
     const noonBooked    = booked.includes('noon');
     const eveningBooked = booked.includes('evening');
