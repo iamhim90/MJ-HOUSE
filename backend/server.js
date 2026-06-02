@@ -161,6 +161,20 @@ app.post('/api/bookings', bookingLimiter, async (req, res) => {
       return res.status(400).json({ error: 'Invalid price amount' });
     }
 
+    // Check if slot is already booked for this date
+    const existingBooking = await pool.query(
+      `SELECT id FROM bookings
+       WHERE check_in = $1 AND slot = $2 AND status IN ('confirmed', 'pending', 'waiting')
+       LIMIT 1`,
+      [date, timeSlot]
+    );
+
+    if (existingBooking.rows.length > 0) {
+      return res.status(409).json({
+        error: 'This time slot is no longer available. Please choose a different date or time.'
+      });
+    }
+
     const result = await pool.query(
       `INSERT INTO bookings (customer_name, phone, email, check_in, check_out, guests, total_amount, occasion, notes, slot, status)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)

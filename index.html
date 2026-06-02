@@ -2509,7 +2509,6 @@ const SLOT_META = {
   'birthday-evening': { name: 'Birthday – Evening',  time: '6:00 PM – 10:00 PM' },
 };
 document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () => {
-  if (s.classList.contains('slot-disabled')) return;
   document.querySelectorAll('.slot').forEach(x => x.classList.remove('sel'));
   s.classList.add('sel');
   document.getElementById('selSlot').value = s.dataset.slot;
@@ -2525,208 +2524,14 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
   }
 }));
 
- 
 /* ══════════════════════════════════════════════
-   AVAILABILITY SYSTEM — Read-only data layer
-   Does NOT modify /book API or MongoDB schema
+   CALENDAR SYSTEM — Simple date picker
+   No availability checks, all dates selectable
 ══════════════════════════════════════════════ */
-(function AvailabilitySystem() {
-  const API = API_BASE_URL + '/api/bookings/availability';
-  let availCache = null;   // { "YYYY-MM-DD": ["noon","evening"] }
+(function CalendarSystem() {
   let calYear, calMonth;
   let calSelectedDate = null;
 
-  /* ── Fetch once, cache for session ── */
-  /* ── Fetch once, cache for session with warm-up overlay ── */
-  async function fetchAvailability() {
-    if (availCache !== null) return;
-    
-    const overlay = document.getElementById('bookingLoaderOverlay');
-    const bar = document.getElementById('bloBar');
-    const step1 = document.getElementById('bloStep1');
-    const step2 = document.getElementById('bloStep2');
-    const step3 = document.getElementById('bloStep3');
-    const retryBtn = document.getElementById('bloRetryBtn');
-
-    const setProgress = (pct) => {
-      if (bar) bar.style.width = pct + '%';
-    };
-
-    const resetOverlay = () => {
-      if (overlay) {
-        overlay.classList.remove('fade-out');
-        overlay.style.display = 'flex';
-      }
-      if (retryBtn) retryBtn.style.display = 'none';
-      if (step1) {
-        step1.className = 'active';
-        step1.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Waking up server...';
-      }
-      if (step2) {
-        step2.className = '';
-        step2.innerHTML = '<i class="far fa-circle"></i> Establishing database connection...';
-      }
-      if (step3) {
-        step3.className = '';
-        step3.innerHTML = '<i class="far fa-circle"></i> Fetching slot availability...';
-      }
-      setProgress(10);
-    };
-
-    resetOverlay();
-
-    // Attach retry handler once
-    if (retryBtn && !retryBtn.dataset.wired) {
-      retryBtn.dataset.wired = 'true';
-      retryBtn.onclick = (e) => {
-        e.stopPropagation();
-        fetchAvailability();
-      };
-    }
-
-    let progressInterval = null;
-    let currentPct = 10;
-    
-    // Smoothly animate progress bar up to 90%
-    progressInterval = setInterval(() => {
-      if (currentPct < 90) {
-        currentPct += (90 - currentPct) * 0.05; // asymptotic growth
-        setProgress(currentPct);
-        
-        // Transition checklist steps based on estimated progress
-        if (currentPct > 35 && step1 && step1.classList.contains('active')) {
-          step1.className = 'done';
-          step1.innerHTML = '<i class="fas fa-check-circle"></i> Server active';
-          if (step2) {
-            step2.className = 'active';
-            step2.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Establishing database connection...';
-          }
-        }
-        if (currentPct > 65 && step2 && step2.classList.contains('active')) {
-          step2.className = 'done';
-          step2.innerHTML = '<i class="fas fa-check-circle"></i> Database connected';
-          if (step3) {
-            step3.className = 'active';
-            step3.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Fetching slot availability...';
-          }
-        }
-      }
-    }, 1000);
-
-    const cleanupInterval = () => {
-      if (progressInterval) {
-        clearInterval(progressInterval);
-        progressInterval = null;
-      }
-    };
-
-    let attempts = 0;
-    const maxRetries = 4;
-    const fetchTimeout = 12000; // 12 seconds per fetch attempt
-    
-    while (attempts < maxRetries) {
-      try {
-        console.log(`🔌 Availability fetch attempt ${attempts + 1}/${maxRetries}...`);
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
-        
-        const res = await fetch(API, { method: 'GET', signal: controller.signal });
-        clearTimeout(timeoutId);
-        
-        if (!res.ok) throw new Error('non-200');
-        const data = await res.json();
-        
-        cleanupInterval();
-        
-        // Success path
-        availCache = data.availability || {};
-        window._availError = false;
-
-        // Show completed state
-        setProgress(100);
-        if (step1) {
-          step1.className = 'done';
-          step1.innerHTML = '<i class="fas fa-check-circle"></i> Server active';
-        }
-        if (step2) {
-          step2.className = 'done';
-          step2.innerHTML = '<i class="fas fa-check-circle"></i> Database connected';
-        }
-        if (step3) {
-          step3.className = 'done';
-          step3.innerHTML = '<i class="fas fa-check-circle"></i> Slot availability loaded';
-        }
-
-        setTimeout(() => {
-          if (overlay) {
-            overlay.classList.add('fade-out');
-            setTimeout(() => { overlay.style.display = 'none'; }, 500);
-          }
-        }, 600);
-        return;
-      } catch (err) {
-        attempts++;
-        console.warn(`⚠️ Fetch attempt ${attempts} failed:`, err.message);
-        
-        if (attempts >= maxRetries) {
-          cleanupInterval();
-          console.error("❌ Failed to fetch availability after retries:", err);
-          availCache = null; // keep as null so they can retry
-          window._availError = true;
-          
-          if (step1 && step1.classList.contains('active')) {
-            step1.className = 'error';
-            step1.innerHTML = '<i class="fas fa-times-circle"></i> Server wake-up failed';
-          } else if (step2 && step2.classList.contains('active')) {
-            step2.className = 'error';
-            step2.innerHTML = '<i class="fas fa-times-circle"></i> Database connection failed';
-          } else if (step3) {
-            step3.className = 'error';
-            step3.innerHTML = '<i class="fas fa-times-circle"></i> Sync availability failed';
-          }
-          
-          if (retryBtn) retryBtn.style.display = 'inline-block';
-          return;
-        }
-        await new Promise(r => setTimeout(r, 2000));
-      }
-    }
-  }
-
-  /* ── Slot-level logic ── */
-  function getSlotStatus(dateStr) {
-    let booked = (availCache && availCache[dateStr]) ? availCache[dateStr] : [];
-    
-    if (!Array.isArray(booked)) {
-      if (typeof booked === 'object' && booked !== null) {
-        booked = Object.keys(booked);
-      } else {
-        console.error('Expected booked to be an array:', booked);
-        booked = [];
-      }
-    }
-
-    const fulldayBooked = booked.includes('fullday');
-    const noonBooked    = booked.includes('noon');
-    const eveningBooked = booked.includes('evening');
-    return {
-      noon:    !fulldayBooked && !noonBooked,
-      evening: !fulldayBooked && !eveningBooked,
-      // fullday requires all 3 sub-slots free (noon + evening + fullday none booked)
-      fullday: !fulldayBooked && !noonBooked && !eveningBooked
-    };
-  }
-
-  /* ── Date-level status ── */
-  function getDateStatus(dateStr) {
-    const s = getSlotStatus(dateStr);
-    const freeCount = [s.noon, s.evening, s.fullday].filter(Boolean).length;
-    if (freeCount === 3) return 'avail';
-    if (freeCount === 0) return 'full';
-    return 'partial';
-  }
-
-  /* ── Calendar rendering ── */
   const MONTHS = ['January','February','March','April','May','June',
                   'July','August','September','October','November','December'];
 
@@ -2739,7 +2544,6 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
     const firstDay   = new Date(calYear, calMonth, 1).getDay();
     const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
 
-    // Filler cells
     for (let i = 0; i < firstDay; i++) {
       const e = document.createElement('div');
       e.className = 'cal-day empty';
@@ -2760,10 +2564,8 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
         cell.classList.add('past');
       } else {
         if (dateObj.getTime() === today.getTime()) cell.classList.add('today');
-
         cell.classList.add('selectable');
         cell.addEventListener('click', () => selectDate(dateStr, cell));
-
         if (dateStr === calSelectedDate) cell.classList.add('selected');
       }
       container.appendChild(cell);
@@ -2772,10 +2574,8 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
 
   function selectDate(dateStr, cell) {
     calSelectedDate = dateStr;
-    // Set the hidden input value — read by booking JS untouched
     document.getElementById('bDate').value = dateStr;
 
-    // Update display label
     const [yr, mo, dy] = dateStr.split('-').map(Number);
     const dateObj = new Date(yr, mo - 1, dy);
     const label   = dateObj.toLocaleDateString('en-IN', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
@@ -2783,7 +2583,6 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
     ph.textContent = label;
     ph.className = 'cal-selected-text';
 
-    // Close panel — also restore overflow and backdrop on mobile
     const calPanel   = document.getElementById('calPanel');
     const calDisplay = document.getElementById('calDisplay');
     const calBackdrop = document.getElementById('calBackdrop');
@@ -2793,80 +2592,11 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
     if (calBackdrop) calBackdrop.classList.remove('active');
     document.body.style.overflow = '';
 
-    // Re-render to show selected highlight
     renderCalendar();
-
-    // Update slot availability UI
-    updateSlotUI(dateStr);
-
-    // Clear any stale booking feedback
     const mb = document.getElementById('bookingMessage');
     if (mb) { mb.style.display = 'none'; }
   }
 
-  function updateSlotUI(dateStr) {
-    const slotCategoryMap = {
-      'fullday': 'fullday',
-      'hday-morning': 'noon',
-      'hday-evening': 'evening',
-      'daris-morning': 'noon',
-      'daris-evening': 'evening',
-      'birthday-morning': 'noon',
-      'birthday-evening': 'evening'
-    };
-
-    const status = getSlotStatus(dateStr);
-    let selectedSlotStillValid = true;
-    let firstAvailableSlot = null;
-
-    document.querySelectorAll('.slot').forEach(s => {
-      const slotId = s.dataset.slot;
-      const category = slotCategoryMap[slotId];
-      const isAvailable = status[category];
-      const statusSpan = s.querySelector('.slot-status');
-
-      if (!isAvailable) {
-        s.classList.add('slot-disabled');
-        if (statusSpan) {
-          statusSpan.textContent = 'Booked';
-          statusSpan.style.cssText = 'display: inline-block; background: #ef4444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.55rem; font-weight: bold; margin-left: 8px;';
-        }
-        if (s.classList.contains('sel')) {
-          selectedSlotStillValid = false;
-        }
-      } else {
-        s.classList.remove('slot-disabled');
-        if (statusSpan) {
-          statusSpan.textContent = '';
-          statusSpan.style.display = 'none';
-        }
-        if (!firstAvailableSlot) {
-          firstAvailableSlot = s;
-        }
-      }
-    });
-
-    // If the currently selected slot is now disabled, auto-select the first available one
-    if (!selectedSlotStillValid) {
-      if (firstAvailableSlot) {
-        console.log("🔄 Auto-selecting available slot:", firstAvailableSlot.dataset.slot);
-        firstAvailableSlot.click();
-      } else {
-        // No slots available on this day
-        console.log("🚫 No slots available on this date");
-        document.querySelectorAll('.slot').forEach(s => s.classList.remove('sel'));
-        document.getElementById('selSlot').value = '';
-        document.getElementById('selPrice').value = '0';
-        updateAdvanceDisplay(0);
-        const nameEl = document.getElementById('fssSlotName');
-        const timeEl = document.getElementById('fssSlotTime');
-        if (nameEl) nameEl.textContent = 'No Slots Available';
-        if (timeEl) timeEl.textContent = 'Please choose another date';
-      }
-    }
-  }
-
-  /* ── Wire up calendar controls ── */
   function initCalendar() {
     const now = new Date();
     calYear  = now.getFullYear();
@@ -2888,12 +2618,8 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
     const display = document.getElementById('calDisplay');
     const panel   = document.getElementById('calPanel');
 
-    // CRITICAL: Move panel to <body> so it escapes any ancestor
-    // transform/will-change/preserve-3d stacking context that would
-    // break position:fixed positioning.
     document.body.appendChild(panel);
 
-    // Create a backdrop element for mobile
     let backdrop = document.getElementById('calBackdrop');
     if (!backdrop) {
       backdrop = document.createElement('div');
@@ -2903,26 +2629,21 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
     backdrop.onclick = closeCalendar;
 
     function positionPanel() {
-      // On mobile (bottom sheet) — CSS handles position via media query
       if (window.innerWidth <= 680) return;
       const rect = display.getBoundingClientRect();
       const panelW = 320;
       const gap = 8;
       let left = rect.left;
-      // Prevent going off right edge of viewport
       if (left + panelW > window.innerWidth - 12) {
         left = window.innerWidth - panelW - 12;
       }
       if (left < 8) left = 8;
-      // position:fixed is viewport-relative — DO NOT add scrollY
       const spaceBelow = window.innerHeight - rect.bottom - gap;
-      const panelH = 340; // approximate calendar height
+      const panelH = 340;
       if (spaceBelow >= panelH || spaceBelow >= 200) {
-        // Open below the trigger
         panel.style.top    = (rect.bottom + gap) + 'px';
         panel.style.bottom = 'auto';
       } else {
-        // Flip: open above the trigger
         panel.style.top    = Math.max(8, rect.top - panelH - gap) + 'px';
         panel.style.bottom = 'auto';
       }
@@ -2962,12 +2683,9 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
     window.addEventListener('resize', () => {
       if (panel.classList.contains('open')) positionPanel();
     }, { passive: true });
-    // On mobile: close calendar on scroll (bottom sheet doesn't need repositioning)
-    // On desktop: reposition on scroll so it stays anchored to the trigger
     window.addEventListener('scroll', () => {
       if (!panel.classList.contains('open')) return;
       if (window.innerWidth <= 680) {
-        // On mobile, close on scroll to prevent glitch
         closeCalendar();
       } else {
         positionPanel();
@@ -2975,17 +2693,9 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
     }, { passive: true });
   }
 
-  /* ── Expose slot-guard for booking form ── */
-  window._getSlotStatus = getSlotStatus;
-  window._availCache    = () => availCache;
-
-  /* ── Boot ── */
-  (async () => {
-    await fetchAvailability();
-    initCalendar();
-  })();
-
+  initCalendar();
 })();
+
 
 
 
@@ -3049,43 +2759,6 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
       showMsg('warn', '<div class="msg-title"><span class="msg-icon">⚠️</span>Please enter a valid 10-digit mobile number.</div>');
       return;
     }
-
-    // ── Fetch Error guard: prevent booking if availability could not be loaded ──
-    if (window._availError) {
-      console.log("🚫 FRONTEND GUARD: Prevent booking due to availability fetch error");
-      showMsg('error',
-        '<div class="msg-title"><span class="msg-icon">❌</span>Unable to verify availability.</div>' +
-        '<div class="msg-detail">Please refresh the page and try again.</div>'
-      );
-      return;
-    }
-
-    // ── Smart booking prevention: guard against already-booked slot ──
-    if (window._availCache && window._availCache() && Object.keys(window._availCache()).length > 0) {
-      const slotCategoryMap = {
-        'fullday': 'fullday',
-        'hday-morning': 'noon',
-        'hday-evening': 'evening',
-        'daris-morning': 'noon',
-        'daris-evening': 'evening',
-        'birthday-morning': 'noon',
-        'birthday-evening': 'evening'
-      };
-      
-      const slotStatus = window._getSlotStatus(date);
-      const slotMap = { noon: slotStatus.noon, evening: slotStatus.evening, fullday: slotStatus.fullday };
-      const category = slotCategoryMap[slot];
-      
-      if (!category || !slotMap[category]) {
-        console.log("🚫 FRONTEND GUARD: Slot already booked for selected date");
-        showMsg('error',
-          '<div class="msg-title"><span class="msg-icon">🚫</span>This slot is already booked for the selected date.</div>' +
-          '<div class="msg-detail">Please choose a different time slot or pick another date.</div>'
-        );
-        return;
-      }
-    }
-
 
 
     const slotLabel = slot==='noon'?'12 PM – 3 PM':slot==='evening'?'6 PM – 9 PM':'12 AM – 10 PM';
@@ -3220,10 +2893,16 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
           }
         });
       } else {
-        console.log("⚠️ BOOKING FAILED:", fetcha.message);
+        console.log("⚠️ BOOKING FAILED:", response.status, fetcha.message);
+        let errorDetail = 'Please try again.';
+        if (response.status === 409) {
+          errorDetail = 'This slot was just booked by another customer. Please select a different date or time.';
+        } else if (response.status >= 500) {
+          errorDetail = 'Server error. Please try again in a moment.';
+        }
         showMsg('error',
-          `<div class="msg-title"><span class="msg-icon">⚠️</span>${fetcha.message || 'Booking failed'}</div>` +
-          `<div class="msg-detail">This time slot may already be booked. Please select another date or time.</div>`
+          `<div class="msg-title"><span class="msg-icon">⚠️</span>${fetcha.message || 'Booking could not be completed'}</div>` +
+          `<div class="msg-detail">${errorDetail}</div>`
         );
       }
     } catch (err) {
