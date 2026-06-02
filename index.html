@@ -1379,8 +1379,127 @@
   line-height:1.4;
 }
 
+    /* ── BOOKING WARMUP OVERLAY ── */
+    .booking-loader-overlay {
+      position: absolute;
+      inset: -10px;
+      background: rgba(18, 13, 6, 0.94);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      border: 1px solid rgba(201, 169, 110, 0.15);
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    .booking-loader-overlay.fade-out {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .blo-content {
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+      padding: 2rem;
+    }
+    .blo-spinner {
+      position: relative;
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 1.5rem;
+    }
+    .blo-ring {
+      position: absolute;
+      inset: 0;
+      border: 2px solid rgba(201, 169, 110, 0.1);
+      border-top-color: var(--wheat);
+      border-radius: 50%;
+      animation: spin 1.2s linear infinite;
+    }
+    .blo-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.6rem;
+      color: var(--wheat);
+    }
+    .blo-title {
+      font-family: 'Cinzel', serif;
+      color: var(--wheat);
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+    .blo-desc {
+      font-size: 0.8rem;
+      color: rgba(245, 240, 232, 0.6);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+    .blo-progress {
+      height: 3px;
+      background: rgba(201, 169, 110, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+    .blo-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--bark), var(--wheat), var(--gold));
+      transition: width 0.4s ease;
+    }
+    .blo-steps {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      text-align: left;
+      display: inline-block;
+    }
+    .blo-steps li {
+      font-size: 0.78rem;
+      color: rgba(245, 240, 232, 0.35);
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      transition: color 0.3s;
+    }
+    .blo-steps li.active {
+      color: var(--wheat);
+    }
+    .blo-steps li.done {
+      color: #4ade80;
+    }
+    .blo-steps li.error {
+      color: #f87171;
+    }
+    .blo-steps li i {
+      font-size: 0.7rem;
+      width: 14px;
+      text-align: center;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
   </style>
   <script src="js/config.js"></script>
+  <script>
+    // Early background wake-up ping for Render server
+    (function() {
+      if (typeof API_BASE_URL !== 'undefined') {
+        console.log("⚡ [Antigravity] Early background wake-up ping sent to:", API_BASE_URL);
+        fetch(API_BASE_URL + '/health').catch(err => console.warn("Early ping failed:", err));
+      }
+    })();
+  </script>
 </head>
 <body>
  
@@ -1738,7 +1857,28 @@
     </div>
 
     <!-- TWO-COLUMN SPLIT -->
-    <div class="booking-split">
+    <div class="booking-split" style="position: relative;">
+
+      <!-- WAKE-UP SERVER LOADER OVERLAY -->
+      <div id="bookingLoaderOverlay" class="booking-loader-overlay">
+        <div class="blo-content">
+          <div class="blo-spinner">
+            <div class="blo-ring"></div>
+            <i class="fas fa-database blo-icon"></i>
+          </div>
+          <h3 class="blo-title">Connecting to Server</h3>
+          <p class="blo-desc">Waking up our secure booking server. This might take 20-30 seconds if it was inactive.</p>
+          <div class="blo-progress">
+            <div class="blo-bar" id="bloBar"></div>
+          </div>
+          <ul class="blo-steps">
+            <li id="bloStep1" class="active"><i class="fas fa-circle-notch fa-spin"></i> Waking up server...</li>
+            <li id="bloStep2"><i class="far fa-circle"></i> Establishing database connection...</li>
+            <li id="bloStep3"><i class="far fa-circle"></i> Fetching slot availability...</li>
+          </ul>
+          <button id="bloRetryBtn" class="btn-gold" style="display:none; margin: 1.5rem auto 0; padding: 0.6rem 1.5rem; font-size: 0.7rem;"><i class="fas fa-redo"></i> Retry Connection</button>
+        </div>
+      </div>
 
       <!-- ══ LEFT: SLOT PICKER ══ -->
       <div class="slots-panel reveal" style="transition-delay:.1s">
@@ -2397,27 +2537,98 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
   let calSelectedDate = null;
 
   /* ── Fetch once, cache for session ── */
+  /* ── Fetch once, cache for session with warm-up overlay ── */
   async function fetchAvailability() {
     if (availCache !== null) return;
     
-    const msgBox = document.getElementById('bookingMessage');
-    const showMsg = (type, html) => {
-      if (!msgBox) return;
-      msgBox.className = 'msg-' + type;
-      msgBox.innerHTML = html;
-      msgBox.style.display = 'block';
-    };
-    const hideMsg = () => { if (msgBox) msgBox.style.display = 'none'; };
+    const overlay = document.getElementById('bookingLoaderOverlay');
+    const bar = document.getElementById('bloBar');
+    const step1 = document.getElementById('bloStep1');
+    const step2 = document.getElementById('bloStep2');
+    const step3 = document.getElementById('bloStep3');
+    const retryBtn = document.getElementById('bloRetryBtn');
 
-    showMsg('info', '<div class="msg-title"><i class="fas fa-spinner fa-spin msg-icon" style="margin-right:8px;"></i>Checking availability...</div>');
+    const setProgress = (pct) => {
+      if (bar) bar.style.width = pct + '%';
+    };
+
+    const resetOverlay = () => {
+      if (overlay) {
+        overlay.classList.remove('fade-out');
+        overlay.style.display = 'flex';
+      }
+      if (retryBtn) retryBtn.style.display = 'none';
+      if (step1) {
+        step1.className = 'active';
+        step1.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Waking up server...';
+      }
+      if (step2) {
+        step2.className = '';
+        step2.innerHTML = '<i class="far fa-circle"></i> Establishing database connection...';
+      }
+      if (step3) {
+        step3.className = '';
+        step3.innerHTML = '<i class="far fa-circle"></i> Fetching slot availability...';
+      }
+      setProgress(10);
+    };
+
+    resetOverlay();
+
+    // Attach retry handler once
+    if (retryBtn && !retryBtn.dataset.wired) {
+      retryBtn.dataset.wired = 'true';
+      retryBtn.onclick = (e) => {
+        e.stopPropagation();
+        fetchAvailability();
+      };
+    }
+
+    let progressInterval = null;
+    let currentPct = 10;
     
+    // Smoothly animate progress bar up to 90%
+    progressInterval = setInterval(() => {
+      if (currentPct < 90) {
+        currentPct += (90 - currentPct) * 0.05; // asymptotic growth
+        setProgress(currentPct);
+        
+        // Transition checklist steps based on estimated progress
+        if (currentPct > 35 && step1 && step1.classList.contains('active')) {
+          step1.className = 'done';
+          step1.innerHTML = '<i class="fas fa-check-circle"></i> Server active';
+          if (step2) {
+            step2.className = 'active';
+            step2.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Establishing database connection...';
+          }
+        }
+        if (currentPct > 65 && step2 && step2.classList.contains('active')) {
+          step2.className = 'done';
+          step2.innerHTML = '<i class="fas fa-check-circle"></i> Database connected';
+          if (step3) {
+            step3.className = 'active';
+            step3.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Fetching slot availability...';
+          }
+        }
+      }
+    }, 1000);
+
+    const cleanupInterval = () => {
+      if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+      }
+    };
+
     let attempts = 0;
-    const maxRetries = 3;
+    const maxRetries = 4;
+    const fetchTimeout = 12000; // 12 seconds per fetch attempt
     
     while (attempts < maxRetries) {
       try {
+        console.log(`🔌 Availability fetch attempt ${attempts + 1}/${maxRetries}...`);
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        const timeoutId = setTimeout(() => controller.abort(), fetchTimeout);
         
         const res = await fetch(API, { method: 'GET', signal: controller.signal });
         clearTimeout(timeoutId);
@@ -2425,20 +2636,59 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
         if (!res.ok) throw new Error('non-200');
         const data = await res.json();
         
+        cleanupInterval();
+        
+        // Success path
         availCache = data.availability || {};
         window._availError = false;
-        hideMsg();
+
+        // Show completed state
+        setProgress(100);
+        if (step1) {
+          step1.className = 'done';
+          step1.innerHTML = '<i class="fas fa-check-circle"></i> Server active';
+        }
+        if (step2) {
+          step2.className = 'done';
+          step2.innerHTML = '<i class="fas fa-check-circle"></i> Database connected';
+        }
+        if (step3) {
+          step3.className = 'done';
+          step3.innerHTML = '<i class="fas fa-check-circle"></i> Slot availability loaded';
+        }
+
+        setTimeout(() => {
+          if (overlay) {
+            overlay.classList.add('fade-out');
+            setTimeout(() => { overlay.style.display = 'none'; }, 500);
+          }
+        }, 600);
         return;
       } catch (err) {
         attempts++;
+        console.warn(`⚠️ Fetch attempt ${attempts} failed:`, err.message);
+        
         if (attempts >= maxRetries) {
+          cleanupInterval();
           console.error("❌ Failed to fetch availability after retries:", err);
-          availCache = {};
+          availCache = null; // keep as null so they can retry
           window._availError = true;
-          showMsg('error', '<div class="msg-title"><span class="msg-icon">❌</span>Unable to check availability. Please try again.</div>');
+          
+          if (step1 && step1.classList.contains('active')) {
+            step1.className = 'error';
+            step1.innerHTML = '<i class="fas fa-times-circle"></i> Server wake-up failed';
+          } else if (step2 && step2.classList.contains('active')) {
+            step2.className = 'error';
+            step2.innerHTML = '<i class="fas fa-times-circle"></i> Database connection failed';
+          } else if (step3) {
+            step3.className = 'error';
+            step3.innerHTML = '<i class="fas fa-times-circle"></i> Sync availability failed';
+          }
+          
+          if (retryBtn) retryBtn.style.display = 'inline-block';
           return;
         }
-        await new Promise(r => setTimeout(r, 1500));
+        await new Promise(r => setTimeout(r, 2000));
       }
     }
   }
@@ -2555,7 +2805,65 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
   }
 
   function updateSlotUI(dateStr) {
-    // Availability removed - no-op
+    const slotCategoryMap = {
+      'fullday': 'fullday',
+      'hday-morning': 'noon',
+      'hday-evening': 'evening',
+      'daris-morning': 'noon',
+      'daris-evening': 'evening',
+      'birthday-morning': 'noon',
+      'birthday-evening': 'evening'
+    };
+
+    const status = getSlotStatus(dateStr);
+    let selectedSlotStillValid = true;
+    let firstAvailableSlot = null;
+
+    document.querySelectorAll('.slot').forEach(s => {
+      const slotId = s.dataset.slot;
+      const category = slotCategoryMap[slotId];
+      const isAvailable = status[category];
+      const statusSpan = s.querySelector('.slot-status');
+
+      if (!isAvailable) {
+        s.classList.add('slot-disabled');
+        if (statusSpan) {
+          statusSpan.textContent = 'Booked';
+          statusSpan.style.cssText = 'display: inline-block; background: #ef4444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.55rem; font-weight: bold; margin-left: 8px;';
+        }
+        if (s.classList.contains('sel')) {
+          selectedSlotStillValid = false;
+        }
+      } else {
+        s.classList.remove('slot-disabled');
+        if (statusSpan) {
+          statusSpan.textContent = '';
+          statusSpan.style.display = 'none';
+        }
+        if (!firstAvailableSlot) {
+          firstAvailableSlot = s;
+        }
+      }
+    });
+
+    // If the currently selected slot is now disabled, auto-select the first available one
+    if (!selectedSlotStillValid) {
+      if (firstAvailableSlot) {
+        console.log("🔄 Auto-selecting available slot:", firstAvailableSlot.dataset.slot);
+        firstAvailableSlot.click();
+      } else {
+        // No slots available on this day
+        console.log("🚫 No slots available on this date");
+        document.querySelectorAll('.slot').forEach(s => s.classList.remove('sel'));
+        document.getElementById('selSlot').value = '';
+        document.getElementById('selPrice').value = '0';
+        updateAdvanceDisplay(0);
+        const nameEl = document.getElementById('fssSlotName');
+        const timeEl = document.getElementById('fssSlotTime');
+        if (nameEl) nameEl.textContent = 'No Slots Available';
+        if (timeEl) timeEl.textContent = 'Please choose another date';
+      }
+    }
   }
 
   /* ── Wire up calendar controls ── */
@@ -2754,9 +3062,21 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
 
     // ── Smart booking prevention: guard against already-booked slot ──
     if (window._availCache && window._availCache() && Object.keys(window._availCache()).length > 0) {
+      const slotCategoryMap = {
+        'fullday': 'fullday',
+        'hday-morning': 'noon',
+        'hday-evening': 'evening',
+        'daris-morning': 'noon',
+        'daris-evening': 'evening',
+        'birthday-morning': 'noon',
+        'birthday-evening': 'evening'
+      };
+      
       const slotStatus = window._getSlotStatus(date);
       const slotMap = { noon: slotStatus.noon, evening: slotStatus.evening, fullday: slotStatus.fullday };
-      if (!slotMap[slot]) {
+      const category = slotCategoryMap[slot];
+      
+      if (!category || !slotMap[category]) {
         console.log("🚫 FRONTEND GUARD: Slot already booked for selected date");
         showMsg('error',
           '<div class="msg-title"><span class="msg-icon">🚫</span>This slot is already booked for the selected date.</div>' +
