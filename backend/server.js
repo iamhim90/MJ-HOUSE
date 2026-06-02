@@ -10,6 +10,9 @@ const { requireAuth } = require('./middleware/auth');
 
 const app = express();
 
+// Trust the reverse proxy (Render) to correctly resolve client IPs (e.g. for express-rate-limit)
+app.set('trust proxy', 1);
+
 /* ═══════════════════════════════════════════
    SECURITY HEADERS — helmet
 ═══════════════════════════════════════════ */
