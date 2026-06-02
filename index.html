@@ -2031,7 +2031,7 @@
           </div>
           <div class="qr-image-wrap">
             <a id="upiPayLink" href="upi://pay?pa=9099847718-3@ybl&pn=MJ%20Culture&am=3600&cu=INR&tn=MJ%20Culture%20Booking%20Advance" style="display:block;width:100%;height:100%;position:relative;border-radius:12px;overflow:hidden;text-decoration:none">
-              <img src="assets/paymentQR.png" alt="MJ Culture Farmhouse Dahod" style="width:100%;height:100%">
+              <img src="assets/paymentQR_v2.png" alt="MJ Culture Farmhouse Dahod" style="width:100%;height:100%">
               <div class="qr-scan-anim"></div>
             </a>
           </div>
@@ -2353,7 +2353,7 @@ function updateAdvanceDisplay(price) {
   // UPI deep link — pre-fill advance amount
   const upiLink = document.getElementById('upiPayLink');
   if (upiLink) {
-    upiLink.href = 'upi://pay?pa=8758457909@omni&pn=MJ%20Culture&am=' + advance + '&cu=INR&tn=MJ%20Culture%20Booking%20Advance';
+    upiLink.href = 'upi://pay?pa=9099847718-3@ybl&pn=MJ%20Culture&am=' + advance + '&cu=INR&tn=MJ%20Culture%20Booking%20Advance';
   }
 }
 
@@ -2399,13 +2399,47 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
   /* ── Fetch once, cache for session ── */
   async function fetchAvailability() {
     if (availCache !== null) return;
-    try {
-      const res = await fetch(API, { method: 'GET' });
-      if (!res.ok) throw new Error('non-200');
-      const data = await res.json();
-      availCache = data.availability || {};
-    } catch {
-      availCache = {};   // graceful degradation — calendar still works, no colors
+    
+    const msgBox = document.getElementById('bookingMessage');
+    const showMsg = (type, html) => {
+      if (!msgBox) return;
+      msgBox.className = 'msg-' + type;
+      msgBox.innerHTML = html;
+      msgBox.style.display = 'block';
+    };
+    const hideMsg = () => { if (msgBox) msgBox.style.display = 'none'; };
+
+    showMsg('info', '<div class="msg-title"><i class="fas fa-spinner fa-spin msg-icon" style="margin-right:8px;"></i>Checking availability...</div>');
+    
+    let attempts = 0;
+    const maxRetries = 3;
+    
+    while (attempts < maxRetries) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        
+        const res = await fetch(API, { method: 'GET', signal: controller.signal });
+        clearTimeout(timeoutId);
+        
+        if (!res.ok) throw new Error('non-200');
+        const data = await res.json();
+        
+        availCache = data.availability || {};
+        window._availError = false;
+        hideMsg();
+        return;
+      } catch (err) {
+        attempts++;
+        if (attempts >= maxRetries) {
+          console.error("❌ Failed to fetch availability after retries:", err);
+          availCache = {};
+          window._availError = true;
+          showMsg('error', '<div class="msg-title"><span class="msg-icon">❌</span>Unable to check availability. Please try again.</div>');
+          return;
+        }
+        await new Promise(r => setTimeout(r, 1500));
+      }
     }
   }
 
@@ -2705,6 +2739,16 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
     if (!/^[0-9]{10}$/.test(phone)) {
       console.log("❌ VALIDATION FAILED: Invalid phone format");
       showMsg('warn', '<div class="msg-title"><span class="msg-icon">⚠️</span>Please enter a valid 10-digit mobile number.</div>');
+      return;
+    }
+
+    // ── Fetch Error guard: prevent booking if availability could not be loaded ──
+    if (window._availError) {
+      console.log("🚫 FRONTEND GUARD: Prevent booking due to availability fetch error");
+      showMsg('error',
+        '<div class="msg-title"><span class="msg-icon">❌</span>Unable to verify availability.</div>' +
+        '<div class="msg-detail">Please refresh the page and try again.</div>'
+      );
       return;
     }
 
