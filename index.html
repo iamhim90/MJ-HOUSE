@@ -2109,7 +2109,9 @@
               <div class="frow full">
                 <div class="ff"><label for="bNotes">Special Requirements</label><textarea id="bNotes" placeholder="Decorations, catering preferences, accessibility needs&hellip;"></textarea></div>
               </div>
-              <button type="submit" id="submitBtn" class="btn-wa"><i class="fas fa-calendar-check"></i>Confirm Booking</button>
+               <button type="submit" id="submitBtn" class="btn-wa">
+  <i class="fas fa-paper-plane"></i>Send Booking Inquiry
+</button>
               <div id="bookingMessage" role="alert" aria-live="polite"></div>
               <p class="wa-note"><i class="fas fa-database" style="font-size:.62rem;margin-right:3px"></i>Data saved securely in our system</p>
             </form>
@@ -2119,118 +2121,9 @@
 
     </div><!-- /booking-split -->
 
-    <!-- Booking Status Tracker (shown after submit) -->
-    <div id="bookingStatusTracker"></div>
-
   </div>
 </section>
  
-<!-- QR PAYMENT SECTION -->
-<section class="qr-section" id="payment">
-  <div class="qr-inner">
-    <div class="fade-in">
-      <span class="sec-tag">Secure Payments</span>
-      <h2 class="sec-h">Pay with Ease</h2>
-      <div class="rule"></div>
-      <p class="sec-p">Only <strong style="color:var(--wheat)">30% advance</strong> is required to confirm your booking. Scan the QR or use UPI ID to pay instantly via GPay, PhonePe, Paytm, and more.</p>
-    </div>
-    <div class="qr-grid">
-      <div class="qr-info reveal">
-        <h3>Simple, Secure &amp;<br>Instant Payments</h3>
-        <p>Pay only <strong style="color:var(--wheat)">30% advance</strong> to confirm your slot. The remaining 70% is collected after your event. All major UPI apps accepted.</p>
-        <div class="qr-steps">
-          <div class="qr-step">
-            <div class="qr-step-num">1</div>
-            <div class="qr-step-text"><strong>Select your plan above</strong><span>Your 30% advance amount is calculated automatically</span></div>
-          </div>
-          <div class="qr-step">
-            <div class="qr-step-num">2</div>
-            <div class="qr-step-text"><strong>Scan the QR code</strong><span>Open GPay, PhonePe, Paytm or any UPI app</span></div>
-          </div>
-          <div class="qr-step">
-            <div class="qr-step-num">3</div>
-            <div class="qr-step-text"><strong>Enter your advance amount</strong><span>Add your name &amp; event date in the remarks</span></div>
-          </div>
-          <div class="qr-step">
-            <div class="qr-step-num">4</div>
-            <div class="qr-step-text"><strong>Share screenshot on WhatsApp</strong><span>Send payment proof to confirm your booking</span></div>
-          </div>
-        </div>
-        <div class="qr-upi-pill">
-          <i class="fas fa-at"></i>
-          <span>UPI ID:</span>
-          <strong>9099847718-3@ybl</strong>
-        </div>
-      </div>
-      <div class="qr-card-wrap reveal" style="transition-delay:.15s">
-        <div class="qr-card" id="qrCard3d">
-          <div class="qr-card-header">
-            <div class="brand">MJ Culture</div>
-            <p>Scan &amp; Pay &bull; All UPI Apps Accepted</p>
-            <p style="font-size:0.7rem;color:rgba(245,240,232,.4);margin-top:0.8rem;letter-spacing:0.5px">Tap the QR to pay using UPI apps →</p>
-          </div>
-          <div class="qr-image-wrap">
-            <a id="upiPayLink" href="upi://pay?pa=9099847718-3@ybl&pn=MJ%20Culture&am=3600&cu=INR&tn=MJ%20Culture%20Booking%20Advance" style="display:block;width:100%;height:100%;position:relative;border-radius:12px;overflow:hidden;text-decoration:none">
-              <img src="assets/paymentQR_v2.png" alt="MJ Culture Farmhouse Dahod" style="width:100%;height:100%">
-              <div class="qr-scan-anim"></div>
-            </a>
-          </div>
-          <div style="text-align:center;margin-top:.8rem;padding:.6rem .8rem;background:rgba(201,169,110,.08);border-radius:6px;border:1px solid rgba(201,169,110,.18)">
-            <div style="font-size:.65rem;letter-spacing:1.2px;text-transform:uppercase;color:rgba(201,169,110,.6);margin-bottom:.2rem">Advance Due (30%)</div>
-            <div id="qrAdvanceAmt" style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:var(--wheat)">₹3,600</div>
-          </div>
-          <div class="qr-card-footer" style="margin-top:.8rem">
-            <strong>MJ Culture Farmhouse</strong><br>
-            Dahod, Gujarat &bull; 8347769980
-          </div>
-          <div class="qr-badges">
-            <span class="qr-badge">GPay</span>
-            <span class="qr-badge">PhonePe</span>
-            <span class="qr-badge">Paytm</span>
-            <span class="qr-badge">BHIM</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══ BOOKING STATUS TRACKER (hidden, shown after form submit) ═══ -->
-    <div id="bookingStatusTracker">
-      <div class="bst-header">
-        <h3>Your Booking Status</h3>
-        <p id="bstBookingId"></p>
-      </div>
-      <div class="bst-summary" id="bstSummary"></div>
-      <div class="bst-stepper">
-        <div class="bst-step done" id="bstStep1"><span class="step-dot"></span>Submitted</div>
-        <i class="fas fa-chevron-right bst-arrow"></i>
-        <div class="bst-step" id="bstStep2"><span class="step-dot"></span>Paid</div>
-        <i class="fas fa-chevron-right bst-arrow"></i>
-        <div class="bst-step" id="bstStep3"><span class="step-dot"></span>Approved</div>
-      </div>
-      <div class="bst-action" id="bstAction">
-        <p class="bst-msg">Pay the <strong>30% advance</strong> using the QR code above, then click the button below.</p>
-        <button id="bstPayDoneBtn"><i class="fas fa-check-circle"></i> I Have Completed Payment</button>
-      </div>
-      <div class="bst-waiting" id="bstWaiting">
-        <div class="bst-waiting-icon"></div>
-        <p><strong>Waiting for owner approval…</strong></p>
-        <p style="font-size:.72rem;color:rgba(245,240,232,.3);margin-top:.4rem">This usually takes a few minutes. This page updates automatically.</p>
-      </div>
-      <div class="bst-result confirmed" id="bstConfirmed">
-        <div class="bst-result-icon"><i class="fas fa-check-circle"></i></div>
-        <h4>Booking Confirmed!</h4>
-        <p>Your booking has been approved. We look forward to hosting your event! 🎉</p>
-      </div>
-      <div class="bst-result rejected" id="bstRejected">
-        <div class="bst-result-icon"><i class="fas fa-times-circle"></i></div>
-        <h4>Booking Not Approved</h4>
-        <p>Unfortunately your booking was not approved. Please contact us on WhatsApp for assistance.</p>
-        <a href="https://wa.me/918347769980" target="_blank" style="display:inline-flex;align-items:center;gap:.5rem;margin-top:1rem;color:var(--wa);font-size:.82rem;text-decoration:none"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</a>
-      </div>
-    </div>
-
-  </div>
-</section>
  
 <!-- FOOTER -->
 <footer>
@@ -2976,7 +2869,11 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
             <i class="fas fa-check-circle" style="font-size:3.5rem;color:#86efac;margin-bottom:1.2rem"></i>
             <h3 style="font-family:'Cinzel',serif;color:var(--wheat);margin-bottom:1rem;font-size:1.5rem">Request Received</h3>
             <p style="color:rgba(245,240,232,0.85);font-size:0.95rem;line-height:1.6;margin-bottom:1.8rem">
-              Your request has been successfully taken. To secure your slot, <strong>please pay the 30% advance</strong> now via the QR code. Your booking will be officially confirmed by the admin once the payment is verified.
+              Your booking inquiry has been submitted successfully.
+
+                Our team will review availability and contact you within 24 hours on WhatsApp.
+
+               Please do not make any payment until you receive a confirmation message from our team.
             </p>
             <button onclick="const o = this.parentElement.parentElement; o.style.opacity='0'; setTimeout(()=>o.remove(),300)" style="background:var(--wheat);color:#111;border:none;padding:.85rem 2.2rem;border-radius:30px;font-weight:600;font-size:.95rem;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 4px 15px rgba(201,169,110,0.2)">Proceed to Payment</button>
           </div>
@@ -3013,9 +2910,6 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
 
         // Update QR section to show correct advance for this booking
         updateAdvanceDisplay(price);
-
-        // Scroll to payment section
-        document.getElementById('payment').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
         // Wire up "I have paid" button
         const payDoneBtn = document.getElementById('bstPayDoneBtn');

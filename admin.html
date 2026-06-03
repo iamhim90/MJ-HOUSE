@@ -19,80 +19,119 @@
     html{height:100%;}
     body{font-family:'DM Sans',sans-serif;background:var(--ink);color:var(--cream);min-height:100vh;display:flex;flex-direction:column;}
 
-    /* LOGIN */
-    #loginScreen{position:fixed;inset:0;background:linear-gradient(160deg,var(--soil) 0%,var(--ink) 100%);display:flex;align-items:center;justify-content:center;z-index:9999;padding:1rem;}
-    .login-box{background:rgba(255,255,255,.03);border:1px solid var(--glass-border);border-radius:16px;padding:2.8rem 2.4rem;width:100%;max-width:380px;box-shadow:0 40px 80px rgba(0,0,0,.6);}
+    /* ── LOGIN SCREEN ── */
+    #loginScreen{
+      position:fixed;inset:0;background:linear-gradient(160deg,var(--soil) 0%,var(--ink) 100%);
+      display:flex;align-items:center;justify-content:center;z-index:9999;padding:1rem;
+    }
+    .login-box{
+      background:rgba(255,255,255,.03);border:1px solid var(--glass-border);border-radius:16px;
+      padding:2.8rem 2.4rem;width:100%;max-width:380px;
+      box-shadow:0 40px 80px rgba(0,0,0,.6);
+    }
     .login-brand{text-align:center;margin-bottom:2rem;}
     .login-brand h1{font-family:'Cinzel',serif;font-size:1.4rem;letter-spacing:4px;color:var(--wheat);}
     .login-brand p{font-size:.62rem;letter-spacing:3px;text-transform:uppercase;color:rgba(245,240,232,.3);margin-top:.3rem;}
-    .login-badge{display:inline-flex;align-items:center;gap:.4rem;font-size:.6rem;letter-spacing:2px;text-transform:uppercase;background:rgba(201,169,110,.1);border:1px solid rgba(201,169,110,.2);border-radius:3px;padding:.3rem .8rem;color:var(--wheat);margin-top:.6rem;}
+    .login-badge{display:inline-flex;align-items:center;gap:.4rem;font-size:.6rem;letter-spacing:2px;
+      text-transform:uppercase;background:rgba(201,169,110,.1);border:1px solid rgba(201,169,110,.2);
+      border-radius:3px;padding:.3rem .8rem;color:var(--wheat);margin-top:.6rem;}
     .lf{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1.2rem;}
     .lf label{font-size:.65rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(245,240,232,.4);}
-    .lf input{background:rgba(255,255,255,.04);border:1px solid rgba(201,169,110,.15);border-radius:6px;padding:.85rem 1rem;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s;}
+    .lf input{
+      background:rgba(255,255,255,.04);border:1px solid rgba(201,169,110,.15);border-radius:6px;
+      padding:.85rem 1rem;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:.9rem;
+      outline:none;transition:border-color .2s;
+    }
     .lf input:focus{border-color:rgba(201,169,110,.5);}
     .lf input::placeholder{color:rgba(245,240,232,.2);}
-    #loginBtn2{width:100%;background:var(--wheat);color:var(--soil);border:none;border-radius:6px;padding:1rem;font-size:.78rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .25s;box-shadow:0 8px 24px rgba(201,169,110,.25);margin-top:.4rem;}
+    #loginBtn2{
+      width:100%;background:var(--wheat);color:var(--soil);border:none;border-radius:6px;
+      padding:1rem;font-size:.78rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+      cursor:pointer;transition:all .25s;box-shadow:0 8px 24px rgba(201,169,110,.25);margin-top:.4rem;
+    }
     #loginBtn2:hover{background:var(--gold);transform:translateY(-2px);}
     #loginErr{font-size:.8rem;color:#fca5a5;text-align:center;margin-top:.8rem;display:none;}
 
-    /* LAYOUT */
+    /* ── MAIN LAYOUT ── */
     #app{display:none;flex:1;min-height:100vh;}
-    .sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar);background:var(--sidebar-c);border-right:1px solid rgba(201,169,110,.1);display:flex;flex-direction:column;z-index:100;overflow-y:auto;}
+    .sidebar{
+      position:fixed;top:0;left:0;bottom:0;width:var(--sidebar);
+      background:var(--sidebar-c);border-right:1px solid rgba(201,169,110,.1);
+      display:flex;flex-direction:column;z-index:100;overflow-y:auto;
+    }
     .sidebar-brand{padding:1.6rem 1.2rem;border-bottom:1px solid rgba(201,169,110,.08);}
     .sidebar-brand h2{font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:2.5px;color:var(--wheat);}
     .sidebar-brand span{font-size:.55rem;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,232,.25);}
     .sidebar-nav{padding:.8rem 0;flex:1;}
-    .nav-item{display:flex;align-items:center;gap:.7rem;padding:.85rem 1.2rem;font-size:.78rem;color:rgba(245,240,232,.45);cursor:pointer;transition:all .15s;border-left:2px solid transparent;letter-spacing:.3px;}
+    .nav-item{
+      display:flex;align-items:center;gap:.7rem;padding:.85rem 1.2rem;
+      font-size:.78rem;color:rgba(245,240,232,.45);cursor:pointer;
+      transition:all .15s;border-left:2px solid transparent;letter-spacing:.3px;
+    }
     .nav-item:hover{background:rgba(201,169,110,.05);color:rgba(245,240,232,.7);}
     .nav-item.active{background:rgba(201,169,110,.08);color:var(--wheat);border-left-color:var(--wheat);}
     .nav-item i{width:16px;text-align:center;font-size:.8rem;opacity:.8;}
-    .nav-section-title{font-size:.55rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(245,240,232,.2);padding:.6rem 1.2rem .3rem;margin-top:.4rem;}
+    .nav-section-title{font-size:.55rem;letter-spacing:2.5px;text-transform:uppercase;
+      color:rgba(245,240,232,.2);padding:.6rem 1.2rem .3rem;margin-top:.4rem;}
     .sidebar-footer{padding:1rem 1.2rem;border-top:1px solid rgba(201,169,110,.08);}
-    .sidebar-footer button{width:100%;background:none;border:1px solid rgba(201,169,110,.2);color:rgba(245,240,232,.4);border-radius:5px;padding:.6rem;font-size:.7rem;cursor:pointer;transition:all .2s;letter-spacing:.5px;}
+    .sidebar-footer button{
+      width:100%;background:none;border:1px solid rgba(201,169,110,.2);color:rgba(245,240,232,.4);
+      border-radius:5px;padding:.6rem;font-size:.7rem;cursor:pointer;transition:all .2s;
+      letter-spacing:.5px;
+    }
     .sidebar-footer button:hover{background:rgba(201,169,110,.08);color:var(--wheat);border-color:rgba(201,169,110,.4);}
+
     .main-content{margin-left:var(--sidebar);flex:1;padding:2rem;min-height:100vh;}
     .page{display:none;}
     .page.active{display:block;}
 
-    /* TOP BAR */
+    /* ── TOP BAR ── */
     .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;}
     .topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--cream);}
     .topbar-sub{font-size:.72rem;color:rgba(245,240,232,.3);letter-spacing:.5px;margin-top:.15rem;}
 
-    /* STATS */
+    /* ── STATS GRID ── */
     .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:2rem;}
-    .stat-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;padding:1.4rem 1.2rem;transition:border-color .2s,transform .2s;}
+    .stat-card{
+      background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;
+      padding:1.4rem 1.2rem;transition:border-color .2s,transform .2s;
+    }
     .stat-card:hover{border-color:rgba(201,169,110,.3);transform:translateY(-2px);}
     .stat-card-label{font-size:.62rem;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,232,.35);margin-bottom:.5rem;}
     .stat-card-num{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:var(--wheat);}
+    .stat-card-sub{font-size:.7rem;color:rgba(245,240,232,.3);margin-top:.25rem;}
     .stat-card-icon{font-size:1.2rem;opacity:.25;float:right;margin-top:-2rem;}
 
-    /* TABLE */
+    /* ── TABLE ── */
     .card{background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;overflow:hidden;margin-bottom:1.5rem;}
     .card-header{padding:1.2rem 1.5rem;border-bottom:1px solid rgba(201,169,110,.08);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.8rem;}
     .card-title{font-size:.82rem;letter-spacing:1px;color:var(--cream);display:flex;align-items:center;gap:.6rem;}
     .card-title i{color:var(--wheat);font-size:.75rem;}
     .tbl-wrap{overflow-x:auto;}
     table{width:100%;border-collapse:collapse;font-size:.8rem;}
-    th{padding:.8rem 1rem;text-align:left;font-size:.6rem;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,232,.3);border-bottom:1px solid rgba(201,169,110,.08);font-weight:400;white-space:nowrap;}
+    th{padding:.8rem 1rem;text-align:left;font-size:.6rem;letter-spacing:2px;text-transform:uppercase;
+      color:rgba(245,240,232,.3);border-bottom:1px solid rgba(201,169,110,.08);font-weight:400;white-space:nowrap;}
     td{padding:.9rem 1rem;border-bottom:1px solid rgba(255,255,255,.03);color:rgba(245,240,232,.7);vertical-align:middle;}
     tr:last-child td{border-bottom:none;}
     tr:hover td{background:rgba(201,169,110,.03);}
 
-    /* BADGES */
+    /* ── BADGES / PILLS ── */
     .badge{font-size:.58rem;letter-spacing:1.5px;text-transform:uppercase;padding:.25rem .65rem;border-radius:3px;font-weight:600;white-space:nowrap;}
     .badge-pending{background:rgba(251,191,36,.1);color:#fcd34d;border:1px solid rgba(251,191,36,.25);}
     .badge-confirmed{background:rgba(74,222,128,.1);color:#86efac;border:1px solid rgba(74,222,128,.25);}
     .badge-rejected{background:rgba(251,113,133,.1);color:#fca5a5;border:1px solid rgba(251,113,133,.25);}
     .badge-waiting{background:rgba(147,197,253,.1);color:#93c5fd;border:1px solid rgba(147,197,253,.25);}
-    .badge-hold{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.35);}
     .badge-paid{background:rgba(74,222,128,.1);color:#86efac;border:1px solid rgba(74,222,128,.25);}
     .badge-unpaid{background:rgba(251,113,133,.1);color:#fca5a5;border:1px solid rgba(251,113,133,.25);}
     .badge-partial{background:rgba(251,191,36,.1);color:#fcd34d;border:1px solid rgba(251,191,36,.25);}
     .badge-advance{background:rgba(147,197,253,.1);color:#93c5fd;border:1px solid rgba(147,197,253,.25);}
 
-    /* ACTION BUTTONS */
-    .btn-action{background:none;border:1px solid rgba(201,169,110,.2);color:rgba(245,240,232,.5);border-radius:4px;padding:.35rem .7rem;font-size:.68rem;cursor:pointer;transition:all .15s;letter-spacing:.3px;display:inline-flex;align-items:center;gap:.35rem;white-space:nowrap;}
+    /* ── ACTION BUTTONS ── */
+    .btn-action{
+      background:none;border:1px solid rgba(201,169,110,.2);color:rgba(245,240,232,.5);
+      border-radius:4px;padding:.35rem .7rem;font-size:.68rem;cursor:pointer;
+      transition:all .15s;letter-spacing:.3px;display:inline-flex;align-items:center;gap:.35rem;white-space:nowrap;
+    }
     .btn-action:hover{background:rgba(201,169,110,.08);color:var(--wheat);border-color:rgba(201,169,110,.4);}
     .btn-action.approve{border-color:rgba(74,222,128,.3);color:#86efac;}
     .btn-action.approve:hover{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.5);}
@@ -100,32 +139,53 @@
     .btn-action.reject:hover{background:rgba(251,113,133,.1);border-color:rgba(251,113,133,.5);}
     .btn-action.hold{border-color:rgba(251,191,36,.3);color:#fcd34d;}
     .btn-action.hold:hover{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.5);}
-    .btn-primary{background:var(--wheat);color:var(--soil);border:none;border-radius:5px;padding:.6rem 1.2rem;font-size:.73rem;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.5px;display:inline-flex;align-items:center;gap:.4rem;}
+    .btn-primary{
+      background:var(--wheat);color:var(--soil);border:none;border-radius:5px;
+      padding:.6rem 1.2rem;font-size:.73rem;font-weight:600;cursor:pointer;
+      transition:all .2s;letter-spacing:.5px;display:inline-flex;align-items:center;gap:.4rem;
+    }
     .btn-primary:hover{background:var(--gold);transform:translateY(-1px);}
-    .btn-outline{background:none;border:1px solid rgba(201,169,110,.3);color:var(--wheat);border-radius:5px;padding:.55rem 1.1rem;font-size:.73rem;cursor:pointer;transition:all .2s;letter-spacing:.5px;display:inline-flex;align-items:center;gap:.4rem;}
+    .btn-outline{
+      background:none;border:1px solid rgba(201,169,110,.3);color:var(--wheat);
+      border-radius:5px;padding:.55rem 1.1rem;font-size:.73rem;cursor:pointer;
+      transition:all .2s;letter-spacing:.5px;display:inline-flex;align-items:center;gap:.4rem;
+    }
     .btn-outline:hover{background:rgba(201,169,110,.08);}
     .btn-danger{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#fca5a5;border-radius:5px;padding:.55rem 1.1rem;font-size:.73rem;cursor:pointer;transition:all .2s;}
     .btn-danger:hover{background:rgba(239,68,68,.25);}
 
-    /* FILTER BAR */
+    /* ── SEARCH / FILTER BAR ── */
     .filter-bar{display:flex;gap:.7rem;flex-wrap:wrap;align-items:center;margin-bottom:1.2rem;}
-    .search-input{background:rgba(255,255,255,.04);border:1px solid rgba(201,169,110,.15);border-radius:6px;padding:.6rem 1rem;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:.82rem;outline:none;transition:border-color .2s;min-width:200px;}
+    .search-input{
+      background:rgba(255,255,255,.04);border:1px solid rgba(201,169,110,.15);border-radius:6px;
+      padding:.6rem 1rem;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:.82rem;
+      outline:none;transition:border-color .2s;min-width:200px;
+    }
     .search-input:focus{border-color:rgba(201,169,110,.4);}
     .search-input::placeholder{color:rgba(245,240,232,.2);}
-    .filter-select{background:rgba(255,255,255,.04);border:1px solid rgba(201,169,110,.15);border-radius:6px;padding:.6rem .9rem;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:.8rem;outline:none;cursor:pointer;appearance:none;}
+    .filter-select{
+      background:rgba(255,255,255,.04);border:1px solid rgba(201,169,110,.15);border-radius:6px;
+      padding:.6rem .9rem;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:.8rem;
+      outline:none;cursor:pointer;appearance:none;
+    }
     .filter-select option{background:var(--soil);}
 
-    /* FORM */
+    /* ── FORM ── */
     .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+    .form-grid.full{grid-template-columns:1fr;}
     .ff2{display:flex;flex-direction:column;gap:.35rem;}
     .ff2 label{font-size:.65rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(245,240,232,.4);}
-    .ff2 input,.ff2 select,.ff2 textarea{background:rgba(255,255,255,.04);border:1px solid rgba(201,169,110,.15);border-radius:6px;padding:.75rem .9rem;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;transition:border-color .2s;}
+    .ff2 input,.ff2 select,.ff2 textarea{
+      background:rgba(255,255,255,.04);border:1px solid rgba(201,169,110,.15);border-radius:6px;
+      padding:.75rem .9rem;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:.85rem;
+      outline:none;transition:border-color .2s;
+    }
     .ff2 input:focus,.ff2 select:focus,.ff2 textarea:focus{border-color:rgba(201,169,110,.4);}
     .ff2 select option{background:var(--soil);}
     .ff2 textarea{resize:vertical;min-height:70px;}
 
-    /* MODAL */
-    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:5000;display:none;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(8px);}
+    /* ── MODAL ── */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:5000;display:none;align-items:center;justify-content:center;padding:1rem;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
     .modal-overlay.open{display:flex;}
     .modal-box{background:linear-gradient(160deg,#1a1008 0%,#0e0b06 100%);border:1px solid rgba(201,169,110,.2);border-radius:12px;width:100%;max-width:520px;padding:2rem;position:relative;max-height:85vh;overflow-y:auto;}
     .modal-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:300;color:var(--cream);margin-bottom:1.5rem;display:flex;align-items:center;gap:.6rem;}
@@ -133,27 +193,29 @@
     .modal-close{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--cream);width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.75rem;transition:all .2s;}
     .modal-close:hover{background:rgba(201,169,110,.15);border-color:var(--wheat);}
 
-    /* TOAST */
+    /* ── TOAST ── */
     #toast{position:fixed;bottom:2rem;right:2rem;z-index:99999;display:flex;flex-direction:column;gap:.5rem;pointer-events:none;}
-    .toast-item{background:#1e1509;border:1px solid rgba(201,169,110,.3);border-radius:8px;padding:.9rem 1.2rem;font-size:.8rem;color:var(--cream);box-shadow:0 12px 32px rgba(0,0,0,.5);min-width:240px;max-width:340px;animation:toastIn .3s ease;display:flex;align-items:center;gap:.6rem;}
+    .toast-item{background:#1e1509;border:1px solid rgba(201,169,110,.3);border-radius:8px;padding:.9rem 1.2rem;
+      font-size:.8rem;color:var(--cream);box-shadow:0 12px 32px rgba(0,0,0,.5);min-width:240px;max-width:340px;
+      animation:toastIn .3s ease;display:flex;align-items:center;gap:.6rem;}
     .toast-item.ok{border-color:rgba(74,222,128,.3);color:#86efac;}
     .toast-item.err{border-color:rgba(251,113,133,.3);color:#fca5a5;}
     @keyframes toastIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
 
-    /* TABS */
+    /* ── TABS ── */
     .tabs{display:flex;gap:0;background:rgba(255,255,255,.03);border-radius:7px;padding:.2rem;margin-bottom:1.5rem;}
     .tab-btn{flex:1;padding:.6rem .8rem;text-align:center;font-size:.7rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border-radius:5px;transition:all .15s;color:rgba(245,240,232,.35);border:none;background:none;}
     .tab-btn.active{background:rgba(201,169,110,.1);color:var(--wheat);border:1px solid rgba(201,169,110,.2);}
 
-    /* CHARTS */
+    /* ── CHARTS PLACEHOLDER ── */
     .chart-box{background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;}
     .chart-title{font-size:.75rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(245,240,232,.35);margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;}
     .chart-bars{display:flex;align-items:flex-end;gap:6px;height:100px;}
-    .chart-bar{flex:1;background:linear-gradient(to top,var(--bark),var(--wheat));border-radius:3px 3px 0 0;min-width:8px;transition:opacity .2s;}
+    .chart-bar{flex:1;background:linear-gradient(to top,var(--bark),var(--wheat));border-radius:3px 3px 0 0;min-width:8px;transition:opacity .2s;position:relative;}
     .chart-bar:hover{opacity:.8;}
     .chart-bar-label{font-size:.5rem;text-align:center;color:rgba(245,240,232,.25);margin-top:.4rem;letter-spacing:.3px;}
 
-    /* ACCOUNTS */
+    /* ── ACCOUNT SUMMARY ── */
     .account-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
     .account-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;padding:1.4rem;}
     .account-card.positive{border-color:rgba(74,222,128,.2);}
@@ -165,7 +227,7 @@
     .account-card.negative .account-card-num{color:#fca5a5;}
     .account-card.neutral .account-card-num{color:var(--wheat);}
 
-    /* MISC */
+    /* ── EMPTY / LOADING ── */
     .empty-state{text-align:center;padding:3rem;color:rgba(245,240,232,.25);}
     .empty-state i{font-size:2rem;margin-bottom:.8rem;opacity:.3;}
     .empty-state p{font-size:.85rem;}
@@ -173,7 +235,7 @@
     .spinner{display:inline-block;animation:spin 1s linear infinite;margin-right:.4rem;}
     @keyframes spin{to{transform:rotate(360deg)}}
 
-    /* RESPONSIVE */
+    /* ── RESPONSIVE ── */
     @media(max-width:768px){
       :root{--sidebar:0px;}
       .sidebar{transform:translateX(-200px);width:200px;transition:transform .3s;}
@@ -188,54 +250,10 @@
     .mobile-topbar{display:none;align-items:center;gap:.8rem;margin-bottom:1.5rem;}
     @media(max-width:768px){.mobile-topbar{display:flex;}}
 
-    /* ══ CALENDAR STYLES ══ */
-    .calendar-wrapper{background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;overflow:hidden;margin-bottom:1.5rem;}
-    .cal-header{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 1.5rem;border-bottom:1px solid rgba(201,169,110,.08);}
-    .cal-month-label{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:var(--cream);}
-    .cal-nav-btn{background:none;border:1px solid rgba(201,169,110,.2);color:var(--wheat);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:.85rem;transition:all .2s;display:flex;align-items:center;justify-content:center;}
-    .cal-nav-btn:hover{background:rgba(201,169,110,.1);border-color:rgba(201,169,110,.5);}
-    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:1rem;}
-    .cal-day-name{text-align:center;font-size:.58rem;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,232,.25);padding:.5rem 0;font-weight:500;}
-    .cal-cell{min-height:72px;border-radius:8px;padding:.5rem;position:relative;transition:all .2s;cursor:pointer;border:1px solid transparent;}
-    .cal-cell.empty{cursor:default;}
-    .cal-cell.today{border-color:rgba(201,169,110,.4);}
-    .cal-cell:not(.empty):hover{border-color:rgba(201,169,110,.3);background:rgba(201,169,110,.04);}
-    .cal-day-num{font-size:.8rem;font-weight:500;color:rgba(245,240,232,.5);margin-bottom:.3rem;}
-    .cal-cell.today .cal-day-num{color:var(--wheat);font-weight:700;}
-    /* Status colours */
-    .cal-cell.status-booked{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.3);}
-    .cal-cell.status-booked .cal-day-num{color:#fca5a5;}
-    .cal-cell.status-booked:hover{background:rgba(239,68,68,.18);}
-    .cal-cell.status-hold{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.3);}
-    .cal-cell.status-hold .cal-day-num{color:#fcd34d;}
-    .cal-cell.status-hold:hover{background:rgba(251,191,36,.16);}
-    .cal-cell.status-pending{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.2);}
-    .cal-cell.status-pending .cal-day-num{color:#fcd34d;}
-    .cal-cell.status-available{background:rgba(74,222,128,.06);border-color:rgba(74,222,128,.15);}
-    .cal-cell.status-available .cal-day-num{color:rgba(245,240,232,.4);}
-    .cal-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin:.1rem .08rem;}
-    .cal-dot.booked{background:#ef4444;}
-    .cal-dot.hold{background:#f59e0b;}
-    .cal-dot.pending{background:#fbbf24;}
-    .cal-dot.confirmed{background:#22c55e;}
-    .cal-dot.waiting{background:#60a5fa;}
-    .cal-booking-label{font-size:.55rem;letter-spacing:.5px;color:rgba(245,240,232,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:block;margin-top:.15rem;}
-    .cal-status-pill{font-size:.5rem;letter-spacing:1px;text-transform:uppercase;padding:.15rem .4rem;border-radius:2px;font-weight:600;display:inline-block;}
-    .cal-status-pill.booked{background:rgba(239,68,68,.2);color:#fca5a5;}
-    .cal-status-pill.hold{background:rgba(251,191,36,.15);color:#fcd34d;}
-    .cal-status-pill.pending{background:rgba(251,191,36,.1);color:#fbbf24;}
-    .cal-status-pill.confirmed{background:rgba(74,222,128,.12);color:#86efac;}
-    /* Legend */
-    .cal-legend{display:flex;gap:1.2rem;flex-wrap:wrap;padding:.8rem 1.5rem;border-top:1px solid rgba(201,169,110,.06);}
-    .cal-legend-item{display:flex;align-items:center;gap:.4rem;font-size:.65rem;color:rgba(245,240,232,.4);}
-    .cal-legend-dot{width:10px;height:10px;border-radius:50%;}
-    /* Day detail panel */
-    #calDayPanel{background:rgba(10,8,6,.95);border:1px solid rgba(201,169,110,.2);border-radius:10px;padding:1.2rem;margin-top:.8rem;display:none;}
-    #calDayPanel.open{display:block;}
-    .day-panel-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:300;color:var(--wheat);margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;}
-    .day-booking-card{background:rgba(255,255,255,.03);border:1px solid rgba(201,169,110,.12);border-radius:7px;padding:.9rem;margin-bottom:.6rem;}
-    .day-booking-name{font-size:.85rem;color:var(--cream);margin-bottom:.3rem;}
-    .day-booking-meta{font-size:.72rem;color:rgba(245,240,232,.4);display:flex;gap:.8rem;flex-wrap:wrap;}
+    /* Inline pay edit */
+    .pay-edit-row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;}
+    .pay-input{width:100px;background:rgba(255,255,255,.04);border:1px solid rgba(201,169,110,.2);border-radius:4px;padding:.35rem .6rem;color:var(--cream);font-size:.8rem;outline:none;}
+    .pay-input:focus{border-color:rgba(201,169,110,.4);}
   </style>
 </head>
 <body>
@@ -257,21 +275,7 @@
     </div>
     <div class="lf">
       <label>Password</label>
-      <div style="position: relative;">
-        <input type="password" id="adminPass" placeholder="Your admin password" autocomplete="current-password" style="width: 100%; padding-right: 40px;">
-        <i class="fas fa-eye" id="togglePassword" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #a39581;" onclick="
-          var x = document.getElementById('adminPass');
-          if (x.type === 'password') {
-            x.type = 'text';
-            this.classList.remove('fa-eye');
-            this.classList.add('fa-eye-slash');
-          } else {
-            x.type = 'password';
-            this.classList.remove('fa-eye-slash');
-            this.classList.add('fa-eye');
-          }
-        "></i>
-      </div>
+      <input type="password" id="adminPass" placeholder="Your admin password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doAdminLogin()">
     </div>
     <button id="loginBtn2" onclick="doAdminLogin()"><i class="fas fa-sign-in-alt"></i> Enter Admin Panel</button>
     <div id="loginErr">Invalid credentials. Please try again.</div>
@@ -290,12 +294,11 @@
       <div class="nav-section-title">Overview</div>
       <div class="nav-item active" onclick="showPage('dashboard')"><i class="fas fa-th-large"></i> Dashboard</div>
       <div class="nav-section-title">Bookings</div>
-      <div class="nav-item" onclick="showPage('calendar')"><i class="fas fa-calendar-alt"></i> Calendar</div>
       <div class="nav-item" onclick="showPage('bookings')"><i class="fas fa-calendar-check"></i> Booking Requests</div>
       <div class="nav-item" onclick="showPage('payments')"><i class="fas fa-rupee-sign"></i> Payment Mgmt</div>
       <div class="nav-section-title">Operations</div>
       <div class="nav-item" onclick="showPage('staff')"><i class="fas fa-users"></i> Staff Management</div>
-      <div class="nav-item" onclick="showPage('expenses')"><i class="fas fa-file-invoice"></i> Bills &amp; Expenses</div>
+      <div class="nav-item" onclick="showPage('expenses')"><i class="fas fa-file-invoice"></i> Bills & Expenses</div>
       <div class="nav-section-title">Reports</div>
       <div class="nav-item" onclick="showPage('accounts')"><i class="fas fa-chart-bar"></i> Accounts</div>
       <div class="nav-item" onclick="showPage('export')"><i class="fas fa-download"></i> Export Reports</div>
@@ -307,6 +310,7 @@
 
   <!-- MAIN -->
   <div class="main-content">
+    <!-- Mobile top bar -->
     <div class="mobile-topbar">
       <button class="mob-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('mob-open')"><i class="fas fa-bars"></i></button>
       <span style="font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:2px;color:var(--wheat)">MJ Admin</span>
@@ -318,12 +322,12 @@
         <div><div class="topbar-title">Dashboard</div><div class="topbar-sub" id="dashDate"></div></div>
         <button class="btn-primary" onclick="loadDashboard()"><i class="fas fa-sync-alt"></i> Refresh</button>
       </div>
-      <div class="stats-grid">
+      <div class="stats-grid" id="dashStats">
         <div class="stat-card"><div class="stat-card-label">Total Bookings</div><div class="stat-card-num" id="ds-total">—</div><i class="fas fa-calendar stat-card-icon"></i></div>
         <div class="stat-card"><div class="stat-card-label">Pending</div><div class="stat-card-num" id="ds-pending">—</div><i class="fas fa-clock stat-card-icon"></i></div>
-        <div class="stat-card"><div class="stat-card-label">Confirmed</div><div class="stat-card-num" id="ds-approved">—</div><i class="fas fa-check-circle stat-card-icon"></i></div>
-        <div class="stat-card"><div class="stat-card-label">On Hold</div><div class="stat-card-num" id="ds-hold">—</div><i class="fas fa-pause-circle stat-card-icon"></i></div>
+        <div class="stat-card"><div class="stat-card-label">Approved</div><div class="stat-card-num" id="ds-approved">—</div><i class="fas fa-check-circle stat-card-icon"></i></div>
         <div class="stat-card"><div class="stat-card-label">Advance Collected</div><div class="stat-card-num" id="ds-advance">—</div><i class="fas fa-rupee-sign stat-card-icon"></i></div>
+        <div class="stat-card"><div class="stat-card-label">Pending Payments</div><div class="stat-card-num" id="ds-pending-pay">—</div><i class="fas fa-exclamation-circle stat-card-icon"></i></div>
         <div class="stat-card"><div class="stat-card-label">Total Expenses</div><div class="stat-card-num" id="ds-expenses">—</div><i class="fas fa-file-invoice stat-card-icon"></i></div>
       </div>
       <div class="card">
@@ -332,48 +336,10 @@
       </div>
     </div>
 
-    <!-- CALENDAR -->
-    <div class="page" id="page-calendar">
-      <div class="topbar">
-        <div><div class="topbar-title">Booking Calendar</div><div class="topbar-sub">Visual availability — click any date to see details</div></div>
-        <button class="btn-primary" onclick="loadCalendar()"><i class="fas fa-sync-alt"></i> Refresh</button>
-      </div>
-      <!-- Legend -->
-      <div style="display:flex;gap:.8rem;flex-wrap:wrap;margin-bottom:1.2rem;">
-        <div style="display:flex;align-items:center;gap:.5rem;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:6px;padding:.4rem .9rem;font-size:.7rem;color:#fca5a5;"><span style="width:10px;height:10px;background:#ef4444;border-radius:50%;display:inline-block"></span> Confirmed / Booked</div>
-        <div style="display:flex;align-items:center;gap:.5rem;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:6px;padding:.4rem .9rem;font-size:.7rem;color:#fcd34d;"><span style="width:10px;height:10px;background:#f59e0b;border-radius:50%;display:inline-block"></span> Pending / On Hold</div>
-        <div style="display:flex;align-items:center;gap:.5rem;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);border-radius:6px;padding:.4rem .9rem;font-size:.7rem;color:#86efac;"><span style="width:10px;height:10px;background:#22c55e;border-radius:50%;display:inline-block"></span> Available</div>
-        <div style="display:flex;align-items:center;gap:.5rem;background:rgba(147,197,253,.06);border:1px solid rgba(147,197,253,.2);border-radius:6px;padding:.4rem .9rem;font-size:.7rem;color:#93c5fd;"><span style="width:10px;height:10px;background:#60a5fa;border-radius:50%;display:inline-block"></span> Waiting (Payment)</div>
-      </div>
-      <div class="calendar-wrapper">
-        <div class="cal-header">
-          <button class="cal-nav-btn" onclick="calPrevMonth()"><i class="fas fa-chevron-left"></i></button>
-          <div class="cal-month-label" id="calMonthLabel">—</div>
-          <button class="cal-nav-btn" onclick="calNextMonth()"><i class="fas fa-chevron-right"></i></button>
-        </div>
-        <div class="cal-grid" id="calGrid">
-          <div class="cal-day-name">Sun</div>
-          <div class="cal-day-name">Mon</div>
-          <div class="cal-day-name">Tue</div>
-          <div class="cal-day-name">Wed</div>
-          <div class="cal-day-name">Thu</div>
-          <div class="cal-day-name">Fri</div>
-          <div class="cal-day-name">Sat</div>
-        </div>
-      </div>
-      <div id="calDayPanel">
-        <div class="day-panel-title">
-          <span id="calDayPanelTitle">Bookings on this date</span>
-          <button onclick="document.getElementById('calDayPanel').classList.remove('open')" style="background:none;border:none;color:rgba(245,240,232,.4);cursor:pointer;font-size:.8rem;"><i class="fas fa-times"></i></button>
-        </div>
-        <div id="calDayPanelBody"></div>
-      </div>
-    </div>
-
     <!-- BOOKINGS -->
     <div class="page" id="page-bookings">
       <div class="topbar">
-        <div><div class="topbar-title">Booking Requests</div><div class="topbar-sub">Manage all bookings — confirm, hold, or reject</div></div>
+        <div><div class="topbar-title">Booking Requests</div><div class="topbar-sub">Manage all bookings — approve, reject, or hold</div></div>
       </div>
       <div class="filter-bar">
         <input class="search-input" id="bookingSearch" placeholder="Search by name or phone…" oninput="filterBookings()">
@@ -381,7 +347,6 @@
           <option value="">All Statuses</option>
           <option value="pending">Pending</option>
           <option value="waiting">Waiting (Paid)</option>
-          <option value="hold">On Hold</option>
           <option value="confirmed">Confirmed</option>
           <option value="rejected">Rejected</option>
         </select>
@@ -396,16 +361,6 @@
         <div class="card-header"><span class="card-title"><i class="fas fa-calendar-check"></i> All Bookings</span><span id="bookingCount" style="font-size:.7rem;color:rgba(245,240,232,.3)"></span></div>
         <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Email</th><th>Date</th><th>Occasion</th><th>Guests</th><th>Slot</th><th>Amount</th><th>Status</th><th>Notes</th><th>Actions</th></tr></thead>
         <tbody id="bookingsTableBody"><tr><td colspan="12" class="loading"><i class="fas fa-spinner spinner"></i>Loading bookings...</td></tr></tbody></table></div>
-      </div>
-    </div>
-
-    <!-- PAYMENTS -->
-    <div class="page" id="page-payments">
-      <div class="topbar"><div><div class="topbar-title">Payment Management</div><div class="topbar-sub">Track advances, remaining amounts &amp; payment status</div></div></div>
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fas fa-rupee-sign"></i> Payment Records</span></div>
-        <div class="tbl-wrap"><table><thead><tr><th>Booking</th><th>Guest</th><th>Date</th><th>Total</th><th>Advance Paid</th><th>Remaining</th><th>Payment Status</th><th>Actions</th></tr></thead>
-        <tbody id="paymentsTableBody"><tr><td colspan="8" class="loading"><i class="fas fa-spinner spinner"></i>Loading…</td></tr></tbody></table></div>
       </div>
     </div>
 
@@ -430,7 +385,7 @@
     <!-- EXPENSES -->
     <div class="page" id="page-expenses">
       <div class="topbar">
-        <div><div class="topbar-title">Bills &amp; Expenses</div><div class="topbar-sub">Track all operational costs</div></div>
+        <div><div class="topbar-title">Bills & Expenses</div><div class="topbar-sub">Track all operational costs</div></div>
         <button class="btn-primary" onclick="openAddExpenseModal()"><i class="fas fa-plus"></i> Add Expense</button>
       </div>
       <div class="card">
@@ -448,7 +403,7 @@
           <option value="">All Time</option>
         </select>
       </div>
-      <div class="account-row">
+      <div class="account-row" id="accountsSummary">
         <div class="account-card positive"><div class="account-card-label">Total Earnings</div><div class="account-card-num" id="acc-earnings">₹0</div></div>
         <div class="account-card negative"><div class="account-card-label">Total Expenses</div><div class="account-card-num" id="acc-expenses">₹0</div></div>
         <div class="account-card neutral"><div class="account-card-label">Net Profit</div><div class="account-card-num" id="acc-profit">₹0</div></div>
@@ -461,10 +416,12 @@
 
     <!-- EXPORT -->
     <div class="page" id="page-export">
-      <div class="topbar"><div><div class="topbar-title">Export Reports</div><div class="topbar-sub">Download CSV reports for bookings, payments, and accounts</div></div></div>
+      <div class="topbar">
+        <div><div class="topbar-title">Export Reports</div><div class="topbar-sub">Download CSV reports for bookings, payments, and accounts</div></div>
+      </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;max-width:700px;">
         <div class="card">
-          <div class="card-header"><span class="card-title"><i class="fas fa-file-csv"></i> Booking &amp; Payment Report</span></div>
+          <div class="card-header"><span class="card-title"><i class="fas fa-file-csv"></i> Booking & Payment Report</span></div>
           <div style="padding:1.5rem">
             <p style="font-size:.8rem;color:rgba(245,240,232,.4);line-height:1.7;margin-bottom:1.2rem">Includes all booking details, guest info, dates, slots, status, advance collected, and remaining payments.</p>
             <button class="btn-primary" onclick="exportBookingsCsv()"><i class="fas fa-download"></i> Download CSV</button>
@@ -559,83 +516,50 @@
 
 <script src="js/config.js"></script>
 <script>
-  /* ══════════════════════════════════════
-     ADMIN AUTH — backend-only, no secrets in frontend
-  ══════════════════════════════════════ */
-  var BACKEND_URL = (typeof API_BASE_URL !== 'undefined') ? API_BASE_URL : '';
+  const BACKEND_URL = API_BASE_URL; // Uses central config
+  /* ── ADMIN AUTH ── */
+  const ADMIN_CREDENTIALS = { username: 'admin', password: 'mjculture2026' }; // Change this!
 
   function doAdminLogin() {
-    var u = document.getElementById('adminUser').value.trim();
-    var p = document.getElementById('adminPass').value;
-    var err = document.getElementById('loginErr');
-    var btn = document.getElementById('loginBtn2');
-    err.style.display = 'none';
+    const u = document.getElementById('adminUser').value.trim();
+    const p = document.getElementById('adminPass').value;
+    const btn = document.getElementById('loginBtn2');
+    const err = document.getElementById('loginErr');
 
-    if (!u || !p) {
-      err.textContent = 'Please enter username and password.';
-      err.style.display = 'block';
+    // Check local admin creds first
+    if (u === ADMIN_CREDENTIALS.username && p === ADMIN_CREDENTIALS.password) {
+      sessionStorage.setItem('mjc_admin', '1');
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+      loadDashboard();
       return;
     }
 
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner spinner"></i> Signing in…';
+    // Try backend admin login
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner spinner"></i> Signing in…';
+    err.style.display = 'none';
 
     fetch(BACKEND_URL + '/api/admin/login', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({username: u, password: p})
-    }).then(function(r){ return r.json(); }).then(function(data){
-      if (data.token) {
+    }).then(r => r.json()).then(data => {
+      if (data.token || data.success) {
         sessionStorage.setItem('mjc_admin', '1');
-        sessionStorage.setItem('mjc_admin_token', data.token);
+        if (data.token) sessionStorage.setItem('mjc_admin_token', data.token);
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('app').style.display = 'flex';
         loadDashboard();
       } else {
-        err.textContent = data.error || 'Invalid credentials.';
+        err.textContent = data.message || 'Invalid credentials.';
         err.style.display = 'block';
       }
-    }).catch(function(){
-      err.textContent = 'Could not reach server. Check your connection.';
+    }).catch(() => {
+      err.textContent = 'Connection error. Check credentials or try local login.';
       err.style.display = 'block';
-    }).finally(function(){
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Enter Admin Panel';
+    }).finally(() => {
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Enter Admin Panel';
     });
   }
-
-  // Enter key on password field
-  document.addEventListener('DOMContentLoaded', function(){
-    document.getElementById('adminPass').addEventListener('keydown', function(e){
-      if (e.key === 'Enter') doAdminLogin();
-    });
-    document.getElementById('adminUser').addEventListener('keydown', function(e){
-      if (e.key === 'Enter') document.getElementById('adminPass').focus();
-    });
-    document.getElementById('dashDate').textContent = new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-    document.getElementById('eDate').valueAsDate = new Date();
-    // Populate month selector
-    var sel = document.getElementById('accountMonth');
-    for (var i = 0; i < 12; i++) {
-      var d = new Date(); d.setMonth(d.getMonth() - i);
-      var val = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
-      var label = d.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
-      sel.innerHTML += '<option value="'+val+'">'+label+'</option>';
-    }
-    // ALWAYS require fresh login on every page open
-    sessionStorage.removeItem('mjc_admin');
-    sessionStorage.removeItem('mjc_admin_token');
-    document.getElementById('loginScreen').style.display = 'flex';
-    document.getElementById('app').style.display = 'none';
-
-    // Auto-refresh every 30s when logged in
-    setInterval(function(){
-      if (!sessionStorage.getItem('mjc_admin')) return;
-      if (document.getElementById('page-dashboard').classList.contains('active')) loadDashboard();
-      if (document.getElementById('page-bookings').classList.contains('active')) loadBookings();
-      if (document.getElementById('page-calendar').classList.contains('active')) loadCalendar();
-    }, 30000);
-  });
 
   function adminLogout() {
     sessionStorage.removeItem('mjc_admin');
@@ -644,695 +568,838 @@
     document.getElementById('app').style.display = 'none';
   }
 
-  /* ══════════════════════════════════════
-     NAVIGATION
-  ══════════════════════════════════════ */
-  function showPage(id) {
-    document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
-    document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
-    document.getElementById('page-'+id).classList.add('active');
-    document.querySelectorAll('.nav-item').forEach(function(n){
-      var t = n.textContent.toLowerCase();
-      if (
-        (id==='dashboard' && t.includes('dashboard')) ||
-        (id==='calendar' && t.includes('calendar')) ||
-        (id==='bookings' && t.includes('booking req')) ||
-        (id==='payments' && t.includes('payment')) ||
-        (id==='staff' && t.includes('staff')) ||
-        (id==='expenses' && t.includes('bills')) ||
-        (id==='accounts' && t.includes('accounts')) ||
-        (id==='export' && t.includes('export'))
-      ) n.classList.add('active');
-    });
-
-    document.getElementById('sidebar').classList.remove('mob-open');
-    if (id==='bookings') loadBookings();
-    if (id==='payments') loadPayments();
-    if (id==='staff') loadStaff();
-    if (id==='expenses') loadExpenses();
-    if (id==='accounts') loadAccounts();
-    if (id==='calendar') loadCalendar();
-  }
-
-  function toggleSidebar(){ document.querySelector('.sidebar').classList.toggle('active'); }
-  function logout(){ adminLogout(); }
-
-  // Security: Prevent XSS
-  function escapeHTML(str) {
-    if (!str) return '';
-    return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
-  }
-
-  /* ══════════════════════════════════════
-     UI RENDERERS
-  ══════════════════════════════════════ */
-
-  /* ══════════════════════════════════════
-     TOAST
-  ══════════════════════════════════════ */
-  function toast(msg, type) {
-    type = type || 'ok';
-    var wrap = document.getElementById('toast');
-    var el = document.createElement('div');
-    el.className = 'toast-item ' + type;
-    el.innerHTML = '<i class="fas fa-'+(type==='ok'?'check-circle':'exclamation-triangle')+'"></i> ' + msg;
-    wrap.appendChild(el);
-    setTimeout(function(){ el.remove(); }, 3500);
-  }
-
-  /* ══════════════════════════════════════
-     API HELPER
-  ══════════════════════════════════════ */
-  function api(path, method, body) {
-    method = method || 'GET';
-    var tok = sessionStorage.getItem('mjc_admin_token');
-    var opts = {
-      method: method,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': tok ? 'Bearer ' + tok : ''
+  // Check session on load
+  window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('dashDate').textContent = new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    // Set today's date in expense date field
+    document.getElementById('eDate').valueAsDate = new Date();
+    // Populate month selector
+    const sel = document.getElementById('accountMonth');
+    for (let i = 0; i < 12; i++) {
+      const d = new Date(); d.setMonth(d.getMonth() - i);
+      const val = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+      const label = d.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+      sel.innerHTML += `<option value="${val}">${label}</option>`;
+    }
+    if (sessionStorage.getItem('mjc_admin')) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+      loadDashboard();
+    }
+    
+    // Auto-refresh every 30 seconds
+    setInterval(() => {
+      if (sessionStorage.getItem('mjc_admin')) {
+        if (document.getElementById('page-dashboard').classList.contains('active')) loadDashboard();
+        if (document.getElementById('page-bookings').classList.contains('active')) loadBookings();
       }
-    };
-    if (body) opts.body = JSON.stringify(body);
-    return fetch(BACKEND_URL + path, opts).then(function(r){
-      // If token expired / invalid — force re-login
-      if (r.status === 401) {
-        adminLogout();
-        return { error: 'Session expired. Please log in again.' };
-      }
-      return r.json();
-    });
-  }
-
-  function openModal(id){ document.getElementById(id).classList.add('open'); }
-  function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-  document.querySelectorAll('.modal-overlay').forEach(function(el){
-    el.addEventListener('click', function(e){ if (e.target === el) el.classList.remove('open'); });
+    }, 30000);
   });
 
-  /* ══════════════════════════════════════
-     SLOT MAP (shared)
-  ══════════════════════════════════════ */
-  var SLOT_MAP = {
-    'fullday':'Full Day Exclusive','hday-morning':'Half Day - Morning','hday-evening':'Half Day - Evening',
-    'daris-morning':'Daris - Morning','daris-evening':'Daris - Evening',
-    'birthday-morning':'Birthday - Morning','birthday-evening':'Birthday - Evening',
-    'noon':'Noon','evening':'Evening'
-  };
+  /* ── NAVIGATION ── */
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => {
+      if (n.textContent.toLowerCase().includes(id === 'dashboard' ? 'dashboard' :
+          id === 'bookings' ? 'booking req' : id === 'payments' ? 'payment' :
+          id === 'staff' ? 'staff' : id === 'expenses' ? 'bills' :
+          id === 'accounts' ? 'accounts' : 'export')) n.classList.add('active');
+    });
+    document.getElementById('sidebar').classList.remove('mob-open');
+    // Lazy load
+    if (id === 'bookings') loadBookings();
+    if (id === 'payments') loadPayments();
+    if (id === 'staff') loadStaff();
+    if (id === 'expenses') loadExpenses();
+    if (id === 'accounts') loadAccounts();
+  }
 
-  /* ══════════════════════════════════════
-     DASHBOARD
-  ══════════════════════════════════════ */
-  var allBookings=[], allExpenses=[], allStaff=[];
+  /* ── TOAST ── */
+  function toast(msg, type='ok') {
+    const wrap = document.getElementById('toast');
+    const el = document.createElement('div');
+    el.className = 'toast-item ' + type;
+    el.innerHTML = `<i class="fas fa-${type==='ok'?'check-circle':'exclamation-triangle'}"></i> ${msg}`;
+    wrap.appendChild(el);
+    setTimeout(() => el.remove(), 3500);
+  }
 
-  function loadDashboard() {
-    Promise.allSettled([api('/api/bookings'), api('/api/expenses'), api('/api/staff')]).then(function(results){
-      allBookings = results[0].status==='fulfilled' ? (Array.isArray(results[0].value)?results[0].value:results[0].value.bookings||[]) : [];
-      allExpenses = results[1].status==='fulfilled' ? (Array.isArray(results[1].value)?results[1].value:results[1].value.expenses||[]) : [];
-      allStaff    = results[2].status==='fulfilled' ? (Array.isArray(results[2].value)?results[2].value:results[2].value.staff||[]) : [];
+  /* ── API HELPER ── */
+  async function api(path, method='GET', body=null) {
+    const opts = {method, headers:{'Content-Type':'application/json'}};
+    const tok = sessionStorage.getItem('mjc_admin_token');
+    if (tok) opts.headers['Authorization'] = 'Bearer ' + tok;
+    if (body) opts.body = JSON.stringify(body);
+    const res = await fetch(BACKEND_URL + path, opts);
+    return res.json();
+  }
 
-      var pending = allBookings.filter(function(b){ return b.status==='pending'||b.status==='waiting'; }).length;
-      var approved = allBookings.filter(function(b){ return b.status==='confirmed'; }).length;
-      var onHold = allBookings.filter(function(b){ return b.status==='hold'; }).length;
-      var advTotal = allBookings.reduce(function(s,b){ return s+(parseFloat(b.advancePaid)||0); }, 0);
-      var expTotal = allExpenses.reduce(function(s,e){ return s+(parseFloat(e.amount)||0); }, 0);
+  /* ── MODAL ── */
+  function openModal(id) { document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+  /* ── DASHBOARD ── */
+  let allBookings = [], allExpenses = [], allStaff = [];
+
+  async function loadDashboard() {
+    try {
+      const [bData, eData, sData] = await Promise.allSettled([
+        api('/api/bookings'),
+        api('/api/expenses'),
+        api('/api/staff')
+      ]);
+      allBookings = (bData.status==='fulfilled' ? (Array.isArray(bData.value)?bData.value:bData.value.bookings||[]) : []);
+      allExpenses = (eData.status==='fulfilled' ? (Array.isArray(eData.value)?eData.value:eData.value.expenses||[]) : []);
+      allStaff    = (sData.status==='fulfilled' ? (Array.isArray(sData.value)?sData.value:sData.value.staff||[]) : []);
+
+      const pending = allBookings.filter(b => b.status==='pending' || b.status==='waiting').length;
+      const approved = allBookings.filter(b => b.status==='confirmed').length;
+      const advTotal = allBookings.reduce((s,b) => s + (parseFloat(b.advancePaid)||0), 0);
+      const pendingPay = allBookings.filter(b => b.paymentStatus !== 'fully_paid' && b.status === 'confirmed').length;
+      const expTotal = allExpenses.reduce((s,e) => s + (parseFloat(e.amount)||0), 0);
 
       document.getElementById('ds-total').textContent = allBookings.length;
       document.getElementById('ds-pending').textContent = pending;
       document.getElementById('ds-approved').textContent = approved;
-      document.getElementById('ds-hold').textContent = onHold;
-      document.getElementById('ds-advance').textContent = '₹'+advTotal.toLocaleString('en-IN');
-      document.getElementById('ds-expenses').textContent = '₹'+expTotal.toLocaleString('en-IN');
+      document.getElementById('ds-advance').textContent = '₹' + advTotal.toLocaleString('en-IN');
+      document.getElementById('ds-pending-pay').textContent = pendingPay;
+      document.getElementById('ds-expenses').textContent = '₹' + expTotal.toLocaleString('en-IN');
 
-      var recent = allBookings.slice().sort(function(a,b){ return new Date(b.createdAt||b.date)-new Date(a.createdAt||a.date); }).slice(0,5);
-      var tbody = document.getElementById('recentBookings');
-      tbody.innerHTML = recent.length ? recent.map(function(b){ return bookingRow(b,true); }).join('') :
+      // Recent 5 bookings
+      const tbody = document.getElementById('recentBookings');
+      const recent = [...allBookings].sort((a,b) => new Date(b.createdAt||b.date) - new Date(a.createdAt||a.date)).slice(0,5);
+      tbody.innerHTML = recent.length ? recent.map(b => bookingRow(b, true)).join('') :
         '<tr><td colspan="6" class="empty-state"><p>No bookings yet</p></td></tr>';
-    }).catch(function(){ toast('Error loading dashboard','err'); });
+    } catch(e) {
+      toast('Error loading dashboard data', 'err');
+    }
   }
 
-  /* ══════════════════════════════════════
-     BOOKINGS
-  ══════════════════════════════════════ */
-  function loadBookings() {
-    var tbody = document.getElementById('bookingsTableBody');
+  /* ── BOOKINGS ── */
+  async function loadBookings() {
+    const tbody = document.getElementById('bookingsTableBody');
     tbody.innerHTML = '<tr><td colspan="12" class="loading"><i class="fas fa-spinner spinner"></i>Loading bookings...</td></tr>';
-    api('/api/bookings').then(function(data){
-      allBookings = Array.isArray(data) ? data : (data.bookings||[]);
+    try {
+      const data = await api('/api/bookings');
+      allBookings = Array.isArray(data) ? data : (data.bookings || []);
       renderBookings(allBookings);
-    }).catch(function(){
+    } catch(e) { 
       tbody.innerHTML = '<tr><td colspan="12" class="empty-state"><p>Failed to load bookings</p></td></tr>';
-      toast('Error loading bookings','err');
-    });
+      toast('Error loading bookings', 'err'); 
+    }
   }
 
   function renderBookings(list) {
-    var tbody = document.getElementById('bookingsTableBody');
+    const tbody = document.getElementById('bookingsTableBody');
     document.getElementById('bookingCount').textContent = list.length + ' records';
-    tbody.innerHTML = list.length ? list.map(function(b){ return bookingRow(b,false); }).join('') :
+    tbody.innerHTML = list.length ? list.map(b => bookingRow(b, false)).join('') :
       '<tr><td colspan="12" class="empty-state"><p>No bookings found</p></td></tr>';
   }
 
   function filterBookings() {
-    var q = document.getElementById('bookingSearch').value.toLowerCase();
-    var s = document.getElementById('bookingStatusFilter').value;
-    var sl = document.getElementById('bookingSlotFilter').value;
-    renderBookings(allBookings.filter(function(b){
-      return (!q||(b.customer_name||'').toLowerCase().includes(q)||(b.phone||'').includes(q)||(b.email||'').toLowerCase().includes(q)) &&
-             (!s||b.status===s) && (!sl||b.slot===sl);
-    }));
+    const q = document.getElementById('bookingSearch').value.toLowerCase();
+    const s = document.getElementById('bookingStatusFilter').value;
+    const sl = document.getElementById('bookingSlotFilter').value;
+    renderBookings(allBookings.filter(b =>
+      (!q || (b.customer_name||'').toLowerCase().includes(q) || (b.phone||'').includes(q) || (b.email||'').toLowerCase().includes(q)) &&
+      (!s || b.status === s) && (!sl || b.slot === sl)
+    ));
   }
 
   function bookingRow(b, compact) {
-    var rawDate = b.check_in || b.date || '';
-    var dateStr = rawDate ? new Date(rawDate).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—';
-    var slotStr = SLOT_MAP[b.slot] || b.slot || 'Full Day';
-    var status = b.status || 'pending';
-    var sCls = status==='confirmed'?'confirmed':status==='rejected'?'rejected':status==='waiting'?'waiting':status==='hold'?'hold':'pending';
-    var id = b.id || b._id || b.bookingId || '';
-    var sid = String(id).length > 8 ? '…'+String(id).slice(-6) : id;
+    const date = new Date(b.check_in || b.date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+    const slotMap = {
+      'fullday': 'Full Day Exclusive',
+      'hday-morning': 'Half Day - Morning',
+      'hday-evening': 'Half Day - Evening',
+      'daris-morning': 'Daris - Morning',
+      'daris-evening': 'Daris - Evening',
+      'birthday-morning': 'Birthday - Morning',
+      'birthday-evening': 'Birthday - Evening',
+      'noon': 'Noon',
+      'evening': 'Evening'
+    };
+    const slotStr = slotMap[b.slot] || b.slot || 'Full Day';
+    const sCls = b.status==='confirmed'?'confirmed':b.status==='rejected'?'rejected':b.status==='waiting'?'waiting':'pending';
+    const id = b.id || b._id || b.bookingId || '';
+    const sid = String(id).length > 8 ? '…' + String(id).slice(-6) : id;
+    if (compact) return `<tr>
+      <td>${b.customer_name||b.name||'—'}</td>
+      <td>${date}</td>
+      <td>${slotStr}</td>
+      <td>${b.occasion||'—'}</td>
+      <td><span class="badge badge-${sCls}">${b.status||'pending'}</span></td>
+      <td><div style="display:flex;gap:.4rem;flex-wrap:wrap">
+       ${b.status==='pending' ? `
 
-    // Safe values for WhatsApp (no quotes that break onclick)
-    var phone = (b.phone||'').replace(/[^0-9]/g,'');
-    var name = escapeHTML(b.customer_name||b.name||'Guest');
-    var occasion = escapeHTML(b.occasion||'General');
-    var guests = String(b.guests||'—');
-    var total = '₹'+parseFloat(b.total_amount||b.price||0).toLocaleString('en-IN');
-    var safeDate = dateStr.replace(/'/g,'');
-    var safeSlot = slotStr.replace(/'/g,'');
+     <button class="btn-action approve" onclick="sendAdvanceRequest(
+'${b.phone}',
+'${b.customer_name || b.name}',
+'${date}',
+'${b.occasion}'
+)">
+  <i class="fas fa-money-bill-wave"></i>
+  Request 30% Advance
+</button>
 
-    var waCall = "sendWhatsApp('"+phone+"','"+status+"','"+name+"','"+safeDate+"','"+safeSlot+"','"+occasion+"','"+guests+"','"+total+"')";
-    var waBtn = '<button class="btn-action" style="background:rgba(37,211,102,.12);border-color:rgba(37,211,102,.4);color:#25d166" onclick="'+waCall+'"><i class="fab fa-whatsapp"></i> WhatsApp</button>';
+<button class="btn-action reject" onclick="updateBookingStatus('${id}','rejected')">
+  <i class="fas fa-times"></i>
+  Reject
+</button>
 
-    var actions = '';
-    if (status === 'pending' || status === 'waiting') {
-      actions =
-        '<button class="btn-action approve" onclick="verifyAdvance(\''+id+'\')"><i class="fas fa-check"></i> Confirm</button>' +
-        '<button class="btn-action hold" onclick="updateBookingStatus(\''+id+'\',\'hold\')"><i class="fas fa-pause"></i> Hold</button>' +
-        '<button class="btn-action reject" onclick="updateBookingStatus(\''+id+'\',\'rejected\')"><i class="fas fa-times"></i> Reject</button>' +
-        waBtn;
-    } else if (status === 'hold') {
-      actions =
-        '<button class="btn-action approve" onclick="verifyAdvance(\''+id+'\')"><i class="fas fa-check"></i> Confirm</button>' +
-        '<button class="btn-action reject" onclick="updateBookingStatus(\''+id+'\',\'rejected\')"><i class="fas fa-times"></i> Reject</button>' +
-        waBtn;
-    } else if (status === 'confirmed') {
-      if (b.paymentStatus === 'fully_paid') {
-        actions = '<span class="badge badge-paid" style="font-size:.65rem">Fully Paid ✅</span>' + waBtn;
-      } else {
-        actions = '<button class="btn-action approve" onclick="collectCash(\''+id+'\')"><i class="fas fa-money-bill-wave"></i> Collect Remaining</button>' + waBtn;
-      }
-    } else if (status === 'rejected') {
-      actions = '<button class="btn-action reject" onclick="'+waCall+'"><i class="fab fa-whatsapp"></i> WhatsApp</button>';
-    }
+<button 
+  class="btn-action"
+  onclick="sendWhatsApp(
+    '${b.phone}',
+    'pending',
+    '${b.customer_name || b.name}',
+    '${String(date).replace(/'/g, "\\'")}'
+  )">
 
-    if (compact) {
-      return '<tr>' +
-        '<td>'+escapeHTML(b.customer_name||b.name||'—')+'</td>' +
-        '<td>'+dateStr+'</td>' +
-        '<td>'+slotStr+'</td>' +
-        '<td>'+escapeHTML(b.occasion||'—')+'</td>' +
-        '<td><span class="badge badge-'+sCls+'">'+status+'</span></td>' +
-        '<td><div style="display:flex;gap:.4rem;flex-wrap:wrap">'+actions+'</div></td>' +
-        '</tr>';
-    }
-    return '<tr>' +
-      '<td style="font-size:.65rem;color:rgba(245,240,232,.3)">'+sid+'</td>' +
-      '<td>'+escapeHTML(b.customer_name||b.name||'—')+'</td>' +
-      '<td>'+(b.phone||'—')+'</td>' +
-      '<td>'+(b.email||'—')+'</td>' +
-      '<td>'+dateStr+'</td>' +
-      '<td>'+escapeHTML(b.occasion||'—')+'</td>' +
-      '<td>'+(b.guests||'—')+'</td>' +
-      '<td>'+slotStr+'</td>' +
-      '<td>₹'+parseFloat(b.total_amount||b.price||0).toLocaleString('en-IN')+'</td>' +
-      '<td><span class="badge badge-'+sCls+'">'+status+'</span></td>' +
-      '<td style="max-width:150px;white-space:normal;font-size:.7rem">'+(b.notes||'—')+'</td>' +
-      '<td><div style="display:flex;gap:.35rem;flex-wrap:wrap">'+actions+'</div></td>' +
-      '</tr>';
+  <i class="fab fa-whatsapp"></i>
+  WhatsApp
+
+</button>
+
+` : 
+
+(b.status==='confirmed' && b.paymentStatus!=='fully_paid') ? `
+
+<button class="btn-action approve" onclick="collectCash('${id}')">
+  <i class="fas fa-money-bill-wave"></i>
+  Collect Remaining 70%
+</button>
+
+<button 
+  class="btn-action"
+  onclick="sendWhatsApp(
+    '${b.phone}',
+    'confirmed',
+    '${b.customer_name || b.name}',
+    '${String(date).replace(/'/g, "\\'")}'
+  )">
+
+  <i class="fab fa-whatsapp"></i>
+  WhatsApp
+
+</button>
+
+` : 
+
+(b.paymentStatus==='fully_paid') ? `
+
+<span class="badge badge-paid" style="font-size:.65rem">
+  Fully Paid ✅
+</span>
+
+<button 
+  class="btn-action"
+  onclick="sendWhatsApp(
+    '${b.phone}',
+    'confirmed',
+    '${b.customer_name || b.name}',
+    '${String(date).replace(/'/g, "\\'")}'
+  )">
+
+  <i class="fab fa-whatsapp"></i>
+  WhatsApp
+
+</button>
+
+` : 
+
+(b.status==='rejected') ? `
+
+<button 
+  class="btn-action reject"
+  onclick="sendWhatsApp(
+    '${b.phone}',
+    'rejected',
+    '${b.customer_name || b.name}',
+    '${String(date).replace(/'/g, "\\'")}'
+  )">
+
+  <i class="fab fa-whatsapp"></i>
+  WhatsApp
+
+</button>
+
+` : ''}
+      </div></td>
+    </tr>`;
+    return `<tr>
+      <td style="font-size:.65rem;color:rgba(245,240,232,.3)">${sid}</td>
+      <td>${b.customer_name||b.name||'—'}</td>
+      <td>${b.phone||'—'}</td>
+      <td>${b.email||'—'}</td>
+      <td>${date}</td>
+      <td>${b.occasion||'—'}</td>
+      <td>${b.guests||'—'}</td>
+      <td>${slotStr}</td>
+      <td>₹${parseFloat(b.total_amount||b.price||0).toLocaleString('en-IN')}</td>
+      <td><span class="badge badge-${sCls}">${b.status||'pending'}</span></td>
+      <td style="max-width:150px;white-space:normal;font-size:.7rem">${b.notes||'—'}</td>
+      <td><div style="display:flex;gap:.35rem;flex-wrap:wrap">
+      ${b.status==='pending' ? `
+
+<button class="btn-action approve" onclick="verifyAdvance('${id}')">
+  <i class="fas fa-check"></i>
+  Approve
+</button>
+
+<button class="btn-action reject" onclick="updateBookingStatus('${id}','rejected')">
+  <i class="fas fa-times"></i>
+  Reject
+</button>
+
+<button 
+  class="btn-action"
+  onclick="sendWhatsApp(
+    '${b.phone}',
+    '${b.status}',
+    '${b.customer_name || b.name}',
+    '${String(date).replace(/'/g, "\\'")}'
+  )">
+
+  <i class="fab fa-whatsapp"></i>
+  WhatsApp
+
+</button>
+
+` : 
+
+(b.status==='confirmed' && b.paymentStatus!=='fully_paid') ? `
+
+<button class="btn-action approve" onclick="collectCash('${id}')">
+  <i class="fas fa-money-bill-wave"></i>
+  Collect Remaining 70%
+</button>
+
+<button 
+  class="btn-action"
+  onclick="sendWhatsApp(
+    '${b.phone}',
+    'confirmed',
+    '${b.customer_name || b.name}',
+    '${String(date).replace(/'/g, "\\'")}'
+  )">
+
+  <i class="fab fa-whatsapp"></i>
+  WhatsApp
+
+</button>
+
+` : 
+
+(b.paymentStatus==='fully_paid') ? `
+
+<span class="badge badge-paid" style="font-size:.65rem">
+  Fully Paid ✅
+</span>
+
+<button 
+  class="btn-action"
+  onclick="sendWhatsApp(
+    '${b.phone}',
+    'confirmed',
+    '${b.customer_name || b.name}',
+    '${String(date).replace(/'/g, "\\'")}'
+  )">
+
+  <i class="fab fa-whatsapp"></i>
+  WhatsApp
+
+</button>
+
+` : ''}
+      </div></td>
+    </tr>`;
   }
 
-  function updateBookingStatus(id, status) {
+  function sendAdvanceRequest(phone,name,date,occasion){
+
+const msg =
+`Hello ${name},
+
+Thank you for choosing MJ Culture.
+
+Your requested date (${date}) is available.
+
+To reserve your booking, kindly pay the 30% advance amount and send the payment screenshot on this WhatsApp number.
+
+Once verified, your booking will be officially confirmed.
+
+Thank you,
+MJ Culture`;
+
+window.open(
+`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`,
+'_blank'
+);
+
+}
+
+  async function updateBookingStatus(id, status) {
     if (!id) return;
-    api('/api/bookings/'+id+'/status','PATCH',{status:status}).then(function(res){
+    try {
+      const res = await api('/api/bookings/' + id + '/status', 'PATCH', {status});
       if (res.error) throw new Error(res.error);
-      toast('Booking '+status+' successfully!');
-      loadBookings(); loadDashboard();
-      if (document.getElementById('page-calendar').classList.contains('active')) loadCalendar();
-    }).catch(function(e){ toast('Error: '+e.message,'err'); });
+      toast('Booking ' + status + ' successfully!');
+      loadBookings();
+      loadDashboard();
+    } catch(e) { toast('Error: ' + e.message, 'err'); }
   }
 
-  function verifyAdvance(id) {
-    if (!id) return;
-    api('/api/bookings/'+id+'/verify-advance','PATCH').then(function(res){
-      if (res.error) throw new Error(res.error);
-      toast('Booking confirmed!');
-      loadBookings(); loadDashboard();
-      if (document.getElementById('page-calendar').classList.contains('active')) loadCalendar();
-    }).catch(function(e){ toast('Error: '+e.message,'err'); });
-  }
+    async function verifyAdvance(id) {
+  if (!id) return;
 
-  function collectCash(id) {
+  if(!confirm(
+    "Have you verified the payment screenshot?"
+  )) return;
+
+  try {
+
+    const res = await api(
+      '/api/bookings/' + id + '/verify-advance',
+      'PATCH'
+    );
+
+    if (res.error)
+      throw new Error(res.error);
+
+    toast('Advance verified successfully!');
+
+    loadBookings();
+    loadDashboard();
+
+  } catch(e) {
+
+    toast('Error: ' + e.message, 'err');
+
+  }
+}
+
+  async function collectCash(id) {
     if (!id) return;
     if (!confirm('Mark as fully paid (cash collected)?')) return;
-    api('/api/bookings/'+id+'/collect-cash','PATCH').then(function(res){
+    try {
+      const res = await api('/api/bookings/' + id + '/collect-cash', 'PATCH');
       if (res.error) throw new Error(res.error);
-      toast('Cash collected!');
-      loadBookings(); loadDashboard(); loadPayments();
-    }).catch(function(e){ toast('Error: '+e.message,'err'); });
+      toast('Cash collected and booking fully paid!');
+      loadBookings();
+      loadDashboard();
+      if (document.getElementById('page-payments').classList.contains('active')) loadPayments();
+    } catch(e) { toast('Error: ' + e.message, 'err'); }
   }
 
-  /* ══════════════════════════════════════
-     CALENDAR
-  ══════════════════════════════════════ */
-  var calYear = new Date().getFullYear();
-  var calMonth = new Date().getMonth(); // 0-indexed
-  var calBookingsCache = [];
-
-  function loadCalendar() {
-    api('/api/bookings').then(function(data){
-      calBookingsCache = Array.isArray(data) ? data : (data.bookings||[]);
-      renderCalendar();
-    }).catch(function(){ renderCalendar(); });
-  }
-
-  function calPrevMonth() { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar(); }
-  function calNextMonth() { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendar(); }
-
-  function renderCalendar() {
-    var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-    document.getElementById('calMonthLabel').textContent = MONTHS[calMonth] + ' ' + calYear;
-
-    // Build date→bookings map
-    var dateMap = {};
-    calBookingsCache.forEach(function(b){
-      var raw = b.check_in || b.date;
-      if (!raw) return;
-      var d = new Date(raw);
-      var key = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-      if (!dateMap[key]) dateMap[key] = [];
-      dateMap[key].push(b);
-    });
-
-    var grid = document.getElementById('calGrid');
-    // Keep day-name headers (first 7 children)
-    var headers = [];
-    for (var i = 0; i < 7; i++) headers.push(grid.children[i]);
-    grid.innerHTML = '';
-    headers.forEach(function(h){ grid.appendChild(h); });
-
-    var firstDay = new Date(calYear, calMonth, 1).getDay();
-    var daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
-    var today = new Date();
-
-    // Empty cells before first day
-    for (var e = 0; e < firstDay; e++) {
-      var empty = document.createElement('div');
-      empty.className = 'cal-cell empty';
-      grid.appendChild(empty);
-    }
-
-    for (var day = 1; day <= daysInMonth; day++) {
-      var key = calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
-      var bookings = dateMap[key] || [];
-      var cell = document.createElement('div');
-
-      var isToday = (day===today.getDate() && calMonth===today.getMonth() && calYear===today.getFullYear());
-
-      // Determine cell status (priority: confirmed > pending/hold/waiting > available)
-      var cellStatus = 'available';
-      var hasConfirmed = bookings.some(function(b){ return b.status==='confirmed'; });
-      var hasPendingOrHold = bookings.some(function(b){ return b.status==='pending'||b.status==='hold'||b.status==='waiting'; });
-      if (hasConfirmed) cellStatus = 'booked';
-      else if (hasPendingOrHold) cellStatus = 'hold';
-
-      cell.className = 'cal-cell' + (isToday?' today':'') + (bookings.length?' status-'+cellStatus:' status-available');
-
-      var html = '<div class="cal-day-num">'+day+'</div>';
-      if (bookings.length) {
-        bookings.slice(0,2).forEach(function(b){
-          var s = b.status||'pending';
-          var dotCls = s==='confirmed'?'confirmed':s==='rejected'?'rejected':s==='waiting'?'waiting':s==='hold'?'hold':'pending';
-          html += '<span class="cal-dot '+dotCls+'"></span>';
-        });
-        if (bookings.length > 2) html += '<span style="font-size:.5rem;color:rgba(245,240,232,.3)"> +'+( bookings.length-2)+'</span>';
-        html += '<br>';
-        var first = bookings[0];
-        html += '<span class="cal-booking-label">'+(first.customer_name||first.name||'Guest')+'</span>';
-        if (bookings.length > 1) {
-          html += '<span style="font-size:.52rem;color:rgba(245,240,232,.3)">&amp; '+(bookings.length-1)+' more</span>';
-        }
-      }
-      cell.innerHTML = html;
-
-      // Click handler
-      (function(d, bk, k){
-        cell.addEventListener('click', function(){
-          showCalDayPanel(d, bk, k);
-        });
-      })(day, bookings, key);
-
-      grid.appendChild(cell);
-    }
-
-    // Close day panel when month changes
-    document.getElementById('calDayPanel').classList.remove('open');
-  }
-
-  function showCalDayPanel(day, bookings, key) {
-    var panel = document.getElementById('calDayPanel');
-    var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-    document.getElementById('calDayPanelTitle').textContent = day + ' ' + MONTHS[calMonth] + ' ' + calYear;
-    var body = document.getElementById('calDayPanelBody');
-
-    if (!bookings.length) {
-      body.innerHTML = '<div style="text-align:center;padding:1.5rem;color:rgba(245,240,232,.25);font-size:.85rem"><i class="fas fa-calendar-times" style="display:block;font-size:1.5rem;margin-bottom:.5rem;opacity:.3"></i>No bookings on this date — available!</div>';
-    } else {
-      body.innerHTML = bookings.map(function(b){
-        var s = b.status||'pending';
-        var sCls = s==='confirmed'?'confirmed':s==='rejected'?'rejected':s==='waiting'?'waiting':s==='hold'?'hold':'pending';
-        var slotStr = SLOT_MAP[b.slot]||b.slot||'Full Day';
-        var id = b.id||b._id||b.bookingId||'';
-        var phone = (b.phone||'').replace(/[^0-9]/g,'');
-        var name = (b.customer_name||b.name||'Guest').replace(/'/g,'').replace(/"/g,'');
-        var waMsg = "sendWhatsApp('"+phone+"','"+s+"','"+name+"','"+slotStr.replace(/'/g,'')+"','"+slotStr.replace(/'/g,'')+"','"+(b.occasion||'General').replace(/'/g,'')+"','"+(b.guests||'—')+"','₹"+parseFloat(b.total_amount||b.price||0).toLocaleString('en-IN')+"')";
-        var actBtns = '';
-        if (s==='pending'||s==='waiting') {
-          actBtns = '<button class="btn-action approve" onclick="verifyAdvance(\''+id+'\');showPage(\'calendar\')" style="font-size:.65rem"><i class="fas fa-check"></i> Confirm</button>' +
-                    '<button class="btn-action hold" onclick="updateBookingStatus(\''+id+'\',\'hold\');showPage(\'calendar\')" style="font-size:.65rem"><i class="fas fa-pause"></i> Hold</button>' +
-                    '<button class="btn-action reject" onclick="updateBookingStatus(\''+id+'\',\'rejected\');showPage(\'calendar\')" style="font-size:.65rem"><i class="fas fa-times"></i> Reject</button>';
-        } else if (s==='hold') {
-          actBtns = '<button class="btn-action approve" onclick="verifyAdvance(\''+id+'\');showPage(\'calendar\')" style="font-size:.65rem"><i class="fas fa-check"></i> Confirm</button>' +
-                    '<button class="btn-action reject" onclick="updateBookingStatus(\''+id+'\',\'rejected\');showPage(\'calendar\')" style="font-size:.65rem"><i class="fas fa-times"></i> Reject</button>';
-        }
-        actBtns += '<button class="btn-action" style="font-size:.65rem;background:rgba(37,211,102,.12);border-color:rgba(37,211,102,.4);color:#25d166" onclick="'+waMsg+'"><i class="fab fa-whatsapp"></i> WhatsApp</button>';
-        return '<div class="day-booking-card">' +
-          '<div class="day-booking-name">'+(b.customer_name||b.name||'—')+' <span class="badge badge-'+sCls+'" style="font-size:.55rem">'+s+'</span></div>' +
-          '<div class="day-booking-meta">' +
-            '<span><i class="fas fa-clock" style="margin-right:.3rem;opacity:.5"></i>'+slotStr+'</span>' +
-            '<span><i class="fas fa-phone" style="margin-right:.3rem;opacity:.5"></i>'+(b.phone||'—')+'</span>' +
-            '<span><i class="fas fa-users" style="margin-right:.3rem;opacity:.5"></i>'+(b.guests||'—')+' guests</span>' +
-            (b.occasion ? '<span><i class="fas fa-star" style="margin-right:.3rem;opacity:.5"></i>'+(b.occasion)+'</span>' : '') +
-          '</div>' +
-          (actBtns ? '<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.7rem">'+actBtns+'</div>' : '') +
-        '</div>';
-      }).join('');
-    }
-    panel.classList.add('open');
-  }
-
-  /* ══════════════════════════════════════
-     PAYMENTS
-  ══════════════════════════════════════ */
-  function loadPayments() {
-    var tbody = document.getElementById('paymentsTableBody');
+  /* ── PAYMENTS ── */
+  async function loadPayments() {
+    const tbody = document.getElementById('paymentsTableBody');
     tbody.innerHTML = '<tr><td colspan="8" class="loading"><i class="fas fa-spinner spinner"></i>Loading…</td></tr>';
-    api('/api/bookings').then(function(data){
-      var bookings = Array.isArray(data) ? data : (data.bookings||[]);
-      var filtered = bookings.filter(function(b){ return b.status==='confirmed'||b.advancePaid>0; });
-      tbody.innerHTML = filtered.length ? filtered.map(function(b){
-        var date = new Date(b.check_in||b.date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
-        var adv = parseFloat(b.advancePaid)||0;
-        var total = parseFloat(b.total_amount)||parseFloat(b.price)||0;
-        var rem = total - adv;
-        var ps = (b.paymentStatus||'not_paid').replace(/_/g,' ');
-        var psCls = b.paymentStatus==='fully_paid'?'paid':b.paymentStatus==='advance_paid'||b.paymentStatus==='partially_paid'?'partial':'unpaid';
-        var id = b.id||b._id||b.bookingId||'';
-        return '<tr>' +
-          '<td style="font-size:.7rem;color:rgba(245,240,232,.4)">'+String(id).slice(-6)+'</td>' +
-          '<td>'+escapeHTML(b.customer_name||b.name||'—')+'</td>' +
-          '<td>'+date+'</td>' +
-          '<td style="color:var(--wheat)">₹'+total.toLocaleString('en-IN')+'</td>' +
-          '<td style="color:#86efac">₹'+adv.toLocaleString('en-IN')+'</td>' +
-          '<td style="color:#fcd34d">₹'+rem.toLocaleString('en-IN')+'</td>' +
-          '<td><span class="badge badge-'+psCls+'">'+ps+'</span></td>' +
-          '<td><div style="display:flex;gap:.35rem;flex-wrap:wrap">' +
-            '<button class="btn-action" onclick="openPaymentModal(\''+id+'\','+adv+',\''+(b.paymentStatus||'not_paid')+'\')"><i class="fas fa-edit"></i> Edit</button>' +
-            (b.paymentStatus!=='fully_paid'?'<button class="btn-action approve" onclick="collectCash(\''+id+'\')"><i class="fas fa-money-bill-wave"></i> Complete</button>':'<span class="badge badge-paid" style="font-size:.65rem;align-self:center">Done ✅</span>') +
-          '</div></td></tr>';
+    try {
+      const data = await api('/api/bookings');
+      const bookings = Array.isArray(data) ? data : (data.bookings || []);
+      const confirmed = bookings.filter(b => b.status === 'confirmed' || b.advancePaid > 0);
+      tbody.innerHTML = confirmed.length ? confirmed.map(b => {
+        const date = new Date(b.check_in || b.date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+        const adv = parseFloat(b.advancePaid) || 0;
+        const total = parseFloat(b.total_amount) || parseFloat(b.price) || 0;
+        const rem = total - adv;
+        const ps = (b.paymentStatus||'not_paid').replace(/_/g,' ');
+        const psCls = b.paymentStatus==='fully_paid'?'paid':b.paymentStatus==='advance_paid'||b.paymentStatus==='partially_paid'?'partial':'unpaid';
+        const id = b.id || b._id || b.bookingId || '';
+        return `<tr>
+          <td style="font-size:.7rem;color:rgba(245,240,232,.4)">${String(id).slice(-6)||'—'}</td>
+          <td>${b.customer_name||b.name||'—'}</td>
+          <td>${date}</td>
+          <td style="color:var(--wheat)">₹${total.toLocaleString('en-IN')}</td>
+          <td style="color:#86efac">₹${adv.toLocaleString('en-IN')}</td>
+          <td style="color:#fcd34d">₹${rem.toLocaleString('en-IN')}</td>
+          <td><span class="badge badge-${psCls}">${ps}</span></td>
+          <td><div style="display:flex;gap:.35rem;flex-wrap:wrap">
+            <button class="btn-action" onclick="openPaymentModal('${id}',${adv},'${b.paymentStatus||'not_paid'}')"><i class="fas fa-edit"></i> Edit</button>
+            ${b.paymentStatus !== 'fully_paid' ? `<button class="btn-action approve" onclick="collectCash('${id}')" title="Collect Remaining Cash"><i class="fas fa-money-bill-wave"></i> Complete</button>` : `<span class="badge badge-paid" style="font-size:.65rem; align-self:center">Done ✅</span>`}
+          </div></td>
+        </tr>`;
       }).join('') : '<tr><td colspan="8" class="empty-state"><p>No payment records yet</p></td></tr>';
-    }).catch(function(){ toast('Error loading payments','err'); });
+    } catch(e) { toast('Error loading payments', 'err'); }
   }
 
   function openPaymentModal(id, advance, status) {
     document.getElementById('payBookingId').value = id;
-    document.getElementById('payAdvance').value = advance||'';
-    document.getElementById('payStatus').value = status||'not_paid';
+    document.getElementById('payAdvance').value = advance || '';
+    document.getElementById('payStatus').value = status || 'not_paid';
     document.getElementById('payNotes').value = '';
     openModal('paymentModal');
   }
 
-  function savePayment() {
-    var id = document.getElementById('payBookingId').value;
-    var advance = parseInt(document.getElementById('payAdvance').value)||0;
-    var status = document.getElementById('payStatus').value;
-    var notes = document.getElementById('payNotes').value;
-    api('/api/bookings/'+id+'/payment','PATCH',{advancePaid:advance,paymentStatus:status,paymentNotes:notes}).then(function(res){
+  async function savePayment() {
+    const id = document.getElementById('payBookingId').value;
+    const advance = parseInt(document.getElementById('payAdvance').value) || 0;
+    const status = document.getElementById('payStatus').value;
+    const notes = document.getElementById('payNotes').value;
+    try {
+      const res = await api('/api/bookings/' + id + '/payment', 'PATCH', {advancePaid: advance, paymentStatus: status, paymentNotes: notes});
       if (res.error) throw new Error(res.error);
       toast('Payment updated!');
       closeModal('paymentModal');
       loadPayments();
-    }).catch(function(e){ toast('Error: '+e.message,'err'); });
+    } catch(e) { toast('Error: ' + e.message, 'err'); }
   }
 
-  /* ══════════════════════════════════════
-     STAFF
-  ══════════════════════════════════════ */
-  function loadStaff() {
-    var tbody = document.getElementById('staffTableBody');
+  /* ── STAFF ── */
+  async function loadStaff() {
+    const tbody = document.getElementById('staffTableBody');
     tbody.innerHTML = '<tr><td colspan="5" class="loading"><i class="fas fa-spinner spinner"></i>Loading…</td></tr>';
-    api('/api/staff').then(function(data){
-      allStaff = Array.isArray(data) ? data : (data.staff||[]);
-      var totalSalary = allStaff.reduce(function(s,st){ return s+(parseFloat(st.salary)||0); },0);
-      var paid = allStaff.filter(function(st){ return st.salaryStatus==='paid'; }).reduce(function(s,st){ return s+(parseFloat(st.salary)||0); },0);
+    try {
+      const data = await api('/api/staff');
+      allStaff = Array.isArray(data) ? data : (data.staff || []);
+      const totalSalary = allStaff.reduce((s,st) => s + (parseFloat(st.salary)||0), 0);
+      const paid = allStaff.filter(st => st.salaryStatus==='paid').reduce((s,st) => s + (parseFloat(st.salary)||0), 0);
       document.getElementById('staffCount').textContent = allStaff.length;
-      document.getElementById('salaryPaid').textContent = '₹'+paid.toLocaleString('en-IN');
-      document.getElementById('salaryPending').textContent = '₹'+(totalSalary-paid).toLocaleString('en-IN');
-      tbody.innerHTML = allStaff.length ? allStaff.map(function(s){
-        var sCls = s.salaryStatus==='paid'?'paid':'unpaid';
-        var id = s._id||s.staffId||'';
-        var newStatus = s.salaryStatus==='paid'?'pending':'paid';
-        return '<tr>' +
-          '<td>'+(s.name||'—')+'</td>' +
-          '<td>'+(s.role||'—')+'</td>' +
-          '<td style="color:var(--wheat)">₹'+(s.salary||0).toLocaleString('en-IN')+'/mo</td>' +
-          '<td><span class="badge badge-'+sCls+'">'+(s.salaryStatus||'pending')+'</span></td>' +
-          '<td style="display:flex;gap:.4rem">' +
-            '<button class="btn-action approve" onclick="toggleSalaryStatus(\''+id+'\',\''+newStatus+'\')">' +
-              '<i class="fas fa-'+(s.salaryStatus==='paid'?'undo':'check')+'"></i> '+(s.salaryStatus==='paid'?'Mark Pending':'Mark Paid') +
-            '</button>' +
-            '<button class="btn-action reject" onclick="deleteStaff(\''+id+'\')"><i class="fas fa-trash"></i></button>' +
-          '</td></tr>';
+      document.getElementById('salaryPaid').textContent = '₹' + paid.toLocaleString('en-IN');
+      document.getElementById('salaryPending').textContent = '₹' + (totalSalary - paid).toLocaleString('en-IN');
+      tbody.innerHTML = allStaff.length ? allStaff.map(s => {
+        const sCls = s.salaryStatus==='paid'?'paid':'unpaid';
+        const id = s._id || s.staffId || '';
+        return `<tr>
+          <td>${s.name||'—'}</td>
+          <td>${s.role||'—'}</td>
+          <td style="color:var(--wheat)">₹${(s.salary||0).toLocaleString('en-IN')}/mo</td>
+          <td><span class="badge badge-${sCls}">${s.salaryStatus||'pending'}</span></td>
+          <td style="display:flex;gap:.4rem">
+            <button class="btn-action approve" onclick="toggleSalaryStatus('${id}','${s.salaryStatus==='paid'?'pending':'paid'}')">
+              <i class="fas fa-${s.salaryStatus==='paid'?'undo':'check'}"></i> ${s.salaryStatus==='paid'?'Mark Pending':'Mark Paid'}
+            </button>
+            <button class="btn-action reject" onclick="deleteStaff('${id}')"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>`;
       }).join('') : '<tr><td colspan="5" class="empty-state"><p>No staff added yet</p></td></tr>';
-    }).catch(function(){ toast('Error loading staff','err'); });
+    } catch(e) { toast('Error loading staff', 'err'); }
   }
 
-  function openAddStaffModal(){ openModal('staffModal'); }
+  function openAddStaffModal() { openModal('staffModal'); }
 
-  function saveStaff(e) {
+  async function saveStaff(e) {
     e.preventDefault();
-    var payload = {
+    const payload = {
       name: document.getElementById('sName').value.trim(),
       role: document.getElementById('sRole').value.trim(),
       salary: parseInt(document.getElementById('sSalary').value),
       salaryStatus: document.getElementById('sSalaryStatus').value
     };
-    api('/api/staff','POST',payload).then(function(res){
+    try {
+      const res = await api('/api/staff', 'POST', payload);
       if (res.error) throw new Error(res.error);
       toast('Staff member added!');
       closeModal('staffModal');
       e.target.reset();
       loadStaff();
-    }).catch(function(err){ toast('Error: '+err.message,'err'); });
+    } catch(err) { toast('Error: ' + err.message, 'err'); }
   }
 
-  function toggleSalaryStatus(id, newStatus) {
-    api('/api/staff/'+id,'PATCH',{salaryStatus:newStatus}).then(function(res){
+  async function toggleSalaryStatus(id, newStatus) {
+    try {
+      const res = await api('/api/staff/' + id, 'PATCH', {salaryStatus: newStatus});
       if (res.error) throw new Error(res.error);
       toast('Salary status updated!');
       loadStaff();
-    }).catch(function(e){ toast('Error: '+e.message,'err'); });
+    } catch(e) { toast('Error: ' + e.message, 'err'); }
   }
 
-  function deleteStaff(id) {
+  async function deleteStaff(id) {
     if (!confirm('Delete this staff member?')) return;
-    api('/api/staff/'+id,'DELETE').then(function(){
+    try {
+      await api('/api/staff/' + id, 'DELETE');
       toast('Staff member removed.');
       loadStaff();
-    }).catch(function(e){ toast('Error: '+e.message,'err'); });
+    } catch(e) { toast('Error: ' + e.message, 'err'); }
   }
 
-  /* ══════════════════════════════════════
-     EXPENSES
-  ══════════════════════════════════════ */
-  function loadExpenses() {
-    var tbody = document.getElementById('expensesTableBody');
+  /* ── EXPENSES ── */
+  async function loadExpenses() {
+    const tbody = document.getElementById('expensesTableBody');
     tbody.innerHTML = '<tr><td colspan="6" class="loading"><i class="fas fa-spinner spinner"></i>Loading…</td></tr>';
-    api('/api/expenses').then(function(data){
-      allExpenses = Array.isArray(data) ? data : (data.expenses||[]);
-      var total = allExpenses.reduce(function(s,e){ return s+(parseFloat(e.amount)||0); },0);
-      document.getElementById('totalExpenseBadge').textContent = 'Total: ₹'+total.toLocaleString('en-IN');
-      tbody.innerHTML = allExpenses.length ? allExpenses.map(function(exp){
-        var date = exp.date ? new Date(exp.date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—';
-        var sCls = exp.status==='paid'?'paid':'unpaid';
-        var id = exp._id||exp.expenseId||'';
-        return '<tr>' +
-          '<td>'+date+'</td>' +
-          '<td>'+(exp.category||'—')+'</td>' +
-          '<td style="font-size:.8rem;color:rgba(245,240,232,.45)">'+(exp.notes||'—')+'</td>' +
-          '<td style="color:var(--wheat)">₹'+(exp.amount||0).toLocaleString('en-IN')+'</td>' +
-          '<td><span class="badge badge-'+sCls+'">'+(exp.status||'paid')+'</span></td>' +
-          '<td><button class="btn-action reject" onclick="deleteExpense(\''+id+'\')"><i class="fas fa-trash"></i></button></td>' +
-          '</tr>';
+    try {
+      const data = await api('/api/expenses');
+      allExpenses = Array.isArray(data) ? data : (data.expenses || []);
+      const total = allExpenses.reduce((s,e) => s + (parseFloat(e.amount)||0), 0);
+      document.getElementById('totalExpenseBadge').textContent = 'Total: ₹' + total.toLocaleString('en-IN');
+      tbody.innerHTML = allExpenses.length ? allExpenses.map(exp => {
+        const date = exp.date ? new Date(exp.date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—';
+        const sCls = exp.status==='paid'?'paid':'unpaid';
+        const id = exp._id || exp.expenseId || '';
+        return `<tr>
+          <td>${date}</td>
+          <td>${exp.category||'—'}</td>
+          <td style="font-size:.8rem;color:rgba(245,240,232,.45)">${exp.notes||'—'}</td>
+          <td style="color:var(--wheat)">₹${(exp.amount||0).toLocaleString('en-IN')}</td>
+          <td><span class="badge badge-${sCls}">${exp.status||'paid'}</span></td>
+          <td><button class="btn-action reject" onclick="deleteExpense('${id}')"><i class="fas fa-trash"></i></button></td>
+        </tr>`;
       }).join('') : '<tr><td colspan="6" class="empty-state"><p>No expenses logged yet</p></td></tr>';
-    }).catch(function(){ toast('Error loading expenses','err'); });
+    } catch(e) { toast('Error loading expenses', 'err'); }
   }
 
-  function openAddExpenseModal(){ openModal('expenseModal'); }
+  function openAddExpenseModal() { openModal('expenseModal'); }
 
-  function saveExpense(e) {
+  async function saveExpense(e) {
     e.preventDefault();
-    var payload = {
+    const payload = {
       category: document.getElementById('eCategory').value,
       amount: parseInt(document.getElementById('eAmount').value),
       date: document.getElementById('eDate').value,
       status: document.getElementById('eStatus').value,
       notes: document.getElementById('eNotes').value.trim()
     };
-    api('/api/expenses','POST',payload).then(function(res){
+    try {
+      const res = await api('/api/expenses', 'POST', payload);
       if (res.error) throw new Error(res.error);
       toast('Expense added!');
       closeModal('expenseModal');
       e.target.reset();
       document.getElementById('eDate').valueAsDate = new Date();
       loadExpenses();
-    }).catch(function(err){ toast('Error: '+err.message,'err'); });
+    } catch(err) { toast('Error: ' + err.message, 'err'); }
   }
 
-  function deleteExpense(id) {
+  async function deleteExpense(id) {
     if (!confirm('Delete this expense entry?')) return;
-    api('/api/expenses/'+id,'DELETE').then(function(){
+    try {
+      await api('/api/expenses/' + id, 'DELETE');
       toast('Expense deleted.');
       loadExpenses();
-    }).catch(function(e){ toast('Error: '+e.message,'err'); });
+    } catch(e) { toast('Error: ' + e.message, 'err'); }
   }
 
-  /* ══════════════════════════════════════
-     ACCOUNTS
-  ══════════════════════════════════════ */
-  function loadAccounts() {
-    var monthFilter = document.getElementById('accountMonth').value;
-    Promise.allSettled([api('/api/bookings'), api('/api/expenses'), api('/api/staff')]).then(function(results){
-      var bookings = results[0].status==='fulfilled'?(Array.isArray(results[0].value)?results[0].value:results[0].value.bookings||[]):[];
-      var expenses = results[1].status==='fulfilled'?(Array.isArray(results[1].value)?results[1].value:results[1].value.expenses||[]):[];
-      var staff    = results[2].status==='fulfilled'?(Array.isArray(results[2].value)?results[2].value:results[2].value.staff||[]):[];
+  /* ── ACCOUNTS ── */
+  async function loadAccounts() {
+    const monthFilter = document.getElementById('accountMonth').value;
+    try {
+      const [bData, eData, sData] = await Promise.allSettled([
+        api('/api/bookings'), api('/api/expenses'), api('/api/staff')
+      ]);
+      let bookings = bData.status==='fulfilled' ? (Array.isArray(bData.value)?bData.value:bData.value.bookings||[]) : [];
+      let expenses = eData.status==='fulfilled' ? (Array.isArray(eData.value)?eData.value:eData.value.expenses||[]) : [];
+      let staff    = sData.status==='fulfilled' ? (Array.isArray(sData.value)?sData.value:sData.value.staff||[]) : [];
 
       if (monthFilter) {
-        var parts = monthFilter.split('-').map(Number);
-        var yr = parts[0], mo = parts[1];
-        bookings = bookings.filter(function(b){ var d=new Date(b.date); return d.getFullYear()===yr&&d.getMonth()+1===mo; });
-        expenses = expenses.filter(function(e){ var d=new Date(e.date); return d.getFullYear()===yr&&d.getMonth()+1===mo; });
+        const [yr, mo] = monthFilter.split('-').map(Number);
+        bookings = bookings.filter(b => { const d = new Date(b.date); return d.getFullYear()===yr && d.getMonth()+1===mo; });
+        expenses = expenses.filter(e => { const d = new Date(e.date); return d.getFullYear()===yr && d.getMonth()+1===mo; });
       }
-      var earnings = bookings.filter(function(b){ return b.status==='confirmed'; }).reduce(function(s,b){ return s+(parseFloat(b.total_amount)||parseFloat(b.price)||0); },0);
-      var expTotal = expenses.reduce(function(s,e){ return s+(parseFloat(e.amount)||0); },0);
-      var salaryTotal = staff.reduce(function(s,st){ return s+(parseFloat(st.salary)||0); },0);
-      var totalCosts = expTotal + (monthFilter ? salaryTotal : 0);
-      var profit = earnings - totalCosts;
-      document.getElementById('acc-earnings').textContent = '₹'+earnings.toLocaleString('en-IN');
-      document.getElementById('acc-expenses').textContent = '₹'+totalCosts.toLocaleString('en-IN');
-      document.getElementById('acc-profit').textContent = '₹'+profit.toLocaleString('en-IN');
-      document.getElementById('acc-profit').style.color = profit>=0 ? '#86efac' : '#fca5a5';
 
-      // Chart
-      var allB = results[0].status==='fulfilled'?(Array.isArray(results[0].value)?results[0].value:results[0].value.bookings||[]):[];
-      var months = [];
-      for (var i=5;i>=0;i--){
-        var d=new Date(); d.setMonth(d.getMonth()-i);
-        var y=d.getFullYear(), m=d.getMonth()+1;
-        var rev = allB.filter(function(b){ var bd=new Date(b.date); return bd.getFullYear()===y&&bd.getMonth()+1===m&&b.status==='confirmed'; }).reduce(function(s,b){ return s+(parseFloat(b.total_amount)||parseFloat(b.price)||0); },0);
-        months.push({label:d.toLocaleDateString('en-IN',{month:'short'}),rev:rev});
+      const earnings = bookings.filter(b => b.status==='confirmed').reduce((s,b) => s + (parseFloat(b.total_amount)||parseFloat(b.price)||0), 0);
+      const expTotal = expenses.reduce((s,e) => s + (parseFloat(e.amount)||0), 0);
+      const salaryTotal = staff.reduce((s,st) => s + (parseFloat(st.salary)||0), 0);
+      const totalCosts = expTotal + (monthFilter ? salaryTotal : 0);
+      const profit = earnings - totalCosts;
+
+      document.getElementById('acc-earnings').textContent = '₹' + earnings.toLocaleString('en-IN');
+      document.getElementById('acc-expenses').textContent = '₹' + totalCosts.toLocaleString('en-IN');
+      document.getElementById('acc-profit').textContent = '₹' + profit.toLocaleString('en-IN');
+      document.getElementById('acc-profit').style.color = profit >= 0 ? '#86efac' : '#fca5a5';
+
+      // Monthly revenue chart (last 6 months)
+      const chartEl = document.getElementById('revenueChart');
+      const allB = (bData.status==='fulfilled' ? (Array.isArray(bData.value)?bData.value:bData.value.bookings||[]) : []);
+      const months = [];
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(); d.setMonth(d.getMonth() - i);
+        const yr = d.getFullYear(), mo = d.getMonth() + 1;
+        const rev = allB.filter(b => {
+          const bd = new Date(b.date);
+          return bd.getFullYear()===yr && bd.getMonth()+1===mo && b.status==='confirmed';
+        }).reduce((s,b) => s + (parseFloat(b.total_amount)||parseFloat(b.price)||0), 0);
+        months.push({label: d.toLocaleDateString('en-IN',{month:'short'}), rev});
       }
-      var maxRev = Math.max.apply(null, months.map(function(m){ return m.rev; }).concat([1]));
-      document.getElementById('revenueChart').innerHTML = months.map(function(m){
-        var pct = Math.max((m.rev/maxRev)*100, m.rev>0?8:4);
-        return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem">' +
-          '<div class="chart-bar" style="height:'+pct+'%;width:100%" title="₹'+m.rev.toLocaleString('en-IN')+'"></div>' +
-          '<div class="chart-bar-label">'+m.label+'</div></div>';
+      const maxRev = Math.max(...months.map(m => m.rev), 1);
+      chartEl.innerHTML = months.map(m => {
+        const pct = Math.max((m.rev / maxRev) * 100, m.rev > 0 ? 8 : 4);
+        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem">
+          <div class="chart-bar" style="height:${pct}%;width:100%" title="₹${m.rev.toLocaleString('en-IN')}"></div>
+          <div class="chart-bar-label">${m.label}</div>
+        </div>`;
       }).join('');
-    }).catch(function(){ toast('Error loading accounts','err'); });
+    } catch(e) { toast('Error loading accounts', 'err'); }
   }
 
-  /* ══════════════════════════════════════
-     EXPORT CSV
-  ══════════════════════════════════════ */
+  /* ── EXPORT CSV ── */
   function csvDownload(filename, rows, headers) {
-    var csv = [headers.join(',')].concat(rows.map(function(r){ return r.map(function(v){ return '"'+String(v||'').replace(/"/g,'""')+'"'; }).join(','); })).join('\n');
-    var a = document.createElement('a');
-    a.href = 'data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+    const csv = [headers.join(','), ...rows.map(r => r.map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(','))].join('\n');
+    const a = document.createElement('a');
+    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
     a.download = filename;
     a.click();
   }
 
-  function exportBookingsCsv() {
-    api('/api/bookings').then(function(data){
-      var bookings = Array.isArray(data) ? data : (data.bookings||[]);
-      var headers = ['Booking ID','Name','Phone','Email','Date','Slot','Occasion','Guests','Status','Total','Advance Paid','Payment Status','Notes'];
-      var rows = bookings.map(function(b){
-        var slot = SLOT_MAP[b.slot]||b.slot||'Full Day';
-        return [b.id||b._id||'',b.customer_name||b.name||'',b.phone||'',b.email||'',
+  async function exportBookingsCsv() {
+    try {
+      const data = await api('/api/bookings');
+      const bookings = Array.isArray(data) ? data : (data.bookings || []);
+      const headers = ['Booking ID','Name','Phone','Email','Date','Slot','Occasion','Guests','Status','Total','Advance Paid','Cash Collected','Payment Status','Notes'];
+      const rows = bookings.map(b => {
+        const adv = b.advancePaid||0;
+        const total = parseFloat(b.total_amount||b.price||0);
+        const slotMap = {
+          'fullday': 'Full Day',
+          'hday-morning': 'Half Day - Morning',
+          'hday-evening': 'Half Day - Evening',
+          'daris-morning': 'Daris - Morning',
+          'daris-evening': 'Daris - Evening',
+          'birthday-morning': 'Birthday - Morning',
+          'birthday-evening': 'Birthday - Evening',
+          'noon': 'Noon',
+          'evening': 'Evening'
+        };
+        const slot = slotMap[b.slot] || b.slot || 'Full Day';
+        const cashCollected = b.paymentStatus === 'fully_paid' ? (total - adv) : `Pending Cash: ₹${total - adv}`;
+        return [b.id||b._id||b.bookingId||'',b.customer_name||b.name||'',b.phone||'',b.email||'',
           (b.check_in||b.date)?new Date(b.check_in||b.date).toLocaleDateString('en-IN'):'',
           slot,b.occasion||'',b.guests||'',b.status||'',
-          parseFloat(b.total_amount||b.price||0),b.advancePaid||0,b.paymentStatus||'not_paid',b.notes||''];
+          total,adv,cashCollected,b.paymentStatus||'not_paid',b.notes||b.specialRequirements||''];
       });
-      csvDownload('mj-bookings-'+Date.now()+'.csv',rows,headers);
+      csvDownload(`mj-bookings-${Date.now()}.csv`, rows, headers);
       toast('Booking report downloaded!');
-    }).catch(function(e){ toast('Export failed: '+e.message,'err'); });
+    } catch(e) { toast('Export failed: ' + e.message, 'err'); }
   }
 
-  function exportAccountsCsv() {
-    Promise.allSettled([api('/api/expenses'), api('/api/staff')]).then(function(results){
-      var expenses = results[0].status==='fulfilled'?(Array.isArray(results[0].value)?results[0].value:results[0].value.expenses||[]):[];
-      var staff    = results[1].status==='fulfilled'?(Array.isArray(results[1].value)?results[1].value:results[1].value.staff||[]):[];
-      var sRows = staff.map(function(s){ return [s.name||'',s.role||'',s.salary||0,s.salaryStatus||'']; });
-      sRows.push(['','','TOTAL',staff.reduce(function(s,st){ return s+(parseFloat(st.salary)||0); },0)]);
-      var eRows = expenses.map(function(e){ return [e.date?new Date(e.date).toLocaleDateString('en-IN'):'',e.category||'',e.notes||'',e.amount||0,e.status||'']; });
-      eRows.push(['','','TOTAL',expenses.reduce(function(s,e){ return s+(parseFloat(e.amount)||0); },0),'']);
-      var allRows = [['=== STAFF SALARIES ==='],['Name','Role','Salary','Status']].concat(sRows)
-        .concat([['']]).concat([['=== EXPENSES ==='],['Date','Category','Notes','Amount','Status']]).concat(eRows);
-      csvDownload('mj-accounts-'+Date.now()+'.csv', allRows.map(function(r){ return Array.isArray(r)?r:[r]; }), []);
+  async function exportAccountsCsv() {
+    try {
+      const [eData, sData] = await Promise.allSettled([api('/api/expenses'), api('/api/staff')]);
+      const expenses = eData.status==='fulfilled' ? (Array.isArray(eData.value)?eData.value:eData.value.expenses||[]) : [];
+      const staff    = sData.status==='fulfilled' ? (Array.isArray(sData.value)?sData.value:sData.value.staff||[]) : [];
+
+      // Staff sheet
+      const sHeaders = ['Name','Role','Monthly Salary','Salary Status'];
+      const sRows = staff.map(s => [s.name||'',s.role||'',s.salary||0,s.salaryStatus||'']);
+      const totalSalary = staff.reduce((s,st) => s + (parseFloat(st.salary)||0), 0);
+      sRows.push(['','','TOTAL',totalSalary]);
+
+      // Expense sheet
+      const eHeaders = ['Date','Category','Notes','Amount','Status'];
+      const eRows = expenses.map(e => [e.date?new Date(e.date).toLocaleDateString('en-IN'):'',e.category||'',e.notes||'',e.amount||0,e.status||'']);
+      const totalExp = expenses.reduce((s,e) => s + (parseFloat(e.amount)||0), 0);
+      eRows.push(['','','TOTAL',totalExp,'']);
+
+      const allRows = [
+        ['=== STAFF SALARIES ==='], sHeaders, ...sRows,
+        [''], ['=== EXPENSES ==='], eHeaders, ...eRows
+      ];
+      csvDownload(`mj-accounts-${Date.now()}.csv`, allRows.map(r => Array.isArray(r)?r:[r]), []);
       toast('Accounts report downloaded!');
-    }).catch(function(e){ toast('Export failed: '+e.message,'err'); });
+    } catch(e) { toast('Export failed: ' + e.message, 'err'); }
   }
 
-  /* ══════════════════════════════════════
-     WHATSAPP — full booking details
-  ══════════════════════════════════════ */
-  function sendWhatsApp(phone, status, name, date, slot, occasion, guests, total) {
-    if (!phone) { toast('No phone number for this booking.','err'); return; }
-    var cleanPhone = String(phone).replace(/[^0-9]/g,'');
-    if (cleanPhone.startsWith('91') && cleanPhone.length > 10) cleanPhone = cleanPhone.slice(2);
+  // Close modal on backdrop click
+  document.querySelectorAll('.modal-overlay').forEach(el => {
+    el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
+  });
 
-    var info = '\n━━━━━━━━━━━━━━━━━━━━\n📋 *Booking Details*\n━━━━━━━━━━━━━━━━━━━━\n' +
-      '👤 Name: '+(name||'—')+'\n' +
-      '📅 Date: '+(date||'—')+'\n' +
-      '🕐 Slot: '+(slot||'—')+'\n' +
-      '🎉 Occasion: '+(occasion||'—')+'\n' +
-      '👥 Guests: '+(guests||'—')+'\n' +
-      '💰 Total: '+(total||'—')+'\n' +
-      '━━━━━━━━━━━━━━━━━━━━';
+  function sendWhatsApp(phone, status, name, bookingDate) {
 
-    var msg = '';
-    if (status === 'confirmed') {
-      msg = 'Hello '+(name||'')+',\n\nGreat news! 🎉 Your booking at *MJ Culture Farmhouse* has been *CONFIRMED* ✅'+info+'\n\nPlease ensure the remaining balance is paid and handing 10,000 deposit cash on the day of event.\n\n— MJ Culture Team 🏡';
-    } else if (status === 'rejected') {
-      msg = 'Hello '+(name||'')+',\n\nWe regret to inform you that your booking at *MJ Culture Farmhouse* has been *rejected* ❌'+info+'\n\nIf an advance was paid, it will be refunded within 3–5 business days.\n\n— MJ Culture Team 🏡';
-    } else if (status === 'hold') {
-      msg = 'Hello '+(name||'')+',\n\nYour booking at *MJ Culture Farmhouse* is currently *ON HOLD* ⏳'+info+'\n\nOur team will get back to you shortly. We appreciate your patience.\n\n— MJ Culture Team 🏡';
-    } else {
-      msg = 'Hello '+(name||'')+',\n\nThank you for your booking request at *MJ Culture Farmhouse*! 🏡'+info+'\n\nYour request is *under review*. Our team will contact you within 24 hours.\n\n— MJ Culture Team';
-    }
-    window.open('https://wa.me/91'+cleanPhone+'?text='+encodeURIComponent(msg), '_blank');
+  let msg = "";
+
+  if(status === "confirmed") {
+
+msg =
+`Hello ${name},
+
+We have successfully verified your advance payment.
+
+Your booking has now been CONFIRMED ✅
+
+Booking Date: ${bookingDate}
+
+Thank you for choosing MJ Culture.
+
+We look forward to hosting your event.`;
+
   }
+
+  else if(status === "rejected") {
+
+msg =
+`Hello ${name},
+
+We regret to inform you that your booking request for ${bookingDate} could not be accommodated.
+
+The requested slot is unavailable.
+
+Thank you for considering MJ Culture.`;
+
+  }
+
+  else {
+
+    msg =
+`Hello ${name},
+
+Thank you for submitting your booking request to MJ Culture ✨
+
+Your booking request for ${bookingDate} is currently under review.
+
+Our team will contact you within 24 hours regarding confirmation.`;
+
+  }
+
+  const url =
+`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`;
+
+  window.open(url, "_blank");
+}
+
+function sendWhatsApp(phone, status, name) {
+
+  let msg = "";
+
+  if(status === "confirmed") {
+
+    msg =
+`Hello ${name},
+
+Greetings from MJ Culture ✨
+
+We are pleased to inform you that your booking for ${String(bookingDate).replace(/'/g, "\\'")} has been successfully CONFIRMED ✅
+
+Our team looks forward to hosting your special occasion.
+
+Thank you for choosing MJ Culture.`;
+
+  }
+
+  else if(status === "rejected") {
+
+msg =
+`Hello ${name},
+
+We regret to inform you that your booking request for ${bookingDate} could not be accommodated.
+
+The requested slot is unavailable.
+
+Thank you for considering MJ Culture.`;
+
+  }
+
+  else {
+
+    msg =
+`Hello ${name},
+
+Your booking request is currently under review.
+
+Our team will contact you within 24 hours regarding confirmation.`;
+
+  }
+
+  const url =
+`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`;
+
+  window.open(url, "_blank");
+}
+
 </script>
 </body>
 </html>
