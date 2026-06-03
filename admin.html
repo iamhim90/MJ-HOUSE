@@ -697,32 +697,9 @@
       const label = d.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
       sel.innerHTML += `<option value="${val}">${label}</option>`;
     }
-    // Restore session only if token exists
-    if (sessionStorage.getItem('mjc_admin') && sessionStorage.getItem('mjc_admin_token')) {
-      // Immediately open the admin panel so there is no flash of the login screen
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('app').style.display = 'flex';
-      loadDashboard();
-
-      // Verify token is still valid with a lightweight API call in the background
-      const tok = sessionStorage.getItem('mjc_admin_token');
-      fetch(BACKEND_URL + '/api/bookings', {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok }
-      }).then(r => {
-        if (!r.ok) {
-          // Token expired or invalid — clear session and logout
-          console.warn('Session token expired (status ' + r.status + '), forcing logout');
-          adminLogout();
-          toast('Session expired. Please log in again.', 'err');
-        }
-      }).catch(err => {
-        console.warn('Backend verification failed:', err);
-      });
-    } else if (sessionStorage.getItem('mjc_admin')) {
-      // Has mjc_admin flag but NO token — stale session from old local-only login, clear it
-      sessionStorage.removeItem('mjc_admin');
-    }
+    // Clear any previous session so they must log in every time the page is loaded/refreshed
+    sessionStorage.removeItem('mjc_admin');
+    sessionStorage.removeItem('mjc_admin_token');
     
     // Auto-refresh every 10 seconds (silent background refresh)
     setInterval(() => {
