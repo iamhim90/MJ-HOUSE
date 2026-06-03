@@ -2912,34 +2912,6 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
         updateAdvanceDisplay(price);
 
         // Wire up "I have paid" button
-        const payDoneBtn = document.getElementById('bstPayDoneBtn');
-        const newPayDoneBtn = payDoneBtn.cloneNode(true); // remove old listeners
-        payDoneBtn.parentNode.replaceChild(newPayDoneBtn, payDoneBtn);
-        newPayDoneBtn.addEventListener('click', async function() {
-          newPayDoneBtn.disabled = true;
-          newPayDoneBtn.innerHTML = '<i class="fas fa-spinner" style="animation:spin 1s linear infinite"></i> Notifying owner…';
-          try {
-            const pRes = await fetch(API_BASE_URL + '/api/bookings/' + bookingId + '/paydone', { method: 'PATCH' });
-            if (pRes.ok) {
-              // Switch to waiting state
-              document.getElementById('bstStep2').className = 'bst-step done';
-              document.getElementById('bstStep3').className = 'bst-step active';
-              document.getElementById('bstAction').style.display = 'none';
-              document.getElementById('bstWaiting').classList.add('active');
-              // Start polling
-              startStatusPolling(bookingId);
-            } else {
-              const pData = await pRes.json();
-              newPayDoneBtn.disabled = false;
-              newPayDoneBtn.innerHTML = '<i class="fas fa-check-circle"></i> I Have Completed Payment';
-              alert(pData.error || 'Something went wrong. Please try again.');
-            }
-          } catch (pollErr) {
-            newPayDoneBtn.disabled = false;
-            newPayDoneBtn.innerHTML = '<i class="fas fa-check-circle"></i> I Have Completed Payment';
-            alert('Connection error. Please check your internet and try again.');
-          }
-        });
       } else {
         console.log("⚠️ BOOKING FAILED:", response.status, fetcha.message);
         let errorDetail = 'Please try again.';
