@@ -55,9 +55,10 @@
     /* ── MAIN LAYOUT ── */
     #app{display:none;flex:1;min-height:100vh;}
     .sidebar{
-      position:fixed;top:0;left:0;bottom:0;width:var(--sidebar);
+      position:fixed;top:0;left:0;bottom:0;width:200px;
       background:var(--sidebar-c);border-right:1px solid rgba(201,169,110,.1);
       display:flex;flex-direction:column;z-index:100;overflow-y:auto;
+      transition:transform .3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .sidebar-brand{padding:1.6rem 1.2rem;border-bottom:1px solid rgba(201,169,110,.08);}
     .sidebar-brand h2{font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:2.5px;color:var(--wheat);}
@@ -81,7 +82,7 @@
     }
     .sidebar-footer button:hover{background:rgba(201,169,110,.08);color:var(--wheat);border-color:rgba(201,169,110,.4);}
 
-    .main-content{margin-left:var(--sidebar);flex:1;padding:2rem;min-height:100vh;}
+    .main-content{margin-left:var(--sidebar);flex:1;padding:2rem;min-height:100vh;transition:margin-left .3s cubic-bezier(0.4, 0, 0.2, 1), padding .3s;}
     .page{display:none;}
     .page.active{display:block;}
 
@@ -238,20 +239,48 @@
     .spinner{display:inline-block;animation:spin 1s linear infinite;margin-right:.4rem;}
     @keyframes spin{to{transform:rotate(360deg)}}
 
-    /* ── RESPONSIVE ── */
+    /* ── RESPONSIVE & COLLAPSIBLE SIDEBAR ── */
+    #app.sidebar-collapsed {
+      --sidebar: 0px;
+    }
+    #app.sidebar-collapsed .sidebar {
+      transform: translateX(-200px);
+    }
+    .sidebar-toggle-btn {
+      background: none;
+      border: 1px solid rgba(201,169,110,.2);
+      color: var(--wheat);
+      padding: .45rem .65rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: .9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .sidebar-toggle-btn:hover {
+      background: rgba(201,169,110,.1);
+      border-color: rgba(201,169,110,.4);
+    }
+    .layout-header {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(201,169,110,.05);
+      padding-bottom: .8rem;
+    }
     @media(max-width:768px){
       :root{--sidebar:0px;}
       .sidebar{transform:translateX(-200px);width:200px;transition:transform .3s;}
-      .sidebar.mob-open{transform:translateX(0);}
+      #app.mobile-sidebar-open .sidebar{transform:translateX(0);}
       .main-content{margin-left:0;padding:1rem;}
-      .mob-menu-btn{display:flex!important;}
       .account-row{grid-template-columns:1fr;}
       .form-grid{grid-template-columns:1fr;}
       .stats-grid{grid-template-columns:1fr 1fr;}
     }
-    .mob-menu-btn{display:none;background:none;border:1px solid rgba(201,169,110,.2);color:var(--wheat);padding:.5rem .7rem;border-radius:5px;cursor:pointer;font-size:.9rem;}
-    .mobile-topbar{display:none;align-items:center;gap:.8rem;margin-bottom:1.5rem;}
-    @media(max-width:768px){.mobile-topbar{display:flex;}}
 
     /* Inline pay edit */
     .pay-edit-row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;}
@@ -374,10 +403,10 @@
 
   <!-- MAIN -->
   <div class="main-content">
-    <!-- Mobile top bar -->
-    <div class="mobile-topbar">
-      <button class="mob-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('mob-open')"><i class="fas fa-bars"></i></button>
-      <span style="font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:2px;color:var(--wheat)">MJ Admin</span>
+    <!-- Layout Header -->
+    <div class="layout-header">
+      <button class="sidebar-toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <span style="font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:2px;color:var(--wheat);font-weight:500;">MJ Admin</span>
     </div>
 
     <!-- DASHBOARD -->
@@ -465,6 +494,35 @@
         <div class="card-header"><span class="card-title"><i class="fas fa-calendar-check"></i> All Bookings</span><span id="bookingCount" style="font-size:.7rem;color:rgba(245,240,232,.3)"></span></div>
         <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Email</th><th>Date</th><th>Occasion</th><th>Guests</th><th>Slot</th><th>Amount</th><th>Status</th><th>Notes</th><th>Actions</th></tr></thead>
         <tbody id="bookingsTableBody"><tr><td colspan="12" class="loading"><i class="fas fa-spinner spinner"></i>Loading bookings...</td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- PAYMENTS -->
+    <div class="page" id="page-payments">
+      <div class="topbar">
+        <div><div class="topbar-title">Payment Management</div><div class="topbar-sub">Track advance payments and outstanding balances</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-rupee-sign"></i> Payment Records</span></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Booking ID</th>
+                <th>Customer</th>
+                <th>Event Date</th>
+                <th>Total Price</th>
+                <th>Advance Paid</th>
+                <th>Remaining</th>
+                <th>Payment Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="paymentsTableBody">
+              <tr><td colspan="8" class="loading"><i class="fas fa-spinner spinner"></i>Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -730,7 +788,7 @@
           id === 'staff' ? 'staff' : id === 'expenses' ? 'bills' :
           id === 'accounts' ? 'accounts' : 'export')) n.classList.add('active');
     });
-    document.getElementById('sidebar').classList.remove('mob-open');
+    document.getElementById('app').classList.remove('mobile-sidebar-open');
     // Lazy load
     if (id === 'calendar') loadCalendar();
     if (id === 'bookings') loadBookings();
@@ -738,6 +796,15 @@
     if (id === 'staff') loadStaff();
     if (id === 'expenses') loadExpenses();
     if (id === 'accounts') loadAccounts();
+  }
+
+  function toggleSidebar() {
+    const app = document.getElementById('app');
+    if (window.innerWidth <= 768) {
+      app.classList.toggle('mobile-sidebar-open');
+    } else {
+      app.classList.toggle('sidebar-collapsed');
+    }
   }
 
   /* ── TOAST ── */
