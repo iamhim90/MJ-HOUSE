@@ -161,15 +161,18 @@ app.post('/api/bookings', bookingLimiter, async (req, res) => {
       return res.status(400).json({ error: 'Invalid price amount' });
     }
 
+    console.log('Booking submitted:', { name, phone, date, timeSlot, price });
+
     // Check if slot is already booked for this date
     const existingBooking = await pool.query(
       `SELECT id FROM bookings
-       WHERE check_in = $1 AND slot = $2 AND status IN ('confirmed', 'pending', 'waiting')
+       WHERE check_in = $1 AND slot = $2 AND status IN ('confirmed', 'pending', 'waiting', 'advance_requested', 'advance_verified')
        LIMIT 1`,
       [date, timeSlot]
     );
 
     if (existingBooking.rows.length > 0) {
+      console.log('❌ Slot unavailable:', { date, timeSlot });
       return res.status(409).json({
         error: 'This time slot is no longer available. Please choose a different date or time.'
       });
@@ -183,10 +186,12 @@ app.post('/api/bookings', bookingLimiter, async (req, res) => {
        occasion.trim(), specialRequirements?.trim() || null, timeSlot, 'pending']
     );
 
-    console.log('✅ New booking created — ID:', result.rows[0].id);
+    console.log('Booking saved');
+    console.log('Booking ID generated:', result.rows[0].id);
 
     res.json({ success: true, bookingId: result.rows[0].id, booking: result.rows[0] });
   } catch (err) {
+    console.error('Failed to submit booking:', err);
     sendError(res, 500, 'Failed to create booking', err);
   }
 });
@@ -195,7 +200,7 @@ app.post('/api/bookings', bookingLimiter, async (req, res) => {
 app.get('/api/bookings/availability', async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT check_in as date, slot, status FROM bookings WHERE status IN ('confirmed', 'pending', 'waiting')"
+      "SELECT check_in as date, slot, status FROM bookings WHERE status IN ('confirmed', 'pending', 'waiting', 'advance_requested', 'advance_verified')"
     );
     const availability = {};
     result.rows.forEach(r => {
@@ -219,6 +224,7 @@ app.get('/api/bookings', requireAuth, async (req, res) => {
     const result = await pool.query(
       'SELECT *, advance_paid as "advancePaid", payment_status as "paymentStatus", payment_notes as "paymentNotes" FROM bookings ORDER BY created_at DESC'
     );
+    console.log(`Booking loaded in admin: ${result.rows.length} records loaded`);
     res.json(result.rows);
   } catch (err) {
     sendError(res, 500, 'Failed to fetch bookings', err);
@@ -240,7 +246,7 @@ app.get('/api/bookings/:id', requireAuth, async (req, res) => {
 app.patch('/api/bookings/:id/status', requireAuth, async (req, res) => {
   try {
     const { status } = req.body;
-    const allowed = ['pending', 'confirmed', 'rejected', 'hold', 'waiting'];
+    const allowed = ['pending', 'confirmed', 'rejected', 'hold', 'waiting', 'advance_requested', 'advance_verified'];
     if (!allowed.includes(status)) {
       return res.status(400).json({ error: 'Invalid status value' });
     }
@@ -249,6 +255,7 @@ app.patch('/api/bookings/:id/status', requireAuth, async (req, res) => {
       [status, req.params.id]
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Booking not found' });
+    console.log(`Booking ${req.params.id} status updated to: ${status}`);
     res.json({ success: true, booking: result.rows[0] });
   } catch (err) {
     sendError(res, 500, 'Failed to update booking status', err);
@@ -283,8 +290,9 @@ app.patch('/api/bookings/:id/verify-advance', requireAuth, async (req, res) => {
     const advancePaid = +(total * 0.3).toFixed(2);
     const result = await pool.query(
       'UPDATE bookings SET status = $1, payment_status = $2, advance_paid = $3 WHERE id = $4 RETURNING *',
-      ['confirmed', 'advance_paid', advancePaid, req.params.id]
+      ['advance_verified', 'advance_paid', advancePaid, req.params.id]
     );
+    console.log(`Booking ${req.params.id} advance verified (status: advance_verified, paid: ${advancePaid})`);
     res.json({ success: true, booking: result.rows[0] });
   } catch (err) {
     sendError(res, 500, 'Failed to verify advance', err);

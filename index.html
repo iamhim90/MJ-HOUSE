@@ -2850,9 +2850,8 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
       console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
       if (response.ok) {
-        console.log("✅ BOOKING SAVED — redirecting to payment section");
+        console.log("✅ BOOKING INQUIRY SAVED");
         const bookingId = fetcha.bookingId;
-        const advance = Math.round(price * 0.30);
 
         // Reset form
         this.reset();
@@ -2867,15 +2866,13 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
         overlay.innerHTML = `
           <div style="background:#11151c;border:1px solid rgba(201,169,110,0.3);padding:2.5rem 2rem;border-radius:12px;max-width:420px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,0.6);transform:translateY(20px);transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275)">
             <i class="fas fa-check-circle" style="font-size:3.5rem;color:#86efac;margin-bottom:1.2rem"></i>
-            <h3 style="font-family:'Cinzel',serif;color:var(--wheat);margin-bottom:1rem;font-size:1.5rem">Request Received</h3>
+            <h3 style="font-family:'Cinzel',serif;color:var(--wheat);margin-bottom:1rem;font-size:1.5rem">Inquiry Submitted</h3>
             <p style="color:rgba(245,240,232,0.85);font-size:0.95rem;line-height:1.6;margin-bottom:1.8rem">
-              Your booking inquiry has been submitted successfully.
-
-                Our team will review availability and contact you within 24 hours on WhatsApp.
-
-               Please do not make any payment until you receive a confirmation message from our team.
+              Your booking inquiry has been submitted successfully.<br><br>
+              Our team will review availability and contact you within 24 hours on WhatsApp.<br><br>
+              Please do not make any payment until our team confirms availability.
             </p>
-            <button onclick="const o = this.parentElement.parentElement; o.style.opacity='0'; setTimeout(()=>o.remove(),300)" style="background:var(--wheat);color:#111;border:none;padding:.85rem 2.2rem;border-radius:30px;font-weight:600;font-size:.95rem;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 4px 15px rgba(201,169,110,0.2)">Proceed to Payment</button>
+            <button onclick="const o = this.parentElement.parentElement; o.style.opacity='0'; setTimeout(()=>o.remove(),300)" style="background:var(--wheat);color:#111;border:none;padding:.85rem 2.2rem;border-radius:30px;font-weight:600;font-size:.95rem;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 4px 15px rgba(201,169,110,0.2)">Close</button>
           </div>
         `;
         document.body.appendChild(overlay);
@@ -2884,34 +2881,6 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
           overlay.style.opacity = '1';
           overlay.firstElementChild.style.transform = 'translateY(0)';
         });
-
-        // Populate status tracker
-        document.getElementById('bstBookingId').textContent = 'Ref: ' + bookingId;
-        document.getElementById('bstSummary').innerHTML =
-          `<div class="bst-row"><span class="bst-label">Name</span><span class="bst-val">${name}</span></div>` +
-          `<div class="bst-row"><span class="bst-label">Date</span><span class="bst-val">${formattedDate}</span></div>` +
-          `<div class="bst-row"><span class="bst-label">Slot</span><span class="bst-val">${slotLabel}</span></div>` +
-          `<div class="bst-row"><span class="bst-label">Advance (30%)</span><span class="bst-val highlight">₹${advance.toLocaleString()}</span></div>`;
-
-        // Reset stepper to initial state
-        document.getElementById('bstStep1').className = 'bst-step done';
-        document.getElementById('bstStep2').className = 'bst-step active';
-        document.getElementById('bstStep3').className = 'bst-step';
-        document.getElementById('bstAction').style.display = 'block';
-        document.getElementById('bstWaiting').classList.remove('active');
-        document.getElementById('bstConfirmed').classList.remove('active');
-        document.getElementById('bstRejected').classList.remove('active');
-        document.getElementById('bstPayDoneBtn').disabled = false;
-        document.getElementById('bstPayDoneBtn').innerHTML = '<i class="fas fa-check-circle"></i> I Have Completed Payment';
-
-        // Show tracker
-        const tracker = document.getElementById('bookingStatusTracker');
-        tracker.classList.add('active');
-
-        // Update QR section to show correct advance for this booking
-        updateAdvanceDisplay(price);
-
-        // Wire up "I have paid" button
       } else {
         console.log("⚠️ BOOKING FAILED:", response.status, fetcha.message);
         let errorDetail = 'Please try again.';
@@ -2939,32 +2908,8 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
   });
 })();
 
-/* ── STATUS POLLING (live updates after "I have paid") ── */
-let _pollTimer = null;
-function startStatusPolling(bookingId) {
-  if (_pollTimer) clearInterval(_pollTimer);
-  _pollTimer = setInterval(async () => {
-    try {
-      const res = await fetch(API_BASE_URL + '/api/bookings/' + bookingId);
-      if (!res.ok) return;
-      const data = await res.json();
-
-      if (data.status === 'confirmed') {
-        clearInterval(_pollTimer); _pollTimer = null;
-        document.getElementById('bstStep3').className = 'bst-step done';
-        document.getElementById('bstWaiting').classList.remove('active');
-        document.getElementById('bstConfirmed').classList.add('active');
-      } else if (data.status === 'rejected') {
-        clearInterval(_pollTimer); _pollTimer = null;
-        document.getElementById('bstStep3').className = 'bst-step';
-        document.getElementById('bstWaiting').classList.remove('active');
-        document.getElementById('bstRejected').classList.add('active');
-      }
-    } catch (e) {
-      console.warn('Polling error:', e.message);
-    }
-  }, 5000);
-}
+/* ── STATUS POLLING ── */
+// Polling functionality is removed under the inquiry-based WhatsApp confirmation flow.
  
 /* ── MOBILE NAV ── */
 const ham=document.getElementById('ham'), mobNav=document.getElementById('mobNav');
