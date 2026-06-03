@@ -335,7 +335,10 @@
     </div>
     <div class="lf">
       <label>Password</label>
-      <input type="password" id="adminPass" placeholder="Your admin password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doAdminLogin()">
+      <div style="position:relative; display:flex; width:100%;">
+        <input type="password" id="adminPass" placeholder="Your admin password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doAdminLogin()" style="width:100%; padding-right:2.8rem;">
+        <button type="button" onclick="toggleAdminPassword()" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:rgba(245,240,232,0.4); cursor:pointer; padding:4px; display:flex; align-items:center; outline:none;"><i class="fas fa-eye" id="passToggleIcon"></i></button>
+      </div>
     </div>
     <button id="loginBtn2" onclick="doAdminLogin()"><i class="fas fa-sign-in-alt"></i> Enter Admin Panel</button>
     <div id="loginErr">Invalid credentials. Please try again.</div>
@@ -621,25 +624,28 @@
   /* ── ADMIN AUTH ── */
   const ADMIN_CREDENTIALS = { username: 'admin', password: 'mjculture2026' }; // Change this!
 
+  function toggleAdminPassword() {
+    const input = document.getElementById('adminPass');
+    const icon = document.getElementById('passToggleIcon');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.className = 'fas fa-eye-slash';
+    } else {
+      input.type = 'password';
+      icon.className = 'fas fa-eye';
+    }
+  }
+
   function doAdminLogin() {
     const u = document.getElementById('adminUser').value.trim();
     const p = document.getElementById('adminPass').value;
     const btn = document.getElementById('loginBtn2');
     const err = document.getElementById('loginErr');
 
-    // Check local admin creds first
-    if (u === ADMIN_CREDENTIALS.username && p === ADMIN_CREDENTIALS.password) {
-      sessionStorage.setItem('mjc_admin', '1');
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('app').style.display = 'flex';
-      loadDashboard();
-      return;
-    }
-
-    // Try backend admin login
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner spinner"></i> Signing in…';
     err.style.display = 'none';
 
+    // Always attempt backend login first so we get the JWT token needed for APIs
     fetch(BACKEND_URL + '/api/admin/login', {
       method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({username: u, password: p})
@@ -651,12 +657,21 @@
         document.getElementById('app').style.display = 'flex';
         loadDashboard();
       } else {
-        err.textContent = data.message || 'Invalid credentials.';
+        err.textContent = data.message || data.error || 'Invalid credentials.';
         err.style.display = 'block';
       }
-    }).catch(() => {
-      err.textContent = 'Connection error. Check credentials or try local login.';
-      err.style.display = 'block';
+    }).catch((e) => {
+      console.warn("Backend auth failed or unreachable, checking local credentials bypass:", e);
+      // Fallback to local bypass ONLY if server is unreachable/offline and credentials match local ADMIN_CREDENTIALS
+      if (u === ADMIN_CREDENTIALS.username && p === ADMIN_CREDENTIALS.password) {
+        sessionStorage.setItem('mjc_admin', '1');
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('app').style.display = 'flex';
+        loadDashboard();
+      } else {
+        err.textContent = 'Connection error. Check credentials or try local login.';
+        err.style.display = 'block';
+      }
     }).finally(() => {
       btn.disabled = false; btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Enter Admin Panel';
     });
