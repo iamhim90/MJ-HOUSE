@@ -727,14 +727,14 @@
       sessionStorage.removeItem('mjc_admin');
     }
     
-    // Auto-refresh every 30 seconds
+    // Auto-refresh every 10 seconds (silent background refresh)
     setInterval(() => {
       if (sessionStorage.getItem('mjc_admin')) {
-        if (document.getElementById('page-dashboard').classList.contains('active')) loadDashboard();
-        if (document.getElementById('page-bookings').classList.contains('active')) loadBookings();
-        if (document.getElementById('page-calendar') && document.getElementById('page-calendar').classList.contains('active')) loadCalendar();
+        if (document.getElementById('page-dashboard').classList.contains('active')) loadDashboard(true);
+        if (document.getElementById('page-bookings').classList.contains('active')) loadBookings(true);
+        if (document.getElementById('page-calendar') && document.getElementById('page-calendar').classList.contains('active')) loadCalendar(true);
       }
-    }, 30000);
+    }, 10000);
   });
 
   function adminLogout() {
@@ -800,9 +800,11 @@
   var calYear = new Date().getFullYear();
   var calMonth = new Date().getMonth(); // 0-indexed
   var calBookingsCache = [];
+  var activeCalDay = null;
+  var activeCalDayKey = null;
 
 
-  async function loadDashboard() {
+  async function loadDashboard(silent = false) {
     try {
       const [bData, eData, sData] = await Promise.allSettled([
         api('/api/bookings'),
@@ -832,21 +834,25 @@
       tbody.innerHTML = recent.length ? recent.map(b => bookingRow(b, true)).join('') :
         '<tr><td colspan="6" class="empty-state"><p>No bookings yet</p></td></tr>';
     } catch(e) {
-      toast('Error loading dashboard data', 'err');
+      if (!silent) toast('Error loading dashboard data', 'err');
     }
   }
 
   /* ── BOOKINGS ── */
-  async function loadBookings() {
+  async function loadBookings(silent = false) {
     const tbody = document.getElementById('bookingsTableBody');
-    tbody.innerHTML = '<tr><td colspan="12" class="loading"><i class="fas fa-spinner spinner"></i>Loading bookings...</td></tr>';
+    if (!silent) {
+      tbody.innerHTML = '<tr><td colspan="12" class="loading"><i class="fas fa-spinner spinner"></i>Loading bookings...</td></tr>';
+    }
     try {
       const data = await api('/api/bookings');
       allBookings = Array.isArray(data) ? data : (data.bookings || []);
-      renderBookings(allBookings);
+      filterBookings();
     } catch(e) { 
-      tbody.innerHTML = '<tr><td colspan="12" class="empty-state"><p>Failed to load bookings</p></td></tr>';
-      toast('Error loading bookings', 'err'); 
+      if (!silent) {
+        tbody.innerHTML = '<tr><td colspan="12" class="empty-state"><p>Failed to load bookings</p></td></tr>';
+        toast('Error loading bookings', 'err'); 
+      }
     }
   }
 
@@ -891,18 +897,35 @@
     'evening': 'Evening'
   };
 
-  async function loadCalendar() {
+  async function loadCalendar(silent = false) {
     try {
       const data = await api('/api/bookings');
       calBookingsCache = Array.isArray(data) ? data : (data.bookings || []);
       renderCalendar();
     } catch(e) {
+      if (!silent) toast('Error loading calendar bookings', 'err');
       renderCalendar();
     }
   }
 
-  function calPrevMonth() { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar(); }
-  function calNextMonth() { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendar(); }
+  function calPrevMonth() { 
+    activeCalDayKey = null; 
+    activeCalDay = null; 
+    const panel = document.getElementById('calDayPanel');
+    if (panel) panel.classList.remove('open');
+    calMonth--; 
+    if (calMonth < 0) { calMonth = 11; calYear--; } 
+    renderCalendar(); 
+  }
+  function calNextMonth() { 
+    activeCalDayKey = null; 
+    activeCalDay = null; 
+    const panel = document.getElementById('calDayPanel');
+    if (panel) panel.classList.remove('open');
+    calMonth++; 
+    if (calMonth > 11) { calMonth = 0; calYear++; } 
+    renderCalendar(); 
+  }
 
   function renderCalendar() {
     const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -995,12 +1018,34 @@
       grid.appendChild(cell);
     }
 
-    // Close day panel when month changes
+    // Close day panel when month changes — but only if month/year changed or activeCalDayKey is not set
     const panel = document.getElementById('calDayPanel');
-    if (panel) panel.classList.remove('open');
+    if (panel && activeCalDayKey) {
+      // Check if activeCalDayKey belongs to the currently displayed month and year
+      const parts = activeCalDayKey.split('-');
+      const y = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10);
+      if (y !== calYear || (m - 1) !== calMonth) {
+        panel.classList.remove('open');
+        activeCalDayKey = null;
+        activeCalDay = null;
+      } else {
+        // Update the open day panel in-place with fresh booking data
+        const updatedBookings = dateMap[activeCalDayKey] || [];
+        // Temporarily clear active key during refresh to prevent infinite call loop if called inside itself
+        const savedKey = activeCalDayKey;
+        const savedDay = activeCalDay;
+        activeCalDayKey = null;
+        showCalDayPanel(savedDay, updatedBookings, savedKey);
+      }
+    } else if (panel) {
+      panel.classList.remove('open');
+    }
   }
 
   function showCalDayPanel(day, bookings, key) {
+    activeCalDay = day;
+    activeCalDayKey = key;
     const panel = document.getElementById('calDayPanel');
     if (!panel) return;
     const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -1045,14 +1090,9 @@
         } else if (s === 'confirmed' && b.paymentStatus !== 'fully_paid') {
           actBtns = `
             <button class="btn-action approve" onclick="collectCash('${id}'); showPage('calendar')" style="font-size:.65rem"><i class="fas fa-money-bill-wave"></i> Collect 70%</button>
-            <button class="btn-action" onclick="sendWhatsApp('${phone}', 'confirmed', '${name}', '${key}')" style="font-size:.65rem"><i class="fab fa-whatsapp"></i> WA</button>
           `;
         } else if (b.paymentStatus === 'fully_paid') {
           actBtns = `<span class="badge badge-paid" style="font-size:.65rem; align-self:center">Fully Paid ✅</span>`;
-        } else if (s === 'rejected') {
-          actBtns = `
-            <button class="btn-action" onclick="sendWhatsApp('${phone}', 'rejected', '${name}', '${key}')" style="font-size:.65rem"><i class="fab fa-whatsapp"></i> WA</button>
-          `;
         }
 
         return `<div class="day-booking-card">
@@ -1127,23 +1167,13 @@
         <button class="btn-action approve" onclick="collectCash('${id}')">
           <i class="fas fa-money-bill-wave"></i> Collect Remaining 70%
         </button>
-        <button class="btn-action" onclick="sendWhatsApp('${phone}', 'confirmed', '${escName}', '${escDate}')">
-          <i class="fab fa-whatsapp"></i> WhatsApp
-        </button>
       `;
     } else if (b.paymentStatus === 'fully_paid') {
       actionBtns = `
         <span class="badge badge-paid" style="font-size:.65rem">Fully Paid ✅</span>
-        <button class="btn-action" onclick="sendWhatsApp('${phone}', 'confirmed', '${escName}', '${escDate}')">
-          <i class="fab fa-whatsapp"></i> WhatsApp
-        </button>
       `;
     } else if (b.status === 'rejected') {
-      actionBtns = `
-        <button class="btn-action" onclick="sendWhatsApp('${phone}', 'rejected', '${escName}', '${escDate}')">
-          <i class="fab fa-whatsapp"></i> WhatsApp
-        </button>
-      `;
+      actionBtns = ``;
     }
 
     if (compact) {
@@ -1176,18 +1206,22 @@
 
   function triggerAdvanceRequest(id, phone, name, date, occasion) {
     const cleanPhone = phone.replace(/[^0-9]/g, '');
-    const msg = `Hello ${name},
+    const msg = `Hello *${name}*,
 
-Thank you for choosing MJ Culture.
+Thank you for choosing *MJ Culture*! ✨
 
-Your requested date (${date}) is available.
+We are pleased to inform you that your booking request for *${date}* is available. 🗓️
 
-To reserve your booking, kindly pay the 30% advance amount and send the payment screenshot on this WhatsApp number.
+To secure your booking, kindly pay the *30% advance amount* and send the screenshot of the payment receipt here for verification.
 
-Once verified, your booking will be officially confirmed.
+*Payment Details:*
+🔹 *UPI ID:* 9099847718-3@ybl
+🔹 *Pay directly via UPI App:* upi://pay?pa=9099847718-3@ybl&pn=MJ%20Culture
 
-Thank you,
-MJ Culture`;
+Once verified, your booking will be officially confirmed. ✅
+
+Warm regards,
+*MJ Culture Team* 🏡`;
 
     window.open(`https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
     updateBookingStatus(id, 'advance_requested');
@@ -1195,13 +1229,18 @@ MJ Culture`;
 
   function triggerRejectBooking(id, phone, name, date) {
     const cleanPhone = phone.replace(/[^0-9]/g, '');
-    const msg = `Hello ${name},
+    const msg = `Hello *${name}*,
 
-We regret to inform you that your booking request for ${date} could not be accommodated.
+Thank you for choosing *MJ Culture*. 🙏
 
-The requested slot is unavailable.
+We are so sorry, but we regret to inform you that we cannot accommodate your booking request for *${date}*. 😔 The slot has already been booked.
 
-Thank you for considering MJ Culture.`;
+We would love to host your event on another date! Please feel free to check our availability calendar on our website and select another slot, or reach out to us. 🗓️✨
+
+Thank you for your understanding.
+
+Warm regards,
+*MJ Culture Team* 🏡`;
 
     window.open(`https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
     updateBookingStatus(id, 'rejected');
@@ -1209,17 +1248,22 @@ Thank you for considering MJ Culture.`;
 
   function triggerConfirmBooking(id, phone, name, date, occasion, guests) {
     const cleanPhone = phone.replace(/[^0-9]/g, '');
-    const msg = `Hello ${name},
+    const msg = `Hello *${name}*,
 
-We have successfully verified your advance payment.
+Great news! We have successfully verified your advance payment. 🎉
 
-Your booking has now been CONFIRMED ✅
+Your booking has now been *CONFIRMED* ✅
 
-Booking Date: ${date}
-${occasion ? `Occasion: ${occasion}\n` : ''}${guests ? `Guests: ${guests}\n` : ''}
-Thank you for choosing MJ Culture.
+📅 *Booking Date:* ${date}
+${occasion ? `🌟 *Occasion:* ${occasion}\n` : ''}${guests ? `👥 *Guests:* ${guests}\n` : ''}
+*Important Booking Guidelines:*
+🔹 A refundable security deposit of *₹10,000* is required (returned after the event).
+🔹 The remaining *70% balance* is to be paid in cash on the day of your event.
 
-We look forward to hosting your event.`;
+Thank you for choosing *MJ Culture*! We look forward to hosting your event. 🏡✨
+
+Warm regards,
+*MJ Culture Team*`;
 
     window.open(`https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
     updateBookingStatus(id, 'confirmed');
@@ -1587,31 +1631,41 @@ We look forward to hosting your event.`;
     let msg = "";
 
     if (status === "confirmed") {
-      msg = `Hello ${name},
+      msg = `Hello *${name}*,
 
-We have successfully verified your advance payment.
+Great news! We have successfully verified your advance payment. 🎉
 
-Your booking has now been CONFIRMED ✅
+Your booking has now been *CONFIRMED* ✅
 
-Booking Date: ${bookingDate || 'N/A'}
+📅 *Booking Date:* ${bookingDate || 'N/A'}
 
-Thank you for choosing MJ Culture.
+*Important Booking Guidelines:*
+🔹 A refundable security deposit of *₹10,000* is required (returned after the event).
+🔹 The remaining *70% balance* is to be paid in cash on the day of your event.
 
-We look forward to hosting your event.`;
+Thank you for choosing *MJ Culture*! We look forward to hosting your event. 🏡✨
+
+Warm regards,
+*MJ Culture Team*`;
     } else if (status === "rejected") {
-      msg = `Hello ${name},
+      msg = `Hello *${name}*,
 
-We regret to inform you that your booking request for ${bookingDate || 'N/A'} could not be accommodated.
+Thank you for choosing *MJ Culture*. 🙏
 
-The requested slot is unavailable.
+We are so sorry, but we regret to inform you that we cannot accommodate your booking request for *${bookingDate || 'N/A'}*. 😔 The slot has already been booked.
 
-Thank you for considering MJ Culture.`;
+We would love to host your event on another date! Please feel free to check our availability calendar on our website and select another slot, or reach out to us. 🗓️✨
+
+Thank you for your understanding.
+
+Warm regards,
+*MJ Culture Team* 🏡`;
     } else {
-      msg = `Hello ${name},
+      msg = `Hello *${name}*,
 
-Thank you for submitting your booking request to MJ Culture ✨
+Thank you for submitting your booking request to *MJ Culture* ✨
 
-Your booking request for ${bookingDate || 'N/A'} is currently under review.
+Your booking request for *${bookingDate || 'N/A'}* is currently under review.
 
 Our team will contact you within 24 hours regarding confirmation.`;
     }
