@@ -697,10 +697,34 @@
       const label = d.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
       sel.innerHTML += `<option value="${val}">${label}</option>`;
     }
-    if (sessionStorage.getItem('mjc_admin')) {
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('app').style.display = 'flex';
-      loadDashboard();
+    // Restore session only if token exists and is still valid
+    if (sessionStorage.getItem('mjc_admin') && sessionStorage.getItem('mjc_admin_token')) {
+      // Verify token is still valid with a lightweight API call
+      const tok = sessionStorage.getItem('mjc_admin_token');
+      fetch(BACKEND_URL + '/api/bookings', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok }
+      }).then(r => {
+        if (r.ok) {
+          // Token is valid — show dashboard
+          document.getElementById('loginScreen').style.display = 'none';
+          document.getElementById('app').style.display = 'flex';
+          loadDashboard();
+        } else {
+          // Token expired or invalid — force re-login
+          console.warn('Session token expired (status ' + r.status + '), requiring re-login');
+          sessionStorage.removeItem('mjc_admin');
+          sessionStorage.removeItem('mjc_admin_token');
+        }
+      }).catch(() => {
+        // Backend unreachable — show login screen (don't auto-open panel without valid token)
+        console.warn('Backend unreachable during session restore');
+        sessionStorage.removeItem('mjc_admin');
+        sessionStorage.removeItem('mjc_admin_token');
+      });
+    } else if (sessionStorage.getItem('mjc_admin')) {
+      // Has mjc_admin flag but NO token — stale session from old local-only login, clear it
+      sessionStorage.removeItem('mjc_admin');
     }
     
     // Auto-refresh every 30 seconds
@@ -759,6 +783,12 @@
     if (tok) opts.headers['Authorization'] = 'Bearer ' + tok;
     if (body) opts.body = JSON.stringify(body);
     const res = await fetch(BACKEND_URL + path, opts);
+    if (res.status === 401) {
+      // Token expired or invalid mid-session — force re-login
+      toast('Session expired. Please log in again.', 'err');
+      adminLogout();
+      throw new Error('Unauthorized — session expired');
+    }
     return res.json();
   }
 
