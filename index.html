@@ -412,32 +412,6 @@
     .testi-event { font-size:.72rem; color:var(--stone); letter-spacing:.5px; }
     .testi-stars { color:var(--wheat); font-size:.7rem; margin-bottom:.6rem; letter-spacing:2px; }
  
-    /* ── ANNOUNCEMENTS ── */
-    .announce-section { background:var(--soil); padding:6rem 1.5rem; border-top:1px solid rgba(201,169,110,.06); }
-    .announce-inner { max-width:1100px; margin:0 auto; }
-    .announce-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:2.5rem; }
-    .announce-header .sec-h { color:var(--cream); }
-    .a-live { display:flex; align-items:center; gap:.5rem; font-size:.65rem; letter-spacing:2px; text-transform:uppercase; color:rgba(245,240,232,.4); }
-    .a-live span { width:7px; height:7px; background:#4ade80; border-radius:50%; box-shadow:0 0 0 3px rgba(74,222,128,.15); animation:pulse 2s ease infinite; }
-    @keyframes pulse { 0%,100%{box-shadow:0 0 0 3px rgba(74,222,128,.15)} 50%{box-shadow:0 0 0 7px rgba(74,222,128,.05)} }
-    .cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.2rem; }
-    .ann-card {
-      background:var(--glass); border:1px solid var(--glass-border); border-radius:8px;
-      padding:1.8rem; -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
-      transition:transform .3s,border-color .3s;
-    }
-    .ann-card:hover { transform:translateY(-4px); border-color:rgba(201,169,110,.3); }
-    .ann-meta { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
-    .ann-type { font-size:.6rem; letter-spacing:2.5px; text-transform:uppercase; padding:.3rem .8rem; border-radius:2px; font-weight:600; }
-    .type-offer { background:rgba(201,169,110,.15); color:var(--wheat); border:1px solid rgba(201,169,110,.25); }
-    .type-event { background:rgba(74,222,128,.1); color:#4ade80; border:1px solid rgba(74,222,128,.2); }
-    .type-new { background:rgba(147,197,253,.1); color:#93c5fd; border:1px solid rgba(147,197,253,.2); }
-    .ann-date { font-size:.7rem; color:rgba(245,240,232,.3); letter-spacing:.5px; }
-    .ann-card h3 { font-family:'Cormorant Garamond',serif; font-size:1.15rem; font-weight:400; color:var(--cream); margin-bottom:.6rem; line-height:1.3; }
-    .ann-card p { font-size:.82rem; color:rgba(245,240,232,.45); line-height:1.7; }
-    .ann-footer { margin-top:2rem; text-align:center; }
-    .ann-footer p { font-size:.75rem; color:rgba(245,240,232,.25); letter-spacing:.5px; }
- 
     /* ── FAQ ── */
     .faq-section { background:var(--ink); padding:7rem 1.5rem; }
     .faq-inner { max-width:700px; margin:0 auto; }
@@ -1795,55 +1769,8 @@
     </div>
   </div>
 </section>
+
  
-<!-- ANNOUNCEMENTS -->
-<div class="announce-section" id="announcements">
-  <div class="announce-inner">
-    <div class="announce-header reveal">
-      <div>
-        <span class="sec-tag">Latest Updates</span>
-        <h2 class="sec-h">Announcements</h2>
-        <div class="rule"></div>
-      </div>
-      <div class="a-live"><span></span>Live from MJ Culture</div>
-    </div>
-    <div class="cards reveal" id="annCards"></div>
-    <div class="ann-footer reveal"><p>More coming soon &mdash; follow us on Instagram @mjculturecenterofficial</p></div>
-  </div>
-</div>
- 
-<!-- FAQ -->
-<section class="faq-section" id="faq">
-  <div class="faq-inner">
-    <div class="fade-in" style="text-align:center;margin-bottom:0">
-      <span class="sec-tag" style="justify-content:center">Got Questions?</span>
-      <h2 class="sec-h" style="text-align:center;color:var(--cream)">Frequently Asked</h2>
-      <div class="rule" style="margin:0.5rem auto 0"></div>
-    </div>
-    <div class="faq-list fade-in d1">
-      <div class="faq-item">
-        <button class="faq-q">How far in advance should I book? <span class="faq-icon"><i class="fas fa-plus"></i></span></button>
-        <div class="faq-a"><div class="faq-a-inner">We recommend booking at least 15 to 20 days in advance, especially for weekends and festival dates. Popular months like March–May and November–January fill up quickly. Contact us on WhatsApp for real-time availability.</div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">Is catering included in the booking price? <span class="faq-icon"><i class="fas fa-plus"></i></span></button>
-        <div class="faq-a"><div class="faq-a-inner">Catering is available as an add-on. We have trusted catering partners who offer a range of menus — from traditional Bohra cuisine to multi-cuisine spreads. Ask us for a custom quote when booking.</div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">What is the maximum guest capacity? <span class="faq-icon"><i class="fas fa-plus"></i></span></button>
-        <div class="faq-a"><div class="faq-a-inner">Our lawn can comfortably accommodate up to 500 guests for open-air events. For seated dinners, capacity is around 200–250 guests depending on the table layout. We can adjust setups to suit your needs.</div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">Can I visit the venue before booking? <span class="faq-icon"><i class="fas fa-plus"></i></span></button>
-        <div class="faq-a"><div class="faq-a-inner">Absolutely! We welcome site visits. Just call or WhatsApp us to schedule a time.</div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">What is the cancellation policy? <span class="faq-icon"><i class="fas fa-plus"></i></span></button>
-        <div class="faq-a"><div class="faq-a-inner">Cancellations made 10+ days before the event receive a full refund of the advance. Cancellations within 10 days are subject to a 50% charge. Please contact us directly for emergency reschedules — we try our best to accommodate.</div></div>
-      </div>
-    </div>
-  </div>
-</section>
  
 <!-- BOOKING -->
 <section class="booking-section" id="booking">
@@ -2123,6 +2050,39 @@
 
   </div>
 </section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="faq-inner">
+    <div class="fade-in" style="text-align:center;margin-bottom:0">
+      <span class="sec-tag" style="justify-content:center">Got Questions?</span>
+      <h2 class="sec-h" style="text-align:center;color:var(--cream)">Frequently Asked</h2>
+      <div class="rule" style="margin:0.5rem auto 0"></div>
+    </div>
+    <div class="faq-list fade-in d1">
+      <div class="faq-item">
+        <button class="faq-q">How far in advance should I book? <span class="faq-icon"><i class="fas fa-plus"></i></span></button>
+        <div class="faq-a"><div class="faq-a-inner">We recommend booking at least 15 to 20 days in advance, especially for weekends and festival dates. Popular months like March–May and November–January fill up quickly. Contact us on WhatsApp for real-time availability.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Is catering included in the booking price? <span class="faq-icon"><i class="fas fa-plus"></i></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Catering is available as an add-on. We have trusted catering partners who offer a range of menus — from traditional Bohra cuisine to multi-cuisine spreads. Ask us for a custom quote when booking.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What is the maximum guest capacity? <span class="faq-icon"><i class="fas fa-plus"></i></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Our lawn can comfortably accommodate up to 500 guests for open-air events. For seated dinners, capacity is around 200–250 guests depending on the table layout. We can adjust setups to suit your needs.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Can I visit the venue before booking? <span class="faq-icon"><i class="fas fa-plus"></i></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Absolutely! We welcome site visits. Just call or WhatsApp us to schedule a time.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What is the cancellation policy? <span class="faq-icon"><i class="fas fa-plus"></i></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Cancellations made 10+ days before the event receive a full refund of the advance. Cancellations within 10 days are subject to a 50% charge. Please contact us directly for emergency reschedules — we try our best to accommodate.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
  
  
 <!-- FOOTER -->
@@ -2356,19 +2316,6 @@ document.addEventListener('keydown', e=>{
   if(e.key==='ArrowRight')lbNav(1);
 });
  
-/* ── ANNOUNCEMENTS ── */
-const ANNOUNCEMENTS = [
-  {type:'offer',label:'Special Offer',date:'April 2026',title:'20% off Morning Slots this Summer',body:'Book any morning slot in April–June 2026 and enjoy an exclusive 20% discount. Limited dates available.'},
-  {type:'event',label:'Event',date:'May 15, 2026',title:'Open House Viewing Day',body:'Come visit the farmhouse! Walk around, meet the team, and plan your event in person. Free entry, no booking needed.'},
-  {type:'new',label:'New',date:'March 2026',title:'Pool Area Now Ready',body:'Our newly renovated pool area is open for all bookings. Perfect for summer celebrations and photoshoots.'},
-  {type:'offer',label:'Package',date:'Ongoing',title:'Wedding Full-Day Package',body:'Special bundled package for weddings — includes full-day slot + basic decoration + catering consultation. Ask us for details.'},
-  {type:'new',label:'New',date:'2026',title:'Ridas Boutique Now Online',body:'Browse our exclusive collection of Dawoodi Bohra Ridas. DM us on Instagram or WhatsApp to place your order.'},
-  {type:'event',label:'Update',date:'Always',title:'Follow us on Instagram',body:'Get real-time updates, behind-the-scenes looks, and exclusive offers. Follow @mjculturecenterofficial.'}
-];
-document.getElementById('annCards').innerHTML = ANNOUNCEMENTS.map(a => {
-  const cls = a.type==='offer'?'type-offer':a.type==='event'?'type-event':'type-new';
-  return `<div class="ann-card"><div class="ann-meta"><span class="ann-type ${cls}">${a.label}</span><span class="ann-date">${a.date}</span></div><h3>${a.title}</h3><p>${a.body}</p></div>`;
-}).join('');
  
 /* ── ADVANCE PAYMENT HELPERS ── */
 function updateAdvanceDisplay(price) {
