@@ -163,20 +163,7 @@ app.post('/api/bookings', bookingLimiter, async (req, res) => {
 
     console.log('Booking submitted:', { name, phone, date, timeSlot, price });
 
-    // Check if slot is already booked for this date
-    const existingBooking = await pool.query(
-      `SELECT id FROM bookings
-       WHERE check_in = $1 AND slot = $2 AND status IN ('confirmed', 'pending', 'waiting', 'advance_requested', 'advance_verified')
-       LIMIT 1`,
-      [date, timeSlot]
-    );
-
-    if (existingBooking.rows.length > 0) {
-      console.log('❌ Slot unavailable:', { date, timeSlot });
-      return res.status(409).json({
-        error: 'This time slot is no longer available. Please choose a different date or time.'
-      });
-    }
+    // All inquiries are accepted regardless of existing bookings — admin decides.
 
     const result = await pool.query(
       `INSERT INTO bookings (customer_name, phone, email, check_in, check_out, guests, total_amount, occasion, notes, slot, status)
