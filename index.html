@@ -1146,121 +1146,166 @@
 
     /* 3D effects now work on mobile too via touch events */
 
-    /* ── TERMS & CONDITIONS MODAL ── */
+    /* ── TERMS & CONDITIONS — PREMIUM GLASSMORPHISM ──
+       HOW IT WORKS: Coloured orbs are painted directly onto
+       the overlay background so the modal's backdrop-filter
+       blurs THEM — making the frosted-glass visible & rich.
+    ────────────────────────────────────── */
+
+    /* Orb drift animations */
+    @keyframes tcOrb1 {
+      0%,100% { transform:translate(0,0) scale(1); opacity:1; }
+      40%     { transform:translate(55px,-45px) scale(1.18); opacity:.85; }
+      75%     { transform:translate(-35px,55px) scale(0.88); opacity:.92; }
+    }
+    @keyframes tcOrb2 {
+      0%,100% { transform:translate(0,0) scale(1); }
+      35%     { transform:translate(-65px,30px) scale(1.22); }
+      70%     { transform:translate(45px,-55px) scale(0.82); }
+    }
+    @keyframes tcShimmer {
+      0%,100% { background-position:200% 0; opacity:.6; }
+      50%      { background-position:  0% 0; opacity:1; }
+    }
+
+    /* — OVERLAY — */
     #tcOverlay {
       position:fixed; inset:0; z-index:999999;
-      background:rgba(4,2,1,0.88);
       display:flex; align-items:center; justify-content:center;
       padding:1rem;
-      opacity:0; transition:opacity .55s ease;
-      /* Overlay blur — light enough not to glitch on mobile */
-      -webkit-backdrop-filter:blur(8px);
-              backdrop-filter:blur(8px);
+      opacity:0; transition:opacity .5s ease;
+      overflow:hidden;
+      /* Dark scrim + coloured orbs all in one background stack */
+      background:
+        /* Gold orb — top-left */
+        radial-gradient(ellipse 480px 420px at 15% 20%,
+          rgba(201,169,110,0.38) 0%,
+          rgba(180,130,50,0.15)  45%,
+          transparent            70%),
+        /* Amber-rose orb — bottom-right */
+        radial-gradient(ellipse 420px 360px at 85% 82%,
+          rgba(210,110,50,0.30)  0%,
+          rgba(170,70,30,0.10)   45%,
+          transparent            68%),
+        /* Copper orb — top-right */
+        radial-gradient(ellipse 340px 280px at 80% 18%,
+          rgba(190,155,90,0.22) 0%,
+          transparent           60%),
+        /* Warm rose accent — bottom-left */
+        radial-gradient(ellipse 300px 240px at 18% 82%,
+          rgba(195,120,65,0.18) 0%,
+          transparent           58%),
+        /* Dark base scrim */
+        rgba(5,2,1,0.84);
     }
     #tcOverlay.tc-visible { opacity:1; }
     #tcOverlay.tc-hidden  { opacity:0; pointer-events:none; }
 
-    /* ── GLASSMORPHISM: applied ONLY to the T&C modal card ── */
+    /* Animated orb layer (pseudo — gives the drift motion) */
+    #tcOverlay::before {
+      content:'';
+      position:absolute; inset:0; z-index:0; pointer-events:none;
+      background:
+        radial-gradient(ellipse 460px 400px at 20% 25%,
+          rgba(201,169,110,0.25) 0%,
+          transparent            65%),
+        radial-gradient(ellipse 380px 320px at 80% 75%,
+          rgba(210,100,45,0.20)  0%,
+          transparent            65%);
+      animation:tcOrb1 14s ease-in-out infinite;
+    }
+
+    /* Second animated orb (offset timing) */
+    #tcOverlay::after {
+      content:'';
+      position:absolute; inset:0; z-index:0; pointer-events:none;
+      background:
+        radial-gradient(ellipse 340px 280px at 75% 20%,
+          rgba(185,150,80,0.18)  0%,
+          transparent            60%),
+        radial-gradient(ellipse 280px 220px at 22% 78%,
+          rgba(195,115,55,0.15)  0%,
+          transparent            58%);
+      animation:tcOrb2 18s ease-in-out infinite reverse;
+    }
+
+    /* — GLASS MODAL CARD — */
     .tc-modal {
-      /* Solid fallback (always applied first) */
-      background:linear-gradient(160deg,rgba(30,21,10,0.92) 0%,rgba(14,9,4,0.96) 100%);
-      border-radius:16px;
+      position:relative;
+      z-index:2;  /* above the orb layers */
       max-width:700px; width:100%;
       max-height:90vh;
       display:flex; flex-direction:column;
+      border-radius:20px;
       overflow:hidden;
       transform:translateY(30px) scale(0.97);
       transition:transform .55s cubic-bezier(.34,1.56,.64,1);
-      position:relative;
 
-      /* Glass border: layered gold glow ring */
-      border:1px solid rgba(201,169,110,0.35);
+      /* Translucent so orbs bleed through the glass */
+      background:rgba(14,8,3,0.38);
+
+      /* Gold border + inner edge glow */
+      border:1px solid rgba(201,169,110,0.45);
       box-shadow:
-        /* Depth shadow behind the card */
-        0 48px 120px rgba(0,0,0,0.72),
-        /* Subtle outer gold ambient ring */
-        0 0 0 1px rgba(201,169,110,0.06),
-        /* Inner top-edge highlight (simulates refracted glass) */
-        inset 0 1px 0 rgba(201,169,110,0.18),
-        /* Inner bottom-edge shadow */
-        inset 0 -1px 0 rgba(0,0,0,0.4);
-    }
+        0 40px 100px rgba(0,0,0,0.65),
+        0 0    0 1px rgba(201,169,110,0.08),
+        inset 0  1px 0 rgba(201,169,110,0.30),
+        inset 0 -1px 0 rgba(0,0,0,0.55),
+        inset 1px 0  0 rgba(201,169,110,0.10);
 
-    /* Glass layer applied via @supports — won't break on old Safari/Android */
-    @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-      .tc-modal {
-        background:
-          /* Primary warm-glass layer */
-          linear-gradient(
-            160deg,
-            rgba(201,169,110,0.07) 0%,
-            rgba(30,21,10,0.72) 35%,
-            rgba(14,9,4,0.82) 100%
-          );
-        -webkit-backdrop-filter:blur(28px) saturate(1.4);
-                backdrop-filter:blur(28px) saturate(1.4);
-      }
+      /* THE GLASS EFFECT — blurs the orbs behind the card */
+      -webkit-backdrop-filter:blur(36px) saturate(1.8) brightness(1.12);
+              backdrop-filter:blur(36px) saturate(1.8) brightness(1.12);
     }
-
-    /* Animated gold shimmer line at very top of modal */
-    .tc-modal::before {
-      content:'';
-      position:absolute; top:0; left:0; right:0; height:2px; z-index:1;
-      background:linear-gradient(90deg,
-        transparent 0%,
-        rgba(201,169,110,0.0) 10%,
-        var(--wheat) 40%,
-        var(--gold)  55%,
-        rgba(201,169,110,0.0) 90%,
-        transparent 100%
-      );
-      background-size:200% 100%;
-      animation:tcShimmer 4s ease-in-out infinite;
-    }
-    @keyframes tcShimmer {
-      0%   { background-position:200% 0; opacity:.7; }
-      50%  { background-position:  0% 0; opacity:1; }
-      100% { background-position:200% 0; opacity:.7; }
-    }
-
-    /* Soft ambient glow orb behind the modal — desktop only */
-    @media (hover:hover) {
-      #tcOverlay::before {
-        content:'';
-        position:absolute;
-        width:520px; height:520px;
-        border-radius:50%;
-        background:radial-gradient(circle,rgba(201,169,110,0.06) 0%,transparent 70%);
-        pointer-events:none;
-        animation:tcOrb 6s ease-in-out infinite alternate;
-      }
-      @keyframes tcOrb {
-        from { transform:translate(-15%,-10%) scale(1); }
-        to   { transform:translate( 15%, 10%) scale(1.1); }
-      }
-    }
-
-    /* Glass inner edge: right side vertical highlight */
-    .tc-modal::after {
-      content:'';
-      position:absolute; top:10%; right:0; width:1px; height:80%;
-      background:linear-gradient(to bottom,transparent,rgba(201,169,110,0.15) 40%,rgba(201,169,110,0.12) 60%,transparent);
-      pointer-events:none;
-    }
-
     #tcOverlay.tc-visible .tc-modal { transform:translateY(0) scale(1); }
 
-    /* Mobile: remove the expensive blur on low-powered touch devices
-       and fall back to solid dark — prevents jank and battery drain */
-    @media (pointer:coarse) and (max-width:480px) {
+    /* Animated gold shimmer sweep on top edge */
+    .tc-modal::before {
+      content:'';
+      position:absolute; top:0; left:0; right:0; height:2px; z-index:10;
+      pointer-events:none;
+      background:linear-gradient(90deg,
+        transparent   0%,
+        transparent   8%,
+        #c9a96e      35%,
+        #f0d890      50%,
+        #c9a96e      65%,
+        transparent  92%,
+        transparent 100%);
+      background-size:200% 100%;
+      animation:tcShimmer 3.5s ease-in-out infinite;
+    }
+
+    /* Diagonal glass-surface refraction glint */
+    .tc-modal::after {
+      content:'';
+      position:absolute; inset:0; z-index:1; pointer-events:none;
+      background:linear-gradient(
+        135deg,
+        rgba(201,169,110,0.13) 0%,
+        rgba(201,169,110,0.04) 25%,
+        transparent            55%,
+        rgba(0,0,0,0.15)       100%
+      );
+      border-radius:inherit;
+    }
+
+    /* — MOBILE FALLBACK —
+       On small touch screens: kill the expensive blur.
+       The orb background is still there for warmth,
+       but the card becomes opaque to avoid battery drain. */
+    @media (pointer:coarse) and (max-width:600px) {
+      #tcOverlay::before, #tcOverlay::after { animation:none; }
       .tc-modal {
-        background:linear-gradient(160deg,rgba(30,21,10,0.97) 0%,rgba(12,8,3,0.99) 100%) !important;
+        background:rgba(18,10,4,0.95) !important;
         -webkit-backdrop-filter:none !important;
                 backdrop-filter:none !important;
-        box-shadow:0 32px 80px rgba(0,0,0,0.8),inset 0 1px 0 rgba(201,169,110,0.15) !important;
+        border-color:rgba(201,169,110,0.38) !important;
+        box-shadow:0 28px 70px rgba(0,0,0,0.75),
+                   inset 0 1px 0 rgba(201,169,110,0.22) !important;
+        border-radius:16px !important;
       }
-      .tc-modal::before { animation:none; background:linear-gradient(90deg,transparent,var(--wheat),transparent); }
-      .tc-modal::after  { display:none; }
+      .tc-modal::before { animation:none; }
     }
 
     .tc-header {
