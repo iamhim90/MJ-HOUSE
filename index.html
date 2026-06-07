@@ -1648,174 +1648,293 @@
   <div class="l-bar"><div class="l-fill"></div></div>
 </div>
 
-        <!-- TERMS & CONDITIONS BUTTON -->
+               ```html
+<!-- TERMS & CONDITIONS BUTTON -->
 <button class="terms-btn" onclick="openTermsPopup()">
   View Terms & Conditions
 </button>
 
-<!-- TERMS & CONDITIONS POPUP -->
+<!-- TERMS POPUP -->
 <div id="termsPopup" class="terms-popup">
+
+  <!-- BACKGROUND OVERLAY -->
+  <div class="terms-overlay"></div>
+
+  <!-- POPUP BOX -->
   <div class="terms-content">
 
-    <span class="terms-close" onclick="closeTermsPopup()">&times;</span>
+    <!-- CLOSE BUTTON -->
+    <button class="terms-close" onclick="closeTermsPopup()">
+      &times;
+    </button>
 
+    <!-- TITLE -->
     <h2>Rules & Regulations</h2>
 
+    <!-- TERMS LIST -->
     <div class="terms-list">
 
       <div class="term-item">
         <h4>Advance Booking</h4>
-        <p>Ensure the plot is booked well in advance, with a signed agreement outlining the terms.</p>
+        <p>
+          Ensure the plot is booked well in advance, with a signed agreement outlining the terms.
+        </p>
       </div>
 
       <div class="term-item">
         <h4>Payment Schedule</h4>
-        <p>Follow the payment terms, including any deposits, which might be non-refundable.</p>
+        <p>
+          Follow the payment terms, including deposits and advance payment requirements.
+        </p>
       </div>
 
       <div class="term-item">
-        <h4>Start and End Times</h4>
-        <p>Stick to the scheduled event time as per the booking agreement. Late hours might attract additional charges or penalties.</p>
-      </div>
-
-      <div class="term-item">
-        <h4>Curfew Compliance</h4>
-        <p>Adhere to local noise curfews to avoid complaints from neighboring properties.</p>
+        <h4>40% Advance Payment</h4>
+        <p>
+          A minimum 40% advance payment is required to confirm your booking.
+        </p>
       </div>
 
       <div class="term-item">
         <h4>Guest Limit</h4>
-        <p>Do not exceed the venue’s capacity for safety reasons.</p>
+        <p>
+          Do not exceed the venue’s allowed guest capacity for safety reasons.
+        </p>
       </div>
 
       <div class="term-item">
-        <h4>Fire Safety</h4>
-        <p>Follow fire safety regulations, including having fire extinguishers and no flames unless specified areas are provided.</p>
-      </div>
-
-      <div class="term-item">
-        <h4>Noise Cut-off Time</h4>
-        <p>Follow any regulation regarding when music should be turned off or reduced in volume.</p>
-      </div>
-
-      <div class="term-item">
-        <h4>Waste Disposal</h4>
-        <p>Properly dispose of all trash. Some venues provide bins — take care of your own waste disposal.</p>
+        <h4>Noise & Curfew</h4>
+        <p>
+          Please follow all local sound and curfew regulations during your event.
+        </p>
       </div>
 
       <div class="term-item">
         <h4>Damage to Property</h4>
-        <p>Any damage to the property must be reported and will typically need to be paid for by the event organizer.</p>
+        <p>
+          Any damages caused during the event will be chargeable to the organizer.
+        </p>
       </div>
 
       <div class="term-item">
         <h4>Permission Required</h4>
-        <p>Any function or event must be organized only with the permission and approval of “Aamil Saheb”.</p>
+        <p>
+          Every function or event must be approved by management before confirmation.
+        </p>
       </div>
 
       <div class="term-item">
-        <h4>Dress Code – Respect Our Culture</h4>
-        <p>All guests are requested to wear attire that reflects and respects our religious and cultural values.</p>
+        <h4>Dress Code</h4>
+        <p>
+          Guests are requested to wear attire that respects our cultural and religious values.
+        </p>
       </div>
 
       <div class="term-item">
         <h4>Parking Arrangements</h4>
-        <p>Ensure there is adequate parking for guests, and avoid blocking access to neighboring properties.</p>
+        <p>
+          Ensure proper parking arrangements and avoid blocking neighboring access areas.
+        </p>
       </div>
 
     </div>
 
   </div>
+
 </div>
 
 <!-- CSS -->
 <style>
 
+/* BUTTON */
 .terms-btn{
   padding:12px 24px;
   background:#c9a96e;
   color:#111;
   border:none;
-  border-radius:6px;
+  border-radius:8px;
   cursor:pointer;
   font-weight:600;
+  transition:.3s;
 }
 
+.terms-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 30px rgba(201,169,110,.25);
+}
+
+/* POPUP MAIN */
 .terms-popup{
-  display:none;
   position:fixed;
-  z-index:99999;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  overflow:auto;
-  background:rgba(0,0,0,0.75);
-  backdrop-filter:blur(6px);
+  inset:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  visibility:hidden;
+  opacity:0;
+
+  transition:.35s ease;
+
+  z-index:999999999;
 }
 
+/* ACTIVE */
+.terms-popup.active{
+  visibility:visible;
+  opacity:1;
+}
+
+/* BACKGROUND */
+.terms-overlay{
+  position:absolute;
+  inset:0;
+
+  background:rgba(0,0,0,.78);
+
+  backdrop-filter:blur(8px);
+}
+
+/* POPUP BOX */
 .terms-content{
-  background:#16110c;
-  margin:4% auto;
-  padding:30px;
-  border:1px solid rgba(201,169,110,0.3);
-  width:90%;
-  max-width:800px;
-  border-radius:14px;
-  color:#f5f0e8;
   position:relative;
-  animation:popupFade 0.3s ease;
+
+  width:90%;
+  max-width:820px;
+
+  max-height:85vh;
+  overflow-y:auto;
+
+  padding:32px;
+
+  border-radius:20px;
+
+  background:linear-gradient(
+    145deg,
+    #1b140d,
+    #120d08
+  );
+
+  border:1px solid rgba(201,169,110,.18);
+
+  color:#f5f0e8;
+
+  z-index:2;
+
+  transform:translateY(40px) scale(.96);
+  opacity:0;
+
+  transition:.4s cubic-bezier(.2,.8,.2,1);
+
+  box-shadow:
+    0 30px 80px rgba(0,0,0,.5),
+    0 0 0 1px rgba(255,255,255,.02);
 }
 
-@keyframes popupFade{
-  from{
-    opacity:0;
-    transform:translateY(20px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
+/* POP EFFECT */
+.terms-popup.active .terms-content{
+  transform:translateY(0) scale(1);
+  opacity:1;
 }
 
+/* CLOSE BUTTON */
 .terms-close{
   position:absolute;
-  right:20px;
-  top:15px;
-  font-size:30px;
+  top:14px;
+  right:16px;
+
+  width:40px;
+  height:40px;
+
+  border:none;
+  border-radius:50%;
+
+  background:rgba(255,255,255,.06);
+
+  color:#fff;
+
+  font-size:24px;
+
   cursor:pointer;
-  color:#c9a96e;
+
+  transition:.25s;
 }
 
+.terms-close:hover{
+  background:#c9a96e;
+  color:#111;
+  transform:rotate(90deg);
+}
+
+/* TITLE */
 .terms-content h2{
-  margin-bottom:25px;
+  font-size:34px;
   color:#c9a96e;
-  font-size:32px;
+  margin-bottom:24px;
 }
 
+/* TERMS LIST */
 .terms-list{
   display:flex;
   flex-direction:column;
   gap:18px;
 }
 
+/* TERM ITEM */
 .term-item{
-  padding:16px;
-  border:1px solid rgba(201,169,110,0.15);
-  border-radius:10px;
-  background:rgba(255,255,255,0.03);
+  padding:18px;
+
+  border-radius:14px;
+
+  background:rgba(255,255,255,.03);
+
+  border:1px solid rgba(201,169,110,.12);
+
+  transition:.3s;
 }
 
+.term-item:hover{
+  background:rgba(201,169,110,.05);
+  border-color:rgba(201,169,110,.22);
+  transform:translateY(-2px);
+}
+
+/* TITLE */
 .term-item h4{
   color:#c9a96e;
   margin-bottom:8px;
   font-size:18px;
 }
 
+/* TEXT */
 .term-item p{
-  color:rgba(245,240,232,0.75);
-  line-height:1.7;
+  color:rgba(245,240,232,.72);
+  line-height:1.8;
   font-size:15px;
+}
+
+/* SCROLLBAR */
+.terms-content::-webkit-scrollbar{
+  width:8px;
+}
+
+.terms-content::-webkit-scrollbar-thumb{
+  background:rgba(201,169,110,.35);
+  border-radius:20px;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+
+  .terms-content{
+    padding:24px 18px;
+  }
+
+  .terms-content h2{
+    font-size:26px;
+  }
+
 }
 
 </style>
@@ -1824,21 +1943,38 @@
 <script>
 
 function openTermsPopup(){
-  document.getElementById("termsPopup").style.display = "block";
+
+  const popup = document.getElementById("termsPopup");
+
+  popup.classList.add("active");
+
+  document.body.style.overflow = "hidden";
 }
 
 function closeTermsPopup(){
-  document.getElementById("termsPopup").style.display = "none";
+
+  const popup = document.getElementById("termsPopup");
+
+  popup.classList.remove("active");
+
+  document.body.style.overflow = "";
 }
 
-window.onclick = function(event){
-  const popup = document.getElementById("termsPopup");
-  if(event.target == popup){
-    popup.style.display = "none";
+/* CLOSE WHEN CLICKING OUTSIDE */
+document.getElementById("termsPopup")
+.addEventListener("click", function(e){
+
+  if(e.target.classList.contains("terms-overlay")){
+
+    closeTermsPopup();
+
   }
-}
+
+});
 
 </script>
+```
+
 
       <!-- Consent checkbox -->
       <div class="tc-checkbox-row">
@@ -2453,7 +2589,6 @@ window.onclick = function(event){
         <a href="https://www.facebook.com/fatema.mullamitha.5" class="soc" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
         <a href="https://wa.me/918347769980" class="soc" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
         <a href="mailto:manaf_khan143@yahoo.co.in" class="soc" aria-label="Email"><i class="fas fa-envelope"></i></a>
-        <a href="mailto:fatemamj1982@gmail.com" class="soc" aria-label="Email"><i class="fas fa-envelope"></i></a>
       </div>
     </div>
     <div class="foot-col">
