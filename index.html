@@ -1597,6 +1597,31 @@
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+
+    .garden-option{
+  margin-top:16px;
+  padding:14px;
+  border:1px solid rgba(201,169,110,.15);
+  border-radius:10px;
+  background:rgba(255,255,255,.03);
+}
+
+.garden-option label{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  cursor:pointer;
+  color:#f5f0e8;
+  font-size:14px;
+  line-height:1.6;
+}
+
+.garden-option input{
+  margin-top:4px;
+  transform:scale(1.2);
+  accent-color:#c9a96e;
+}
+
   </style>
   <script src="js/config.js"></script>
   <script>
@@ -1623,50 +1648,197 @@
   <div class="l-bar"><div class="l-fill"></div></div>
 </div>
 
-<!-- TERMS & CONDITIONS MODAL -->
-<div id="tcOverlay" role="dialog" aria-modal="true" aria-labelledby="tcModalTitle" style="display:none;">
-  <div class="tc-modal">
-    <div class="tc-header">
-      <div class="tc-seal">Official Document</div>
-      <h2 id="tcModalTitle">Terms &amp; Conditions of Booking</h2>
-      <p>MJ Culture Farmhouse &amp; Events &mdash; Dahod, Gujarat &bull; Please read carefully before proceeding</p>
+        <!-- TERMS & CONDITIONS BUTTON -->
+<button class="terms-btn" onclick="openTermsPopup()">
+  View Terms & Conditions
+</button>
+
+<!-- TERMS & CONDITIONS POPUP -->
+<div id="termsPopup" class="terms-popup">
+  <div class="terms-content">
+
+    <span class="terms-close" onclick="closeTermsPopup()">&times;</span>
+
+    <h2>Rules & Regulations</h2>
+
+    <div class="terms-list">
+
+      <div class="term-item">
+        <h4>Advance Booking</h4>
+        <p>Ensure the plot is booked well in advance, with a signed agreement outlining the terms.</p>
+      </div>
+
+      <div class="term-item">
+        <h4>Payment Schedule</h4>
+        <p>Follow the payment terms, including any deposits, which might be non-refundable.</p>
+      </div>
+
+      <div class="term-item">
+        <h4>Start and End Times</h4>
+        <p>Stick to the scheduled event time as per the booking agreement. Late hours might attract additional charges or penalties.</p>
+      </div>
+
+      <div class="term-item">
+        <h4>Curfew Compliance</h4>
+        <p>Adhere to local noise curfews to avoid complaints from neighboring properties.</p>
+      </div>
+
+      <div class="term-item">
+        <h4>Guest Limit</h4>
+        <p>Do not exceed the venue’s capacity for safety reasons.</p>
+      </div>
+
+      <div class="term-item">
+        <h4>Fire Safety</h4>
+        <p>Follow fire safety regulations, including having fire extinguishers and no flames unless specified areas are provided.</p>
+      </div>
+
+      <div class="term-item">
+        <h4>Noise Cut-off Time</h4>
+        <p>Follow any regulation regarding when music should be turned off or reduced in volume.</p>
+      </div>
+
+      <div class="term-item">
+        <h4>Waste Disposal</h4>
+        <p>Properly dispose of all trash. Some venues provide bins — take care of your own waste disposal.</p>
+      </div>
+
+      <div class="term-item">
+        <h4>Damage to Property</h4>
+        <p>Any damage to the property must be reported and will typically need to be paid for by the event organizer.</p>
+      </div>
+
+      <div class="term-item">
+        <h4>Permission Required</h4>
+        <p>Any function or event must be organized only with the permission and approval of “Aamil Saheb”.</p>
+      </div>
+
+      <div class="term-item">
+        <h4>Dress Code – Respect Our Culture</h4>
+        <p>All guests are requested to wear attire that reflects and respects our religious and cultural values.</p>
+      </div>
+
+      <div class="term-item">
+        <h4>Parking Arrangements</h4>
+        <p>Ensure there is adequate parking for guests, and avoid blocking access to neighboring properties.</p>
+      </div>
+
     </div>
-    <div class="tc-body" id="tcBody">
 
-      <!-- Clause 1: Security Deposit -->
-      <div class="tc-clause">
-        <div class="tc-clause-num">Cond. - I</div>
-        <h4>Security Deposit — Refundable Assurance</h4>
-        <p>Upon confirmation of any booking, a mandatory <strong>refundable security deposit of ₹10,000</strong> shall be collected from the guest. This deposit serves exclusively as a financial assurance against any damage, breakage, misuse, or loss of property belonging to MJ Culture Farmhouse. The deposit shall be returned in full upon inspection and clearance of the premises after the event. Any deductions shall be made strictly on the basis of documented damages, and a detailed account shall be provided to the guest accordingly.</p>
-      </div>
+  </div>
+</div>
 
-      <!-- Clause 2: Cancellation Policy -->
-      <div class="tc-clause">
-        <div class="tc-clause-num">Cond. - II</div>
-        <h4>Cancellation &amp; Refund Policy</h4>
-        <p>In the event of cancellation of a confirmed booking, the following policy shall apply: <strong>Cancellations made 10 (ten) or more days prior to the scheduled event date</strong> shall attract a deduction of <strong>20% (Twenty Percent) of the total advance payment</strong> made at the time of booking. Cancellations made within 10 days of the event date shall be subject to a separate forfeiture policy as communicated at the time of booking. All refund requests must be submitted in writing via official channels and shall be processed within 7–10 working days.</p>
-      </div>
+<!-- CSS -->
+<style>
 
-      <!-- Clause 3: Premises Maintenance -->
-      <div class="tc-clause">
-        <div class="tc-clause-num">Cond. - III</div>
-        <h4>Premises Maintenance &amp; Code of Conduct</h4>
-        <p>The guest and all attendees are required to maintain the farmhouse premises in a clean, orderly, and respectful condition throughout the duration of their event. <strong>MJ Culture Farmhouse must be returned in the same condition as received.</strong> Any wilful damage, vandalism, littering, or failure to maintain decorum shall result in deductions from the security deposit and may result in immediate termination of the event without refund. Guests are fully responsible for the conduct of all individuals present at their event.</p>
-      </div>
+.terms-btn{
+  padding:12px 24px;
+  background:#c9a96e;
+  color:#111;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:600;
+}
 
-      <!-- Clause 4: Alcohol-Free & No Nuisance -->
-      <div class="tc-clause">
-        <div class="tc-clause-num">Cond. - IV</div>
-        <h4>Alcohol-Free Premises &amp; Zero Nuisance Policy</h4>
-        <p>MJ Culture Farmhouse operates as a <strong>strictly alcohol-free venue.</strong> The possession, consumption, or distribution of any alcoholic beverages or prohibited substances on or around the premises is <strong>strictly forbidden</strong> and constitutes grounds for immediate termination of the event and forfeiture of all payments. Additionally, all guests are expected to conduct themselves with the utmost respect and dignity. Any behaviour causing disturbance, nuisance, or inconvenience to staff, neighbours, or the surrounding community shall not be tolerated under any circumstances.</p>
-      </div>
+.terms-popup{
+  display:none;
+  position:fixed;
+  z-index:99999;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  overflow:auto;
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(6px);
+}
 
-      <!-- Clause 5: Janab Saab Authority -->
-      <div class="tc-authority">
-        <div class="janab-title"></div>
-        <h4>Mandatory Approval of Janab Saab</h4>
-        <p>The explicit prior approval of <strong>Janab Saab</strong> — the designated authority and principal overseer of MJ Culture — is <strong>mandatory and non-negotiable</strong> for all bookings, events, and matters pertaining to the farmhouse. No booking shall be deemed confirmed, and no event shall proceed, without the express consent and authorisation of Janab Saab. This clause supersedes all other conditions and applies universally across all categories of events, packages, and arrangements.</p>
-      </div>
+.terms-content{
+  background:#16110c;
+  margin:4% auto;
+  padding:30px;
+  border:1px solid rgba(201,169,110,0.3);
+  width:90%;
+  max-width:800px;
+  border-radius:14px;
+  color:#f5f0e8;
+  position:relative;
+  animation:popupFade 0.3s ease;
+}
+
+@keyframes popupFade{
+  from{
+    opacity:0;
+    transform:translateY(20px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.terms-close{
+  position:absolute;
+  right:20px;
+  top:15px;
+  font-size:30px;
+  cursor:pointer;
+  color:#c9a96e;
+}
+
+.terms-content h2{
+  margin-bottom:25px;
+  color:#c9a96e;
+  font-size:32px;
+}
+
+.terms-list{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.term-item{
+  padding:16px;
+  border:1px solid rgba(201,169,110,0.15);
+  border-radius:10px;
+  background:rgba(255,255,255,0.03);
+}
+
+.term-item h4{
+  color:#c9a96e;
+  margin-bottom:8px;
+  font-size:18px;
+}
+
+.term-item p{
+  color:rgba(245,240,232,0.75);
+  line-height:1.7;
+  font-size:15px;
+}
+
+</style>
+
+<!-- JAVASCRIPT -->
+<script>
+
+function openTermsPopup(){
+  document.getElementById("termsPopup").style.display = "block";
+}
+
+function closeTermsPopup(){
+  document.getElementById("termsPopup").style.display = "none";
+}
+
+window.onclick = function(event){
+  const popup = document.getElementById("termsPopup");
+  if(event.target == popup){
+    popup.style.display = "none";
+  }
+}
+
+</script>
 
       <!-- Consent checkbox -->
       <div class="tc-checkbox-row">
@@ -1964,7 +2136,7 @@
                 </div>
                 <div class="slot-right">
                   <div class="slot-price">30,000</div>
-                  <div class="slot-advance">Advance: &#8377;9,000</div>
+                  <div class="slot-advance">Advance: &#8377;12,000</div>
                 </div>
               </div>
             </div>
@@ -1993,7 +2165,7 @@
                 </div>
                 <div class="slot-right">
                   <div class="slot-price">20,000</div>
-                  <div class="slot-advance">Adv: &#8377;6,000</div>
+                  <div class="slot-advance">Adv: &#8377;8,000</div>
                 </div>
               </div>
             </div>
@@ -2006,7 +2178,7 @@
                 </div>
                 <div class="slot-right">
                   <div class="slot-price">20,000</div>
-                  <div class="slot-advance">Adv: &#8377;6,000</div>
+                  <div class="slot-advance">Adv: &#8377;8,000</div>
                 </div>
               </div>
             </div>
@@ -2038,7 +2210,7 @@
                 </div>
                 <div class="slot-right">
                   <div class="slot-price">12,000</div>
-                  <div class="slot-advance">Adv: &#8377;3,600</div>
+                  <div class="slot-advance">Adv: &#8377;4,800</div>
                 </div>
               </div>
             </div>
@@ -2051,7 +2223,7 @@
                 </div>
                 <div class="slot-right">
                   <div class="slot-price">12,000</div>
-                  <div class="slot-advance">Adv: &#8377;3,600</div>
+                  <div class="slot-advance">Adv: &#8377;4,800</div>
                 </div>
               </div>
             </div>
@@ -2069,7 +2241,7 @@
                 </div>
                 <div class="slot-right">
                   <div class="slot-price">12,000</div>
-                  <div class="slot-advance">Adv: &#8377;3,600</div>
+                  <div class="slot-advance">Adv: &#8377;4,800</div>
                 </div>
               </div>
             </div>
@@ -2082,9 +2254,44 @@
                 </div>
                 <div class="slot-right">
                   <div class="slot-price">12,000</div>
-                  <div class="slot-advance">Adv: &#8377;3,600</div>
+                  <div class="slot-advance">Adv: &#8377;4,800</div>
                 </div>
               </div>
+              <!-- Jafaf -->
+<div class="slot-sub-label" style="border-top:1px solid rgba(201,169,110,.06);margin-top:.3rem">
+  <i class="fas fa-gem" style="opacity:.4;font-size:.65rem"></i>
+  Jafaf
+</div>
+
+<div class="slot-grid cols-1">
+
+  <div class="slot" data-slot="jafaf-event" data-price="20000">
+
+    <span class="slot-status" id="sstatus-jafaf-event"></span>
+
+    <div class="slot-inner">
+
+      <div class="slot-left">
+        <div class="slot-name">
+          <span class="sel-dot"></span>
+          Jafaf Event
+        </div>
+
+        <div class="slot-time">
+          <i class="fas fa-clock" style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>
+          Premium Event Package
+        </div>
+      </div>
+
+      <div class="slot-right">
+        <div class="slot-price">20,000</div>
+        <div class="slot-advance">Adv: &#8377;8,000</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
             </div>
           </div>
         </div>
@@ -2111,7 +2318,7 @@
               </div>
               <div class="fss-right">
                 <div class="fss-price" id="fssPriceDisplay">30,000</div>
-                <div class="fss-advance">Adv: &#8377;<span id="advanceBannerAmt">9,000</span></div>
+                <div class="fss-advance">Adv: &#8377;<span id="advanceBannerAmt">12,000</span></div>
               </div>
             </div>
 
@@ -2172,6 +2379,24 @@
 </button>
               <div id="bookingMessage" role="alert" aria-live="polite"></div>
               <p class="wa-note"><i class="fas fa-database" style="font-size:.62rem;margin-right:3px"></i>Data saved securely in our system</p>
+
+              <div class="garden-option">
+
+  <label>
+    <input type="checkbox" id="gardenAccess">
+
+    <div>
+      <strong>Add Garden Access (+₹3,000)</strong>
+
+      <span style="display:block; margin-top:4px; color:rgba(245,240,232,.55); font-size:13px;">
+        Optional access to the garden area for photography, guest seating, and event activities.
+      </span>
+    </div>
+
+  </label>
+
+</div>
+
             </form>
           </div>
         </div>
@@ -2449,7 +2674,7 @@ document.addEventListener('keydown', e=>{
  
 /* ── ADVANCE PAYMENT HELPERS ── */
 function updateAdvanceDisplay(price) {
-  const advance = Math.round(price * 0.30);
+  const advance = Math.round(price * 0.40);
   const fmt = advance.toLocaleString('en-IN');
   // Advance banner in form summary
   const bannerEl = document.getElementById('advanceBannerAmt');
@@ -2851,7 +3076,15 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
     const guests   = document.getElementById('bGuests').value;
     const notes    = document.getElementById('bNotes').value.trim();
     const slot     = document.getElementById('selSlot').value;
-    const price    = parseInt(document.getElementById('selPrice').value);
+    let price = parseInt(document.getElementById('selPrice').value);
+
+const gardenCheckbox = document.getElementById('gardenAccess');
+
+if(gardenCheckbox && gardenCheckbox.checked){
+  price += 3000;
+}
+
+const advance = Math.round(price * 0.40);
 
     // Frontend logging
     console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
@@ -3298,6 +3531,21 @@ function tcDecline() {
     document.body.style.overflow = 'hidden';
   }, 400);
 }
+
+document.getElementById('gardenAccess')?.addEventListener('change', function(){
+
+  let price = parseInt(document.getElementById('selPrice').value);
+
+  if(this.checked){
+    price += 3000;
+  }
+
+  const advance = Math.round(price * 0.40);
+
+  console.log("Updated Price:", price);
+  console.log("Advance:", advance);
+
+});
 
 </script>
 
