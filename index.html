@@ -1622,6 +1622,18 @@
   accent-color:#c9a96e;
 }
 
+.jafaf-center{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin-top:1rem;
+}
+
+.jafaf-center .slot{
+  width:48%;
+  min-width:280px;
+}
+
   </style>
   <script src="js/config.js"></script>
   <script>
@@ -2045,7 +2057,7 @@
   Jafaf
 </div>
 
-<div class="slot-grid cols-1">
+<div class="slot-grid jafaf-center"></div>
 
   <div class="slot" data-slot="jafaf-event" data-price="20000">
 
@@ -3221,6 +3233,31 @@ document.querySelectorAll('.faq-q').forEach(btn => btn.addEventListener('click',
     <!-- TERMS -->
     <div class="terms-list">
 
+      <div class="term-item important-term">
+
+  <div class="important-top">
+
+    <div class="important-icon">
+      <i class="fas fa-envelope-open-text"></i>
+    </div>
+
+    <div>
+
+      <h4>
+        Permission Required
+      </h4>
+
+      <p>
+        Any function or event must be organized only with the permission and approval of
+        <strong>“Aamil Saheb”</strong>.
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
+
       <div class="term-item">
         <h4>40% Advance Payment</h4>
         <p>
@@ -3248,15 +3285,6 @@ document.querySelectorAll('.faq-q').forEach(btn => btn.addEventListener('click',
           Any damages caused during the event will be chargeable.
         </p>
       </div>
-
-      <div class="term-item">
-        <h4>Permission Required</h4>
-        <p>
-          Every event must be approved by management before confirmation.
-        </p>
-      </div>
-
-    </div>
 
     <!-- CHECKBOX -->
     <div class="terms-check">
@@ -3649,6 +3677,126 @@ document.querySelectorAll('.faq-q').forEach(btn => btn.addEventListener('click',
 
 }
 
+/* IMPORTANT TERM */
+.important-term{
+
+  border:1px solid rgba(201,169,110,.35);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(201,169,110,.12),
+      rgba(255,255,255,.03)
+    );
+
+  box-shadow:
+    0 10px 35px rgba(201,169,110,.08);
+
+  position:relative;
+
+  overflow:hidden;
+}
+
+/* GOLD GLOW */
+.important-term::before{
+
+  content:"";
+
+  position:absolute;
+
+  top:-80px;
+  right:-80px;
+
+  width:180px;
+  height:180px;
+
+  background:
+    radial-gradient(circle,
+    rgba(201,169,110,.18),
+    transparent 70%);
+
+  pointer-events:none;
+}
+
+/* FLEX */
+.important-top{
+
+  display:flex;
+
+  align-items:flex-start;
+
+  gap:18px;
+
+  position:relative;
+
+  z-index:2;
+}
+
+/* ICON */
+.important-icon{
+
+  min-width:58px;
+  height:58px;
+
+  border-radius:16px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(201,169,110,.22),
+      rgba(255,255,255,.05)
+    );
+
+  border:1px solid rgba(201,169,110,.3);
+
+  color:#e7c68d;
+
+  font-size:22px;
+
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.08);
+}
+
+/* TITLE */
+.important-term h4{
+
+  color:#f3d39a;
+
+  font-size:24px;
+
+  font-weight:800;
+
+  margin-bottom:10px;
+
+  letter-spacing:.4px;
+}
+
+/* TEXT */
+.important-term p{
+
+  color:rgba(255,255,255,.82);
+
+  line-height:1.9;
+
+  font-size:16px;
+
+  font-weight:500;
+}
+
+/* AAMIL SAHEB */
+.important-term strong{
+
+  color:#f3d39a;
+
+  font-weight:800;
+
+  font-size:17px;
+}
+
 </style>
 
 <!-- =========================================
@@ -3718,3 +3866,4 @@ function closeWebsite(){
 
 </body>
 </html>
+
