@@ -3194,185 +3194,12 @@ document.querySelectorAll('.faq-q').forEach(btn => btn.addEventListener('click',
   }, {passive:true});
 })();
  
-
-/* ── TERMS & CONDITIONS LOGIC ── */
-/*
- * AUTH INTEGRATION GUIDE (for when real backend is ready):
- * ─────────────────────────────────────────────────────────
- * Replace the showTermsModal() function body with:
- *
- *   async function showTermsModal() {
- *     try {
- *       const res = await fetch('/api/user/tc-status', { credentials: 'include' });
- *       const data = await res.json();
- *       if (data.tc_accepted) return;  // Returning user — skip modal
- *     } catch(e) { /* network error — show modal to be safe *\/ }
- *     _openTcOverlay();
- *   }
- *
- * Your backend endpoint should:
- *   GET /api/user/tc-status  → { tc_accepted: true/false, accepted_at: ISO_date }
- *   POST /api/tc-consent     → save { user_id, accepted_at, ip, user_agent }
- *
- * Until then, modal shows on every visit (correct behaviour for no-auth state).
- */
-function showTermsModal() {
-  // ── NO-AUTH MODE (current): always show on every page load / refresh ──
-  // When real auth + backend is added, replace this entire function
-  // with the async version in the guide above.
-  _openTcOverlay();
-}
-
-function _openTcOverlay() {
-  // Reset checkbox and button state for a fresh display
-  const checkbox = document.getElementById('tcConsent');
-  const acceptBtn = document.getElementById('tcAcceptBtn');
-  if (checkbox) checkbox.checked = false;
-  if (acceptBtn) {
-    acceptBtn.disabled = true;
-    acceptBtn.innerHTML = '<i class="fas fa-check"></i> I Accept &amp; Proceed';
-  }
-
-  // Attach checkbox listener to ensure it works
-  if (checkbox && acceptBtn) {
-    checkbox.addEventListener('change', function() {
-      acceptBtn.disabled = !checkbox.checked;
-    });
-  }
-
-  const overlay = document.getElementById('tcOverlay');
-  overlay.style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => overlay.classList.add('tc-visible'));
-  });
-}
-
-
-function tcAccept() {
-  const checkbox = document.getElementById('tcConsent');
-  if (!checkbox || !checkbox.checked) return;
-
-  const acceptBtn = document.getElementById('tcAcceptBtn');
-  acceptBtn.disabled = true;
-  acceptBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Recording...';
-
-  // Record acceptance with timestamp
-  const record = {
-    accepted: true,
-    timestamp: new Date().toISOString(),
-    userAgent: navigator.userAgent,
-    language: navigator.language,
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    page: window.location.href,
-    version: 'MJC-TC-v1.0'
-  };
-
-  // Save to sessionStorage (current session)
-  sessionStorage.setItem('mjc_tc_accepted', JSON.stringify(record));
-  // Save to localStorage (persists across sessions)
-  localStorage.setItem('mjc_tc_accepted', JSON.stringify(record));
-
-  // Log to console for backend reference
-  console.log('✅ MJ Culture T&C Accepted:', record);
-
-  // Simulate a brief confirmation delay, then close
-  setTimeout(() => {
-    const overlay = document.getElementById('tcOverlay');
-    overlay.classList.remove('tc-visible');
-    overlay.classList.add('tc-hidden');
-    document.body.style.overflow = '';
-    setTimeout(() => {
-      overlay.style.display = 'none';
-    }, 600);
-    // Optionally: send to backend via fetch
-    // fetch('/api/tc-consent', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(record) })
-    //   .catch(err => console.warn('T&C backend log failed:', err));
-  }, 800);
-
-  acceptBtn.innerHTML = '<i class="fas fa-check-circle"></i> Accepted!';
-}
-
-function tcDecline() {
-  // Log decline
-  const record = {
-    accepted: false,
-    timestamp: new Date().toISOString(),
-    userAgent: navigator.userAgent
-  };
-  console.log('❌ MJ Culture T&C Declined:', record);
-  sessionStorage.setItem('mjc_tc_declined', JSON.stringify(record));
-
-  // Hide modal, show rejection screen
-  const overlay = document.getElementById('tcOverlay');
-  overlay.classList.remove('tc-visible');
-  overlay.classList.add('tc-hidden');
-  setTimeout(() => {
-    overlay.style.display = 'none';
-    const rejected = document.getElementById('tcRejected');
-    rejected.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }, 400);
-}
-
-document.getElementById('gardenAccess')?.addEventListener('change', function(){
-
-  let price = parseInt(document.getElementById('selPrice').value);
-
-  if(this.checked){
-    price += 3000;
-  }
-
-  const advance = Math.round(price * 0.40);
-
-  console.log("Updated Price:", price);
-  console.log("Advance:", advance);
-
-});
-
 </script>
 
-<script>
-  // Disable Right Click
-  document.addEventListener('contextmenu', function(e) {
-    e.preventDefault();
-  });
-
-  // Optional: Disable common inspect shortcuts
-  document.addEventListener('keydown', function(e) {
-
-    // F12
-    if (e.key === 'F12') {
-      e.preventDefault();
-    }
-
-    // Ctrl+Shift+I
-    if (e.ctrlKey && e.shiftKey && e.key === 'I') {
-      e.preventDefault();
-    }
-
-    // Ctrl+Shift+J
-    if (e.ctrlKey && e.shiftKey && e.key === 'J') {
-      e.preventDefault();
-    }
-
-    // Ctrl+U
-    if (e.ctrlKey && e.key === 'u') {
-      e.preventDefault();
-    }
-
-  });
-</script>
-
-<!-- BUTTON -->
-<button class="terms-btn" onclick="openTermsPopup()">
-  View Terms & Conditions
-</button>
-
-<!-- POPUP -->
+<!-- TERMS POPUP -->
 <div id="termsPopup" class="terms-popup">
 
-  <!-- GLASS OVERLAY -->
+  <!-- OVERLAY -->
   <div class="terms-overlay"></div>
 
   <!-- GLASS BOX -->
@@ -3381,23 +3208,18 @@ document.getElementById('gardenAccess')?.addEventListener('change', function(){
     <!-- GLOW -->
     <div class="terms-glow"></div>
 
-    <!-- CLOSE -->
-    <button class="terms-close" onclick="closeTermsPopup()">
-      &times;
-    </button>
+    <!-- LOGO -->
+    <img src="your-logo.png" class="terms-logo">
 
     <!-- TITLE -->
-    <h2>Rules & Regulations</h2>
+    <h2>Terms & Conditions</h2>
+
+    <p class="terms-sub">
+      Please read and accept the following rules before accessing the website and booking services.
+    </p>
 
     <!-- TERMS -->
     <div class="terms-list">
-
-      <div class="term-item">
-        <h4>Advance Booking</h4>
-        <p>
-          Ensure the plot is booked well in advance with confirmed agreement terms.
-        </p>
-      </div>
 
       <div class="term-item">
         <h4>40% Advance Payment</h4>
@@ -3407,9 +3229,9 @@ document.getElementById('gardenAccess')?.addEventListener('change', function(){
       </div>
 
       <div class="term-item">
-        <h4>Payment Schedule</h4>
+        <h4>Guest Capacity</h4>
         <p>
-          All payments must follow the agreed booking schedule.
+          Exceeding the allowed guest limit is not permitted.
         </p>
       </div>
 
@@ -3417,13 +3239,6 @@ document.getElementById('gardenAccess')?.addEventListener('change', function(){
         <h4>Noise & Curfew</h4>
         <p>
           Please follow local sound and curfew regulations during your event.
-        </p>
-      </div>
-
-      <div class="term-item">
-        <h4>Guest Capacity</h4>
-        <p>
-          Exceeding the allowed guest limit is not permitted.
         </p>
       </div>
 
@@ -3441,12 +3256,35 @@ document.getElementById('gardenAccess')?.addEventListener('change', function(){
         </p>
       </div>
 
-      <div class="term-item">
-        <h4>Parking Arrangements</h4>
-        <p>
-          Vehicles must be parked responsibly without blocking neighboring access.
-        </p>
-      </div>
+    </div>
+
+    <!-- CHECKBOX -->
+    <div class="terms-check">
+
+      <input type="checkbox" id="termsAgree">
+
+      <label for="termsAgree">
+        I have read, understood, and agree to comply with all Terms & Conditions mentioned above.
+      </label>
+
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="terms-btns">
+
+      <button class="decline-btn" onclick="declineTerms()">
+        Decline
+      </button>
+
+      <button
+        class="accept-btn"
+        id="acceptBtn"
+        disabled
+        onclick="acceptTerms()">
+
+        I Accept & Proceed
+
+      </button>
 
     </div>
 
@@ -3454,48 +3292,33 @@ document.getElementById('gardenAccess')?.addEventListener('change', function(){
 
 </div>
 
-<!-- =========================
-     GLASSMORPHISM CSS
-========================= -->
+<!-- REJECTION SCREEN -->
+<div id="rejectScreen">
+
+  <div class="reject-box">
+
+    <div class="reject-icon">✦</div>
+
+    <h2>Access Restricted</h2>
+
+    <p>
+      This venue experience is intended for guests who agree to respect our guidelines, values, and event policies.
+    </p>
+
+    <button onclick="closeWebsite()">
+      Exit Website
+    </button>
+
+  </div>
+
+</div>
+
+<!-- =========================================
+     CSS
+========================================= -->
 <style>
 
-/* BUTTON */
-.terms-btn{
-  padding:14px 26px;
-
-  border:none;
-  border-radius:14px;
-
-  cursor:pointer;
-
-  font-weight:600;
-  font-size:15px;
-
-  color:#fff;
-
-  background:rgba(255,255,255,.08);
-
-  backdrop-filter:blur(14px);
-
-  border:1px solid rgba(255,255,255,.12);
-
-  box-shadow:
-    0 8px 30px rgba(0,0,0,.25);
-
-  transition:.35s ease;
-}
-
-.terms-btn:hover{
-
-  transform:translateY(-3px);
-
-  background:rgba(201,169,110,.18);
-
-  box-shadow:
-    0 20px 40px rgba(201,169,110,.18);
-}
-
-/* POPUP */
+/* MAIN POPUP */
 .terms-popup{
   position:fixed;
   inset:0;
@@ -3504,12 +3327,12 @@ document.getElementById('gardenAccess')?.addEventListener('change', function(){
   align-items:center;
   justify-content:center;
 
+  z-index:999999999;
+
   visibility:hidden;
   opacity:0;
 
-  transition:.4s ease;
-
-  z-index:999999999;
+  transition:.45s ease;
 }
 
 /* ACTIVE */
@@ -3524,14 +3347,6 @@ document.getElementById('gardenAccess')?.addEventListener('change', function(){
   inset:0;
 
   background:
-    radial-gradient(circle at top left,
-    rgba(201,169,110,.12),
-    transparent 30%),
-
-    radial-gradient(circle at bottom right,
-    rgba(255,255,255,.08),
-    transparent 30%),
-
     rgba(0,0,0,.72);
 
   backdrop-filter:blur(10px);
@@ -3542,15 +3357,15 @@ document.getElementById('gardenAccess')?.addEventListener('change', function(){
   position:relative;
 
   width:92%;
-  max-width:850px;
+  max-width:820px;
 
-  max-height:85vh;
+  max-height:86vh;
 
   overflow-y:auto;
 
   padding:34px;
 
-  border-radius:28px;
+  border-radius:30px;
 
   background:
     linear-gradient(
@@ -3559,17 +3374,12 @@ document.getElementById('gardenAccess')?.addEventListener('change', function(){
       rgba(255,255,255,.03)
     );
 
-  backdrop-filter:blur(22px);
-
-  -webkit-backdrop-filter:blur(22px);
+  backdrop-filter:blur(24px);
 
   border:1px solid rgba(255,255,255,.12);
 
   box-shadow:
-    0 25px 80px rgba(0,0,0,.45),
-    inset 0 1px 1px rgba(255,255,255,.08);
-
-  color:#f5f0e8;
+    0 30px 80px rgba(0,0,0,.5);
 
   z-index:2;
 
@@ -3579,12 +3389,10 @@ document.getElementById('gardenAccess')?.addEventListener('change', function(){
 
   opacity:0;
 
-  transition:
-    transform .45s cubic-bezier(.2,.8,.2,1),
-    opacity .45s ease;
+  transition:.45s cubic-bezier(.2,.8,.2,1);
 }
 
-/* POP EFFECT */
+/* OPEN EFFECT */
 .terms-popup.active .terms-content{
   transform:
     translateY(0)
@@ -3593,7 +3401,7 @@ document.getElementById('gardenAccess')?.addEventListener('change', function(){
   opacity:1;
 }
 
-/* GOLD GLOW */
+/* GLOW */
 .terms-glow{
   position:absolute;
 
@@ -3602,7 +3410,7 @@ document.getElementById('gardenAccess')?.addEventListener('change', function(){
 
   background:
     radial-gradient(circle,
-    rgba(201,169,110,.22),
+    rgba(201,169,110,.25),
     transparent 70%);
 
   top:-100px;
@@ -3611,62 +3419,35 @@ document.getElementById('gardenAccess')?.addEventListener('change', function(){
   pointer-events:none;
 }
 
-/* CLOSE */
-.terms-close{
-  position:absolute;
-
-  top:18px;
-  right:18px;
-
-  width:42px;
-  height:42px;
-
-  border:none;
-  border-radius:50%;
-
-  background:rgba(255,255,255,.08);
-
-  backdrop-filter:blur(10px);
-
-  color:#fff;
-
-  font-size:24px;
-
-  cursor:pointer;
-
-  transition:.3s;
-}
-
-.terms-close:hover{
-
-  transform:
-    rotate(90deg)
-    scale(1.08);
-
-  background:rgba(201,169,110,.25);
+/* LOGO */
+.terms-logo{
+  width:90px;
+  margin-bottom:20px;
 }
 
 /* TITLE */
 .terms-content h2{
-  font-size:36px;
-
-  margin-bottom:26px;
-
   color:#fff;
-
-  letter-spacing:.5px;
+  font-size:34px;
+  margin-bottom:10px;
 }
 
-/* TERMS LIST */
+/* SUB */
+.terms-sub{
+  color:rgba(255,255,255,.65);
+  line-height:1.8;
+  margin-bottom:24px;
+}
+
+/* LIST */
 .terms-list{
   display:flex;
   flex-direction:column;
   gap:18px;
 }
 
-/* GLASS CARD */
+/* TERM CARD */
 .term-item{
-
   padding:18px;
 
   border-radius:18px;
@@ -3680,52 +3461,175 @@ document.getElementById('gardenAccess')?.addEventListener('change', function(){
 
   border:1px solid rgba(255,255,255,.08);
 
-  backdrop-filter:blur(10px);
-
   transition:.35s ease;
 }
 
-/* HOVER */
 .term-item:hover{
-
   transform:translateY(-3px);
 
-  border-color:rgba(201,169,110,.28);
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(201,169,110,.08),
-      rgba(255,255,255,.03)
-    );
+  border-color:rgba(201,169,110,.25);
 }
 
 /* TITLE */
 .term-item h4{
   color:#e7c68d;
-
   margin-bottom:8px;
-
-  font-size:18px;
 }
 
 /* TEXT */
 .term-item p{
-  color:rgba(255,255,255,.74);
-
+  color:rgba(255,255,255,.72);
   line-height:1.8;
-
-  font-size:15px;
 }
 
-/* SCROLLBAR */
-.terms-content::-webkit-scrollbar{
-  width:8px;
+/* CHECKBOX */
+.terms-check{
+  display:flex;
+  gap:14px;
+
+  margin-top:28px;
+
+  align-items:flex-start;
 }
 
-.terms-content::-webkit-scrollbar-thumb{
-  background:rgba(255,255,255,.14);
-  border-radius:20px;
+.terms-check input{
+  margin-top:5px;
+  transform:scale(1.2);
+}
+
+.terms-check label{
+  color:rgba(255,255,255,.8);
+  line-height:1.7;
+}
+
+/* BUTTON ROW */
+.terms-btns{
+  display:flex;
+  gap:16px;
+
+  margin-top:28px;
+}
+
+/* ACCEPT */
+.accept-btn{
+  flex:1;
+
+  padding:16px;
+
+  border:none;
+  border-radius:16px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #c9a96e,
+      #e7c68d
+    );
+
+  color:#111;
+
+  font-weight:700;
+
+  cursor:pointer;
+
+  transition:.3s;
+}
+
+.accept-btn:hover{
+  transform:translateY(-2px);
+}
+
+/* DISABLED */
+.accept-btn:disabled{
+  opacity:.4;
+  cursor:not-allowed;
+}
+
+/* DECLINE */
+.decline-btn{
+  flex:1;
+
+  padding:16px;
+
+  border-radius:16px;
+
+  border:1px solid rgba(255,255,255,.1);
+
+  background:rgba(255,255,255,.04);
+
+  color:#fff;
+
+  cursor:pointer;
+
+  transition:.3s;
+}
+
+.decline-btn:hover{
+  background:rgba(255,255,255,.08);
+}
+
+/* REJECT SCREEN */
+#rejectScreen{
+  position:fixed;
+  inset:0;
+
+  background:#080808;
+
+  display:none;
+
+  align-items:center;
+  justify-content:center;
+
+  z-index:9999999999;
+}
+
+/* REJECT BOX */
+.reject-box{
+  text-align:center;
+
+  max-width:500px;
+
+  padding:40px;
+
+  color:#fff;
+}
+
+/* ICON */
+.reject-icon{
+  font-size:60px;
+  color:#c9a96e;
+
+  margin-bottom:20px;
+}
+
+/* TITLE */
+.reject-box h2{
+  font-size:40px;
+  margin-bottom:18px;
+}
+
+/* TEXT */
+.reject-box p{
+  color:rgba(255,255,255,.7);
+  line-height:1.8;
+}
+
+/* BUTTON */
+.reject-box button{
+  margin-top:28px;
+
+  padding:14px 28px;
+
+  border:none;
+  border-radius:14px;
+
+  background:#c9a96e;
+
+  color:#111;
+
+  font-weight:700;
+
+  cursor:pointer;
 }
 
 /* MOBILE */
@@ -3733,58 +3637,84 @@ document.getElementById('gardenAccess')?.addEventListener('change', function(){
 
   .terms-content{
     padding:24px 18px;
-    border-radius:22px;
   }
 
   .terms-content h2{
     font-size:28px;
   }
 
+  .terms-btns{
+    flex-direction:column;
+  }
+
 }
 
 </style>
 
-<!-- =========================
+<!-- =========================================
      JAVASCRIPT
-========================= -->
+========================================= -->
 <script>
 
-function openTermsPopup(){
+/* AUTO OPEN ON WEBSITE LOAD */
+window.addEventListener("load", () => {
 
-  const popup =
-    document.getElementById("termsPopup");
+  setTimeout(() => {
 
-  popup.classList.add("active");
+    document
+      .getElementById("termsPopup")
+      .classList.add("active");
 
-  document.body.style.overflow = "hidden";
-}
+    document.body.style.overflow = "hidden";
 
-function closeTermsPopup(){
-
-  const popup =
-    document.getElementById("termsPopup");
-
-  popup.classList.remove("active");
-
-  document.body.style.overflow = "";
-}
-
-/* OUTSIDE CLICK */
-document
-.getElementById("termsPopup")
-.addEventListener("click", function(e){
-
-  if(
-    e.target.classList.contains("terms-overlay")
-  ){
-
-    closeTermsPopup();
-
-  }
+  }, 500);
 
 });
 
+/* ENABLE ACCEPT BUTTON */
+document
+.getElementById("termsAgree")
+.addEventListener("change", function(){
+
+  document
+    .getElementById("acceptBtn")
+    .disabled = !this.checked;
+
+});
+
+/* ACCEPT */
+function acceptTerms(){
+
+  document
+    .getElementById("termsPopup")
+    .classList.remove("active");
+
+  document.body.style.overflow = "";
+
+}
+
+/* DECLINE */
+function declineTerms(){
+
+  document
+    .getElementById("termsPopup")
+    .style.display = "none";
+
+  document
+    .getElementById("rejectScreen")
+    .style.display = "flex";
+
+}
+
+/* CLOSE WEBSITE */
+function closeWebsite(){
+
+  window.location.href = "about:blank";
+
+}
+
 </script>
+
 
 </body>
 </html>
