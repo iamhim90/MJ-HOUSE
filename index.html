@@ -452,15 +452,6 @@
   margin-bottom:28px;
 }
 
-/* FULL DAY WIDTH */
-.full-day-grid{
-  width:100%;
-}
-
-.full-day-grid .slot{
-  width:100%;
-  max-width:100%;
-}
 
 /* DETAILS GAP */
 .form-wrap{
@@ -1767,15 +1758,6 @@
 
 }
 
-/* FULL DAY FULL WIDTH */
-.full-day-grid{
-  width:100%;
-}
-
-.full-day-grid .slot{
-  width:100%;
-  max-width:100%;
-}
 
 /* SPACE BETWEEN ALL BOXES */
 .slot-category{
@@ -1787,6 +1769,36 @@
   margin-top:28px;
 }
 
+/* FULL DAY FIX */
+.full-day-grid{
+
+  display:block !important;
+
+  width:100% !important;
+
+}
+
+.full-day-grid .slot{
+
+  width:100% !important;
+
+  display:block !important;
+
+}
+
+.full-day-grid .slot-inner{
+
+  width:100% !important;
+
+  display:flex !important;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  padding:34px;
+
+}
 
   </style>
   <script src="js/config.js"></script>
@@ -3510,7 +3522,7 @@ document.querySelectorAll('.faq-q').forEach(btn => btn.addEventListener('click',
 </script>
 
 <!-- TERMS POPUP -->
-<div id="termsPopup" class="terms-popup">
+< id="termsPopup" class="terms-popup">
 
   <!-- OVERLAY -->
   <div class="terms-overlay"></div>
@@ -4129,49 +4141,9 @@ document.querySelectorAll('.faq-q').forEach(btn => btn.addEventListener('click',
 ========================================= -->
 <script>
 
-/* AUTO OPEN ON WEBSITE LOAD */
-window.addEventListener("load", () => {
-
-  setTimeout(() => {
-
-    document
-      .getElementById("termsPopup")
-      .classList.add("active");
-
-    document.body.style.overflow = "hidden";
-
-  }, 500);
-
-});
-
-/* ENABLE ACCEPT BUTTON */
-document
-.getElementById("termsAgree")
-.addEventListener("change", function(){
-
-  document
-    .getElementById("acceptBtn")
-    .disabled = !this.checked;
-
-});
-
-/* ACCEPT */
-function acceptTerms(){
-
-  document
-    .getElementById("termsPopup")
-    .classList.remove("active");
-
-  document.body.style.overflow = "";
-
-}
-
-/* DECLINE */
-
-
 function tcDecline(){
 
-  document.body.innerHTML = 
+  document.body.innerHTML = `
 
   <div style="
     min-height:100vh;
@@ -4190,6 +4162,7 @@ function tcDecline(){
       <div style="
         font-size:60px;
         margin-bottom:20px;
+        color:#c9a96e;
       ">
         ✦
       </div>
@@ -4212,26 +4185,29 @@ function tcDecline(){
         This venue experience is exclusively intended for guests who agree to respect our policies, values, and event guidelines.
       </p>
 
-      <button onclick="window.close()"
-      style="
-        margin-top:35px;
-        padding:14px 30px;
-        border:none;
-        border-radius:12px;
-        background:#c9a96e;
-        color:#111;
-        font-weight:700;
-        cursor:pointer;
-        font-size:15px;
-      ">
+      <button
+        onclick="window.close()"
+        style="
+          margin-top:35px;
+          padding:14px 30px;
+          border:none;
+          border-radius:12px;
+          background:#c9a96e;
+          color:#111;
+          font-weight:700;
+          cursor:pointer;
+          font-size:15px;
+        ">
         Exit Website
       </button>
 
     </div>
 
   </div>
-}
 
+  `;
+
+}
 
 document
 .getElementById('gardenAccess')
