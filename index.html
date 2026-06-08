@@ -1729,15 +1729,6 @@
 /* SPACE BETWEEN SLOT SECTION & DETAILS FORM */
 .form-wrap{
   margin-top:28px;
-
-  display:flex !important;
-
-  justify-content:space-between;
-
-  align-items:center;
-
-  padding:34px;
-
 }
 
   </style>
@@ -1755,7 +1746,7 @@
 <body>
 
 <!-- TERMS & CONDITIONS POPUP -->
-<div id="termsPopup" class="terms-popup">
+<div id="termsPopup" class="terms-popup" style="visibility:hidden; opacity:0;">
 
   <!-- OVERLAY -->
   <div class="terms-overlay"></div>
@@ -2141,9 +2132,19 @@
 
       <!-- ══ LEFT: SLOT PICKER ══ -->
       <div class="slots-panel reveal" style="transition-delay:.1s">
-
-           </div>
-           <div class="slot-grid cols-1 full-day-grid" id="slots"></div>
+        <!-- ① FULL DAY -->
+        <div class="slot-category">
+          <div class="slot-cat-header">
+            <div class="slot-cat-left">
+              <div class="slot-cat-icon"><i class="fas fa-sun"></i></div>
+              <div>
+                <div class="slot-cat-title">Full Day</div>
+                <div class="slot-cat-sub">13 hours of access &bull; Exclusive Use</div>
+              </div>
+            </div>
+            <span class="slot-cat-badge">1 Option</span>
+          </div>
+          <div class="slot-grid cols-1 full-day-grid" id="slots">
             <div class="slot sel" data-slot="fullday" data-price="30000">
               <span class="slot-badge">Most Popular</span>
               <span class="slot-status" id="sstatus-fullday"></span>
