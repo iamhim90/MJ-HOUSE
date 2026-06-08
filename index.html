@@ -2652,6 +2652,7 @@ function showTermsModal() {
     // Force reflow so transition works
     void popup.offsetWidth;
     popup.classList.add('active');
+    popup.style.opacity = '1';
   }
 }
 
@@ -4222,7 +4223,15 @@ termsCheckbox?.addEventListener('change', () => {
 
 function acceptTerms() {
   localStorage.setItem('termsAccepted', 'true');
-  document.getElementById('termsPopup').classList.remove('active');
+  const popup = document.getElementById('termsPopup');
+  if (popup) {
+    popup.classList.remove('active');
+    popup.style.opacity = '0';
+    setTimeout(() => {
+      popup.style.display = 'none';
+      popup.style.visibility = 'hidden';
+    }, 450);
+  }
 }
 
 function tcDecline() {
