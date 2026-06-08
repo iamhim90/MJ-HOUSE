@@ -447,6 +447,26 @@
     }
     .slot-category:hover { border-color:rgba(201,169,110,0.2); }
 
+    /* SPACE BETWEEN BOXES */
+.slot-category{
+  margin-bottom:28px;
+}
+
+/* FULL DAY WIDTH */
+.full-day-grid{
+  width:100%;
+}
+
+.full-day-grid .slot{
+  width:100%;
+  max-width:100%;
+}
+
+/* DETAILS GAP */
+.form-wrap{
+  margin-top:28px;
+}
+
     /* Category header bar */
     .slot-cat-header {
       display:flex; align-items:center; justify-content:space-between;
@@ -1699,6 +1719,75 @@
   font-size:14px;
 }
 
+/* FULL DAY FIX */
+.full-day-grid{
+
+  width:100%;
+
+}
+
+.full-day-grid .slot{
+
+  width:100%;
+
+  max-width:100%;
+
+  display:block;
+
+}
+
+/* SAME HEIGHT AS OTHER CARDS */
+.full-day-grid .slot-inner{
+
+  min-height:120px;
+
+}
+
+/* SPACE BETWEEN SECTIONS */
+.slot-category,
+.slot-grid,
+.booking-card,
+.slots-panel{
+
+  margin-bottom:28px;
+
+}
+
+/* MATCH HEIGHT */
+.full-day-grid .slot-inner{
+
+  min-height:120px;
+
+}
+
+/* SPACE BEFORE DETAILS */
+.booking-form-card{
+
+  margin-top:32px;
+
+}
+
+/* FULL DAY FULL WIDTH */
+.full-day-grid{
+  width:100%;
+}
+
+.full-day-grid .slot{
+  width:100%;
+  max-width:100%;
+}
+
+/* SPACE BETWEEN ALL BOXES */
+.slot-category{
+  margin-bottom:28px;
+}
+
+/* SPACE BETWEEN SLOT SECTION & DETAILS FORM */
+.form-wrap{
+  margin-top:28px;
+}
+
+
   </style>
   <script src="js/config.js"></script>
   <script>
@@ -1973,7 +2062,7 @@
       <div class="slots-panel reveal" style="transition-delay:.1s">
 
            </div>
-          <div class="slot-grid cols-1" id="slots">
+           <div class="slot-grid cols-1 full-day-grid" id="slots"></div>
             <div class="slot sel" data-slot="fullday" data-price="30000">
               <span class="slot-badge">Most Popular</span>
               <span class="slot-status" id="sstatus-fullday"></span>
@@ -2657,8 +2746,15 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
   s.classList.add('sel');
   document.getElementById('selSlot').value = s.dataset.slot;
   
-  let finalPrice = parseInt(s.dataset.price);
 
+/* ORIGINAL SLOT PRICE */
+const originalPrice =
+  parseInt(s.dataset.price);
+
+/* FINAL PRICE */
+let finalPrice = originalPrice;
+
+/* GARDEN CHECK */
 const garden =
   document.getElementById('gardenAccess');
 
@@ -2668,19 +2764,42 @@ if(garden && garden.checked){
 
 }
 
+/* SAVE FINAL PRICE */
 document.getElementById('selPrice').value =
   finalPrice;
 
+/* UPDATE ADVANCE + SUMMARY */
 updateAdvanceDisplay(finalPrice);
+
+/* UPDATE SLOT SUMMARY */
+ const slotMeta = SLOT_META[s.dataset.slot];
+
+if (slotMeta) {
+
+  const nameEl =
+    document.getElementById('fssSlotName');
+
+  const timeEl =
+    document.getElementById('fssSlotTime');
+
+  if (nameEl)
+    nameEl.textContent = slotMeta.name;
+
+  if (timeEl)
+    timeEl.textContent = slotMeta.time;
+
+}
+
 
   // Update form summary strip
   const meta = SLOT_META[s.dataset.slot];
-  if (meta) {
-    const nameEl = document.getElementById('fssSlotName');
-    const timeEl = document.getElementById('fssSlotTime');
-    if (nameEl) nameEl.textContent = meta.name;
-    if (timeEl) timeEl.textContent = meta.time;
-  }
+   if (slotMeta) {
+  const nameEl = document.getElementById('fssSlotName');
+  const timeEl = document.getElementById('fssSlotTime');
+
+  if (nameEl) nameEl.textContent = slotMeta.name;
+  if (timeEl) timeEl.textContent = slotMeta.time;
+}
 }));
 
 /* ══════════════════════════════════════════════
@@ -4160,7 +4279,22 @@ document.addEventListener('keydown', function(e) {
 
 });
 
-</script>
+
+/* GARDEN LIVE UPDATE */
+document
+.getElementById('gardenAccess')
+?.addEventListener('change', () => {
+
+  const activeSlot =
+    document.querySelector('.slot.sel');
+
+  if(activeSlot){
+
+    activeSlot.click();
+
+  }
+
+});
 
 </script>
 
