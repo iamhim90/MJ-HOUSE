@@ -2642,8 +2642,6 @@ window.addEventListener('load', () => {
  
 /* Show Terms Modal */
 function showTermsModal() {
-  // Skip if user already accepted terms
-  if (localStorage.getItem('termsAccepted') === 'true') return;
   const popup = document.getElementById('termsPopup');
   if (popup) {
     popup.style.display = 'flex';
@@ -4244,10 +4242,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const popup = document.getElementById('termsPopup');
   if (popup) {
     popup.classList.remove('active');
-  }
-
-  if (localStorage.getItem('termsAccepted') === 'true') {
-    popup?.classList.remove('active');
   }
 });
 
