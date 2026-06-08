@@ -1713,26 +1713,38 @@
 
 /* FULL DAY FIX */
 .full-day-grid{
-
-  width:100%;
-
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  margin-bottom: 28px;
 }
 
 .full-day-grid .slot{
-
-  width:100%;
-
-  max-width:100%;
-
-  display:block;
-
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex: 1;
 }
 
-/* SAME HEIGHT AS OTHER CARDS */
 .full-day-grid .slot-inner{
+  width: 100%;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 8px 32px rgba(0,0,0,.2);
+  transition: all .3s ease;
+}
 
-  min-height:120px;
-
+.full-day-grid .slot-inner:hover{
+  background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+  box-shadow: 0 12px 40px rgba(201,169,110,.15);
 }
 
 /* SPACE BETWEEN SECTIONS */
@@ -1740,56 +1752,17 @@
 .slot-grid,
 .booking-card,
 .slots-panel{
-
   margin-bottom:28px;
-
-}
-
-/* MATCH HEIGHT */
-.full-day-grid .slot-inner{
-
-  min-height:120px;
-
 }
 
 /* SPACE BEFORE DETAILS */
 .booking-form-card{
-
   margin-top:32px;
-
-}
-
-
-/* SPACE BETWEEN ALL BOXES */
-.slot-category{
-  margin-bottom:28px;
 }
 
 /* SPACE BETWEEN SLOT SECTION & DETAILS FORM */
 .form-wrap{
   margin-top:28px;
-}
-
-/* FULL DAY FIX */
-.full-day-grid{
-
-  display:block !important;
-
-  width:100% !important;
-
-}
-
-.full-day-grid .slot{
-
-  width:100% !important;
-
-  display:block !important;
-
-}
-
-.full-day-grid .slot-inner{
-
-  width:100% !important;
 
   display:flex !important;
 
@@ -1826,10 +1799,6 @@
 
     <!-- GLOW -->
     <div class="terms-glow"></div>
-
-    <!-- LOGO -->
-    <img src="assets/logo-clean.png" alt="MJ Farmhouse Logo"
-         class="terms-logo">
 
     <!-- TITLE -->
     <h2>Terms & Conditions</h2>
@@ -3653,7 +3622,7 @@ document.querySelectorAll('.faq-q').forEach(btn => btn.addEventListener('click',
   visibility:hidden;
   opacity:0;
 
-  transition:.45s ease;
+  transition: visibility .45s ease, opacity .45s ease;
 }
 
 /* ACTIVE */
@@ -3671,6 +3640,8 @@ document.querySelectorAll('.faq-q').forEach(btn => btn.addEventListener('click',
     rgba(0,0,0,.72);
 
   backdrop-filter:blur(10px);
+
+  transition: opacity .45s ease;
 }
 
 /* GLASS BOX */
@@ -4284,4 +4255,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
-
