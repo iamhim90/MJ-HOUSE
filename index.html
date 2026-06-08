@@ -1711,41 +1711,7 @@
   font-size:14px;
 }
 
-/* FULL DAY FIX */
-.full-day-grid{
-  display: flex;
-  width: 100%;
-  max-width: 100%;
-  padding: 0;
-  margin-bottom: 28px;
-}
-
-.full-day-grid .slot{
-  width: 100%;
-  max-width: 100%;
-  display: flex;
-  flex: 1;
-}
-
-.full-day-grid .slot-inner{
-  width: 100%;
-  min-height: 120px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 20px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-  backdrop-filter: blur(24px);
-  border: 1px solid rgba(255,255,255,.12);
-  box-shadow: 0 8px 32px rgba(0,0,0,.2);
-  transition: all .3s ease;
-}
-
-.full-day-grid .slot-inner:hover{
-  background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
-  box-shadow: 0 12px 40px rgba(201,169,110,.15);
-}
+/* FULL DAY - Uses standard slot styling */
 
 /* SPACE BETWEEN SECTIONS */
 .slot-category,
@@ -1789,7 +1755,7 @@
 <body>
 
 <!-- TERMS & CONDITIONS POPUP -->
-<div id="termsPopup" class="terms-popup active">
+<div id="termsPopup" class="terms-popup">
 
   <!-- OVERLAY -->
   <div class="terms-overlay"></div>
@@ -2652,6 +2618,14 @@ window.addEventListener('load', () => {
   }, loaderDelay);
 });
  
+/* Show Terms Modal */
+function showTermsModal() {
+  const popup = document.getElementById('termsPopup');
+  if (popup) {
+    popup.classList.add('active');
+  }
+}
+
 /* ── CURSOR ── */
 if (window.matchMedia('(hover:hover)').matches) {
   const dot = document.getElementById('cursorDot');
