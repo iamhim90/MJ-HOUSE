@@ -4219,8 +4219,14 @@ function tcDecline() {
 
 // Check if user already accepted terms on page load
 document.addEventListener('DOMContentLoaded', () => {
+  // Hide popup on page load - it will be shown after loader finishes
+  const popup = document.getElementById('termsPopup');
+  if (popup) {
+    popup.classList.remove('active');
+  }
+
   if (localStorage.getItem('termsAccepted') === 'true') {
-    document.getElementById('termsPopup').classList.remove('active');
+    popup?.classList.remove('active');
   }
 });
 
