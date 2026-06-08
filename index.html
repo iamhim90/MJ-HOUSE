@@ -1634,6 +1634,71 @@
   min-width:280px;
 }
 
+/* GARDEN OPTION */
+.garden-option{
+
+  margin-top:1.2rem;
+
+  padding:18px;
+
+  border-radius:18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.05),
+      rgba(255,255,255,.02)
+    );
+
+  border:1px solid rgba(201,169,110,.12);
+
+  backdrop-filter:blur(12px);
+}
+
+/* LABEL */
+.garden-label{
+
+  display:flex;
+
+  align-items:flex-start;
+
+  gap:14px;
+
+  cursor:pointer;
+}
+
+/* CHECKBOX */
+.garden-label input{
+
+  margin-top:5px;
+
+  transform:scale(1.2);
+
+  accent-color:#c9a96e;
+}
+
+/* TITLE */
+.garden-label strong{
+
+  display:block;
+
+  color:#e7c68d;
+
+  margin-bottom:6px;
+
+  font-size:16px;
+}
+
+/* TEXT */
+.garden-label span{
+
+  color:rgba(255,255,255,.68);
+
+  line-height:1.7;
+
+  font-size:14px;
+}
+
   </style>
   <script src="js/config.js"></script>
   <script>
@@ -1917,7 +1982,206 @@
                 <div class="slot-cat-sub">9 AM &ndash; 10 PM &bull; 13 hours of exclusive access</div>
               </div>
             </div>
-            <span class="slot-cat-badge">Best Value</span>
+            <span class="slot-cat-badge">
+<!-- Birthday -->
+<div class="slot-sub-label"
+  style="border-top:1px solid rgba(201,169,110,.06);margin-top:.3rem">
+
+  <i class="fas fa-birthday-cake"
+    style="opacity:.4;font-size:.65rem"></i>
+
+  Birthday
+
+</div>
+
+<div class="slot-grid cols-2">
+
+  <!-- Morning -->
+  <div class="slot"
+    data-slot="birthday-morning"
+    data-price="15000">
+
+    <span class="slot-status"
+      id="sstatus-birthday-morning"></span>
+
+    <div class="slot-inner">
+
+      <div class="slot-left">
+
+        <div class="slot-name">
+          <span class="sel-dot"></span>
+          Morning
+        </div>
+
+        <div class="slot-time">
+          <i class="fas fa-clock"
+            style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>
+
+          11 AM – 3 PM
+        </div>
+
+      </div>
+
+      <div class="slot-right">
+
+        <div class="slot-price">
+          ₹15,000
+        </div>
+
+        <div class="slot-advance">
+          Adv: ₹6,000
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Evening -->
+  <div class="slot"
+    data-slot="birthday-evening"
+    data-price="15000">
+
+    <span class="slot-status"
+      id="sstatus-birthday-evening"></span>
+
+    <div class="slot-inner">
+
+      <div class="slot-left">
+
+        <div class="slot-name">
+          <span class="sel-dot"></span>
+          Evening
+        </div>
+
+        <div class="slot-time">
+          <i class="fas fa-clock"
+            style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>
+
+          6 PM – 10 PM
+        </div>
+
+      </div>
+
+      <div class="slot-right">
+
+        <div class="slot-price">
+          ₹15,000
+        </div>
+
+        <div class="slot-advance">
+          Adv: ₹6,000
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Jafaf -->
+<div class="slot-sub-label"
+  style="border-top:1px solid rgba(201,169,110,.06);margin-top:.8rem">
+
+  <i class="fas fa-gem"
+    style="opacity:.4;font-size:.65rem"></i>
+
+  Jafaf
+
+</div>
+
+<div class="slot-grid cols-2">
+
+  <!-- Morning -->
+  <div class="slot"
+    data-slot="jafaf-morning"
+    data-price="20000">
+
+    <span class="slot-status"
+      id="sstatus-jafaf-morning"></span>
+
+    <div class="slot-inner">
+
+      <div class="slot-left">
+
+        <div class="slot-name">
+          <span class="sel-dot"></span>
+          Morning
+        </div>
+
+        <div class="slot-time">
+          <i class="fas fa-clock"
+            style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>
+
+          11 AM – 2 PM
+        </div>
+
+      </div>
+
+      <div class="slot-right">
+
+        <div class="slot-price">
+          ₹20,000
+        </div>
+
+        <div class="slot-advance">
+          Adv: ₹8,000
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Evening -->
+  <div class="slot"
+    data-slot="jafaf-evening"
+    data-price="20000">
+
+    <span class="slot-status"
+      id="sstatus-jafaf-evening"></span>
+
+    <div class="slot-inner">
+
+      <div class="slot-left">
+
+        <div class="slot-name">
+          <span class="sel-dot"></span>
+          Evening
+        </div>
+
+        <div class="slot-time">
+          <i class="fas fa-clock"
+            style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>
+
+          7 PM – 10 PM
+        </div>
+
+      </div>
+
+      <div class="slot-right">
+
+        <div class="slot-price">
+          ₹20,000
+        </div>
+
+        <div class="slot-advance">
+          Adv: ₹8,000
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+```
+</span>
           </div>
           <div class="slot-grid cols-1" id="slots">
             <div class="slot sel" data-slot="fullday" data-price="30000">
@@ -1929,7 +2193,7 @@
                   <div class="slot-time"><i class="fas fa-clock" style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>9:00 AM &ndash; 10:00 PM</div>
                 </div>
                 <div class="slot-right">
-                  <div class="slot-price">30,000</div>
+                  <div class="slot-price"> ₹30,000</div>
                   <div class="slot-advance">Advance: &#8377;12,000</div>
                 </div>
               </div>
@@ -1958,7 +2222,7 @@
                   <div class="slot-time"><i class="fas fa-clock" style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>9 AM &ndash; 3 PM</div>
                 </div>
                 <div class="slot-right">
-                  <div class="slot-price">20,000</div>
+                  <div class="slot-price"> ₹20,000</div>
                   <div class="slot-advance">Adv: &#8377;8,000</div>
                 </div>
               </div>
@@ -1971,7 +2235,7 @@
                   <div class="slot-time"><i class="fas fa-clock" style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>3:30 PM &ndash; 10:30 PM</div>
                 </div>
                 <div class="slot-right">
-                  <div class="slot-price">20,000</div>
+                  <div class="slot-price"> ₹20,000</div>
                   <div class="slot-advance">Adv: &#8377;8,000</div>
                 </div>
               </div>
@@ -2003,7 +2267,7 @@
                   <div class="slot-time"><i class="fas fa-clock" style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>11 AM &ndash; 2 PM</div>
                 </div>
                 <div class="slot-right">
-                  <div class="slot-price">12,000</div>
+                  <div class="slot-price"> ₹12,000</div>
                   <div class="slot-advance">Adv: &#8377;4,800</div>
                 </div>
               </div>
@@ -2016,14 +2280,13 @@
                   <div class="slot-time"><i class="fas fa-clock" style="font-size:.6rem;margin-right:.3rem;opacity:.5"></i>7 PM &ndash; 10 PM</div>
                 </div>
                 <div class="slot-right">
-                  <div class="slot-price">12,000</div>
+                  <div class="slot-price"> ₹12,000</div>
                   <div class="slot-advance">Adv: &#8377;4,800</div>
                 </div>
               </div>
             </div>
           </div>
            
-           ```html
 <!-- Birthday -->
 <div class="slot-sub-label"
   style="border-top:1px solid rgba(201,169,110,.06);margin-top:.3rem">
@@ -2222,6 +2485,30 @@
 
 </div>
 
+ <!-- GARDEN ACCESS -->
+<div class="garden-option">
+
+  <label class="garden-label">
+
+    <input type="checkbox" id="gardenAccess">
+
+    <div>
+
+      <strong>
+        Add Garden Access (+₹3,000)
+      </strong>
+
+      <span>
+        Optional access to the garden area for photography,
+        guest seating, and event activities.
+      </span>
+
+    </div>
+
+  </label>
+
+</div>
+
 
         <!-- Availability info bar -->
         <div id="dateAvailInfo" role="status" aria-live="polite"></div>
@@ -2291,9 +2578,15 @@
                   <label for="bOccasion">Occasion *</label>
                   <select id="bOccasion" required>
                     <option value="">Select occasion&hellip;</option>
-                    <option>Wedding</option><option>Birthday</option><option>Family Event</option>
-                    <option>Engagement</option><option>Nikah</option><option>Corporate Event</option>
-                    <option>Photoshoot</option><option>Other</option>
+                    <option>Wedding</option>
+                    <option>Birthday</option>
+                    <option>Family Event</option>
+                    <option>Engagement</option>
+                    <option>Nikah</option>
+                    <option>Jafaf</option>
+                    <option>Corporate Event</option>
+                    <option>Photoshoot</option>
+                    <option>Other</option>
                   </select>
                 </div>
                 <div class="ff"><label for="bGuests">Approx. Guests *</label><input type="number" id="bGuests" placeholder="e.g. 80" min="10" max="500" required></div>
@@ -2307,22 +2600,6 @@
               <div id="bookingMessage" role="alert" aria-live="polite"></div>
               <p class="wa-note"><i class="fas fa-database" style="font-size:.62rem;margin-right:3px"></i>Data saved securely in our system</p>
 
-              <div class="garden-option">
-
-  <label>
-    <input type="checkbox" id="gardenAccess">
-
-    <div>
-      <strong>Add Garden Access (+₹3,000)</strong>
-
-      <span style="display:block; margin-top:4px; color:rgba(245,240,232,.55); font-size:13px;">
-        Optional access to the garden area for photography, guest seating, and event activities.
-      </span>
-    </div>
-
-  </label>
-
-</div>
 
             </form>
           </div>
@@ -2635,8 +2912,23 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
   document.querySelectorAll('.slot').forEach(x => x.classList.remove('sel'));
   s.classList.add('sel');
   document.getElementById('selSlot').value = s.dataset.slot;
-  document.getElementById('selPrice').value = s.dataset.price;
-  updateAdvanceDisplay(parseInt(s.dataset.price));
+  
+  let finalPrice = parseInt(s.dataset.price);
+
+const garden =
+  document.getElementById('gardenAccess');
+
+if(garden && garden.checked){
+
+  finalPrice += 3000;
+
+}
+
+document.getElementById('selPrice').value =
+  finalPrice;
+
+updateAdvanceDisplay(finalPrice);
+
   // Update form summary strip
   const meta = SLOT_META[s.dataset.slot];
   if (meta) {
@@ -3004,7 +3296,20 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
     const guests   = document.getElementById('bGuests').value;
     const notes    = document.getElementById('bNotes').value.trim();
     const slot     = document.getElementById('selSlot').value;
-    let price = parseInt(document.getElementById('selPrice').value);
+    
+    let price =
+  parseInt(
+    document.getElementById('selPrice').value
+  );
+
+const garden =
+  document.getElementById('gardenAccess');
+
+if(garden && garden.checked){
+
+  price += 3000;
+
+}
 
 const gardenCheckbox = document.getElementById('gardenAccess');
 
@@ -4021,6 +4326,21 @@ function declineTerms(){
   document.body.classList.add("site-blocked");
 
 }
+
+document
+.getElementById('gardenAccess')
+?.addEventListener('change', () => {
+
+  const activeSlot =
+    document.querySelector('.slot.sel');
+
+  if(activeSlot){
+
+    activeSlot.click();
+
+  }
+
+});
 
 </script>
 
