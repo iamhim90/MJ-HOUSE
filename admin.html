@@ -1437,65 +1437,60 @@
 
   function triggerAdvanceRequest(id, phone, name, date, occasion) {
     const cleanPhone = phone.replace(/[^0-9]/g, '');
-    const msg = `Hello *${name}*,
-
-Thank you for choosing *MJ Culture*! ✨
-
-We are pleased to inform you that your booking request for *${date}* is available. 🗓️
-
-To secure your booking, kindly pay the *30% advance amount* and send the screenshot of the payment receipt here for verification.
-
-*Payment Details:*
-🔹 *UPI ID:* 9099847718-3@ybl
-
-Once verified, your booking will be officially confirmed. ✅
-
-Warm regards,
-*MJ Culture Team* 🏡`;
-
-    window.open(`https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+    const lines = [
+      'Assalamu Alaikum ' + name + '! \u2728',
+      '',
+      'Your booking for *' + date + '* is available! \uD83D\uDCC5',
+      '',
+      'To confirm, please pay *30% advance* via UPI:',
+      '',
+      '\uD83D\uDCB3 *UPI:* 9099847718-3@ybl',
+      '',
+      'Send the payment screenshot here for verification. \u2705',
+      '',
+      '- *MJ Culture* \uD83C\uDFE1'
+    ];
+    const msg = lines.join('\n');
+    window.open('https://wa.me/91' + cleanPhone + '?text=' + encodeURIComponent(msg), '_blank');
     updateBookingStatus(id, 'advance_requested');
   }
 
   function triggerRejectBooking(id, phone, name, date) {
     const cleanPhone = phone.replace(/[^0-9]/g, '');
-    const msg = `Hello *${name}*,
-
-Thank you for choosing *MJ Culture*. 🙏
-
-We are so sorry, but we regret to inform you that we cannot accommodate your booking request for *${date}*. 😔 The slot has already been booked.
-
-We would love to host your event on another date! Please feel free to check our availability calendar on our website and select another slot, or reach out to us. 🗓️✨
-
-Thank you for your understanding.
-
-Warm regards,
-*MJ Culture Team* 🏡`;
-
-    window.open(`https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+    const lines = [
+      'Assalamu Alaikum ' + name + ',',
+      '',
+      'We\'re sorry, your requested date *' + date + '* is not available. \uD83D\uDE14',
+      '',
+      'Please check another date on our website. We\'d love to host you! \uD83D\uDCC6\u2728',
+      '',
+      '- *MJ Culture* \uD83C\uDFE1'
+    ];
+    const msg = lines.join('\n');
+    window.open('https://wa.me/91' + cleanPhone + '?text=' + encodeURIComponent(msg), '_blank');
     updateBookingStatus(id, 'rejected');
   }
 
   function triggerConfirmBooking(id, phone, name, date, occasion, guests) {
     const cleanPhone = phone.replace(/[^0-9]/g, '');
-    const msg = `Hello *${name}*,
-
-Great news! We have successfully verified your advance payment. 🎉
-
-Your booking has now been *CONFIRMED* ✅
-
-📅 *Booking Date:* ${date}
-${occasion ? `🌟 *Occasion:* ${occasion}\n` : ''}${guests ? `👥 *Guests:* ${guests}\n` : ''}
-*Important Booking Guidelines:*
-🔹 A refundable security deposit of *₹10,000* is required (returned after the event).
-🔹 The remaining *70% balance* is to be paid in cash on the day of your event.
-
-Thank you for choosing *MJ Culture*! We look forward to hosting your event. 🏡✨
-
-Warm regards,
-*MJ Culture Team*`;
-
-    window.open(`https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+    const lines = [
+      'Assalamu Alaikum ' + name + '! \uD83C\uDF89',
+      '',
+      'Your booking is *CONFIRMED*! \u2705',
+      '',
+      '\uD83D\uDCC5 *Date:* ' + date,
+    ];
+    if (occasion) lines.push('\uD83C\uDF1F *Occasion:* ' + occasion);
+    if (guests) lines.push('\uD83D\uDC65 *Guests:* ' + guests);
+    lines.push('');
+    lines.push('*Payment Details:*');
+    lines.push('\uD83D\uDD39 Security Deposit: *Rs.10,000* (refundable)');
+    lines.push('\uD83D\uDD39 Remaining *60%* to be paid in cash');
+    lines.push('\uD83D\uDD39 Both to be paid *2-3 days before* the event');
+    lines.push('');
+    lines.push('Thank you for choosing MJ Culture! \uD83C\uDFE1\u2728');
+    const msg = lines.join('\n');
+    window.open('https://wa.me/91' + cleanPhone + '?text=' + encodeURIComponent(msg), '_blank');
     updateBookingStatus(id, 'confirmed');
   }
 
@@ -1858,50 +1853,48 @@ Warm regards,
 
   function sendWhatsApp(phone, status, name, bookingDate) {
     const cleanPhone = phone.replace(/[^0-9]/g, '');
-    let msg = "";
+    const bd = bookingDate || 'N/A';
+    let lines = [];
 
-    if (status === "confirmed") {
-      msg = `Hello *${name}*,
-
-Great news! We have successfully verified your advance payment. 🎉
-
-Your booking has now been *CONFIRMED* ✅
-
-📅 *Booking Date:* ${bookingDate || 'N/A'}
-
-*Important Booking Guidelines:*
-🔹 A refundable security deposit of *₹10,000* is required (returned after the event).
-🔹 The remaining *70% balance* is to be paid in cash on the day of your event.
-
-Thank you for choosing *MJ Culture*! We look forward to hosting your event. 🏡✨
-
-Warm regards,
-*MJ Culture Team*`;
-    } else if (status === "rejected") {
-      msg = `Hello *${name}*,
-
-Thank you for choosing *MJ Culture*. 🙏
-
-We are so sorry, but we regret to inform you that we cannot accommodate your booking request for *${bookingDate || 'N/A'}*. 😔 The slot has already been booked.
-
-We would love to host your event on another date! Please feel free to check our availability calendar on our website and select another slot, or reach out to us. 🗓️✨
-
-Thank you for your understanding.
-
-Warm regards,
-*MJ Culture Team* 🏡`;
+    if (status === 'confirmed') {
+      lines = [
+        'Assalamu Alaikum ' + name + '! \uD83C\uDF89',
+        '',
+        'Your booking is *CONFIRMED*! \u2705',
+        '',
+        '\uD83D\uDCC5 *Date:* ' + bd,
+        '',
+        '*Payment Details:*',
+        '\uD83D\uDD39 Security Deposit: *Rs.10,000* (refundable)',
+        '\uD83D\uDD39 Remaining *60%* in cash',
+        '\uD83D\uDD39 Both due *2-3 days before* event',
+        '',
+        'Thank you! - *MJ Culture* \uD83C\uDFE1\u2728'
+      ];
+    } else if (status === 'rejected') {
+      lines = [
+        'Assalamu Alaikum ' + name + ',',
+        '',
+        'Sorry, *' + bd + '* is not available. \uD83D\uDE14',
+        '',
+        'Please try another date! \uD83D\uDCC6\u2728',
+        '',
+        '- *MJ Culture* \uD83C\uDFE1'
+      ];
     } else {
-      msg = `Hello *${name}*,
-
-Thank you for submitting your booking request to *MJ Culture* ✨
-
-Your booking request for *${bookingDate || 'N/A'}* is currently under review.
-
-Our team will contact you within 24 hours regarding confirmation.`;
+      lines = [
+        'Assalamu Alaikum ' + name + '! \u2728',
+        '',
+        'Your booking for *' + bd + '* is under review. \uD83D\uDCCB',
+        '',
+        'We\'ll get back to you within 24 hours. \u23F3',
+        '',
+        '- *MJ Culture* \uD83C\uDFE1'
+      ];
     }
 
-    const url = `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(msg)}`;
-    window.open(url, "_blank");
+    const msg = lines.join('\n');
+    window.open('https://wa.me/91' + cleanPhone + '?text=' + encodeURIComponent(msg), '_blank');
   }
 
 </script>
