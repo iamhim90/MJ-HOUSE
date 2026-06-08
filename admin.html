@@ -1440,8 +1440,6 @@
     const cleanPhone = phone.replace(/[^0-9]/g, '');
     const advanceVal = totalAmount ? Math.round(parseFloat(totalAmount) * 0.4) : null;
     const advanceStr = advanceVal ? '₹' + advanceVal.toLocaleString('en-IN') : '40% advance';
-    let payLink = 'https://iamhim90.github.io/MJ-HOUSE/pay.html';
-    if (advanceVal) payLink += '?am=' + advanceVal;
 
     const lines = [
       'Assalamu Alaikum ' + name + '! \u2728',
@@ -1451,7 +1449,6 @@
       'To confirm, please pay *' + advanceStr + '* (40% advance) via UPI:',
       '',
       '\uD83D\uDCB3 *UPI ID:* 9099847718-3@ybl',
-      '\uD83D\uDD17 *Direct Pay Link:* ' + payLink,
       '',
       'Please send the payment screenshot here for verification. \u2705',
       '',
