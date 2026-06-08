@@ -3521,137 +3521,6 @@ document.querySelectorAll('.faq-q').forEach(btn => btn.addEventListener('click',
  
 </script>
 
-<!-- TERMS POPUP -->
-< id="termsPopup" class="terms-popup">
-
-  <!-- OVERLAY -->
-  <div class="terms-overlay"></div>
-
-  <!-- GLASS BOX -->
-  <div class="terms-content">
-
-    <!-- GLOW -->
-    <div class="terms-glow"></div>
-
-    <!-- LOGO -->
-    <img src="D:\MJ-Farmhouse\MJ-HOUSE\assets\logo-clean.png" class="terms-logo">
-
-    <!-- TITLE -->
-    <h2>Terms & Conditions</h2>
-
-    <p class="terms-sub">
-      Please read and accept the following rules before accessing the website and booking services.
-    </p>
-
-    <!-- TERMS -->
-    <div class="terms-list">
-
-      <div class="term-item important-term">
-
-  <div class="important-top">
-
-    <div class="important-icon">
-      <i class="fas fa-envelope-open-text"></i>
-    </div>
-
-    <div>
-
-      <h4>Permission Required</h4>
-
-      <p>
-        Any function or event must be organized only with the permission and approval of
-        <strong>“Aamil Saheb”</strong>.
-      </p>
-
-    </div>
-
-  </div>
-
-</div>
-
-      <div class="term-item">
-        <h4>40% Advance Payment</h4>
-        <p>
-          A minimum 40% advance payment is required to confirm your booking.
-        </p>
-      </div>
-
-      <div class="term-item">
-        <h4>Guest Capacity</h4>
-        <p>
-          Exceeding the allowed guest limit is not permitted.
-        </p>
-      </div>
-
-      <div class="term-item">
-        <h4>Noise & Curfew</h4>
-        <p>
-          Please follow local sound and curfew regulations during your event.
-        </p>
-      </div>
-
-      <div class="term-item">
-        <h4>Damage to Property</h4>
-        <p>
-          Any damages caused during the event will be chargeable.
-        </p>
-      </div>
-
-    <!-- CHECKBOX -->
-    <div class="terms-check">
-
-      <input type="checkbox" id="termsAgree">
-
-      <label for="termsAgree">
-        I have read, understood, and agree to comply with all Terms & Conditions mentioned above.
-      </label>
-
-    </div>
-
-    <!-- BUTTONS -->
-    <div class="terms-btns">
-
-      <button class="decline-btn" onclick="declineTerms()">
-        Decline
-      </button>
-
-      <button
-        class="accept-btn"
-        id="acceptBtn"
-        disabled
-        onclick="acceptTerms()">
-
-        I Accept & Proceed
-
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
-<!-- REJECTION SCREEN -->
-<div id="rejectScreen">
-
-  <div class="reject-box">
-
-    <div class="reject-icon">✦</div>
-
-    <h2>Access Restricted</h2>
-
-    <p>
-      This venue experience is intended for guests who agree to respect our guidelines, values, and event policies.
-    </p>
-
-    <button onclick="closeWebsite()">
-      Exit Website
-    </button>
-
-  </div>
-
-</div>
-
 <!-- =========================================
      CSS
 ========================================= -->
@@ -4273,6 +4142,118 @@ document
 });
 
 </script>
+
+<!-- TERMS POPUP -->
+<div id="termsPopup" class="terms-popup">
+
+  <!-- OVERLAY -->
+  <div class="terms-overlay"></div>
+
+  <!-- CONTENT -->
+  <div class="terms-content">
+
+    <!-- GLOW -->
+    <div class="terms-glow"></div>
+
+    <!-- LOGO -->
+    <img src="assets/logo-clean.png" alt="MJ Farmhouse Logo"
+         class="terms-logo">
+
+    <!-- TITLE -->
+    <h2>Terms & Conditions</h2>
+
+    <p class="terms-sub">
+      Please read and accept the following rules before proceeding with your booking.
+    </p>
+
+    <!-- TERMS -->
+    <div class="terms-list">
+
+      <div class="term-item">
+        <h4>Advance Payment</h4>
+        <p>
+          A non-refundable advance payment of
+          <strong>40%</strong>
+          is required to confirm the booking.
+        </p>
+      </div>
+
+      <div class="term-item">
+        <h4>Guest Responsibility</h4>
+        <p>
+          Any damage caused during the event will
+          be chargeable to the organizer.
+        </p>
+      </div>
+
+      <div class="term-item important-term">
+
+        <div class="important-top">
+
+          <div class="important-icon">
+            ✦
+          </div>
+
+          <div>
+
+            <h4>
+              Permission Required
+            </h4>
+
+            <p>
+              Every function or event must be approved
+              by management before confirmation and
+              organized only with permission from
+              <strong>Aamil Saheb</strong>.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- CHECKBOX -->
+    <div class="terms-check">
+
+      <input type="checkbox"
+             id="termsAgree">
+
+      <label for="termsAgree">
+
+        I have read, understood, and agree to
+        comply with all Terms & Conditions.
+
+      </label>
+
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="terms-btns">
+
+      <button class="accept-btn"
+              id="acceptBtn"
+              onclick="acceptTerms()"
+              disabled>
+
+        I Accept & Proceed
+
+      </button>
+
+      <button class="decline-btn"
+              onclick="tcDecline()">
+
+        Decline
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
 
 
 </body>
