@@ -1213,7 +1213,7 @@
         // Action buttons
         let actBtns = '';
         if (s === 'pending') {
-          actBtns = '<button class="btn-action approve" onclick="triggerAdvanceRequest(\'' + id + '\',\'' + rawPhone + '\',\'' + safeName + '\',\'' + displayDate + '\',\'' + safeOccasion + '\');showPage(\'calendar\')" style="font-size:.65rem"><i class="fas fa-money-bill-wave"></i> Req 30%</button>'
+          actBtns = '<button class="btn-action approve" onclick="triggerAdvanceRequest(\'' + id + '\',\'' + rawPhone + '\',\'' + safeName + '\',\'' + displayDate + '\',\'' + safeOccasion + '\',' + total + ');showPage(\'calendar\')" style="font-size:.65rem"><i class="fas fa-money-bill-wave"></i> Req 40%</button>'
                   + '<button class="btn-action reject" onclick="triggerRejectBooking(\'' + id + '\',\'' + rawPhone + '\',\'' + safeName + '\',\'' + displayDate + '\');showPage(\'calendar\')" style="font-size:.65rem"><i class="fas fa-times"></i> Reject</button>';
         } else if (s === 'advance_requested') {
           actBtns = '<button class="btn-action approve" onclick="verifyAdvance(\'' + id + '\');showPage(\'calendar\')" style="font-size:.65rem"><i class="fas fa-check"></i> Verify Adv</button>'
@@ -1222,7 +1222,7 @@
           actBtns = '<button class="btn-action approve" onclick="triggerConfirmBooking(\'' + id + '\',\'' + rawPhone + '\',\'' + safeName + '\',\'' + displayDate + '\',\'' + safeOccasion + '\',\'' + guests + '\');showPage(\'calendar\')" style="font-size:.65rem"><i class="fas fa-check-double"></i> Confirm</button>'
                   + '<button class="btn-action reject" onclick="triggerRejectBooking(\'' + id + '\',\'' + rawPhone + '\',\'' + safeName + '\',\'' + displayDate + '\');showPage(\'calendar\')" style="font-size:.65rem"><i class="fas fa-times"></i> Reject</button>';
         } else if (s === 'confirmed' && b.paymentStatus !== 'fully_paid') {
-          actBtns = '<button class="btn-action approve" onclick="collectCash(\'' + id + '\');showPage(\'calendar\')" style="font-size:.65rem"><i class="fas fa-money-bill-wave"></i> Collect 70%</button>';
+          actBtns = '<button class="btn-action approve" onclick="collectCash(\'' + id + '\');showPage(\'calendar\')" style="font-size:.65rem"><i class="fas fa-money-bill-wave"></i> Collect 60%</button>';
         } else if (b.paymentStatus === 'fully_paid') {
           actBtns = '<span class="badge badge-paid" style="font-size:.65rem;align-self:center">Fully Paid ✅</span>';
         }
@@ -1365,11 +1365,12 @@
     const phone = b.phone || '';
     const guests = b.guests || '';
 
+    const total = parseFloat(b.total_amount || b.price || 0);
     let actionBtns = '';
     if (b.status === 'pending') {
       actionBtns = `
-        <button class="btn-action approve" onclick="triggerAdvanceRequest('${id}', '${phone}', '${escName}', '${escDate}', '${escOccasion}')">
-          <i class="fas fa-money-bill-wave"></i> Request 30% Advance
+        <button class="btn-action approve" onclick="triggerAdvanceRequest('${id}', '${phone}', '${escName}', '${escDate}', '${escOccasion}', ${total})">
+          <i class="fas fa-money-bill-wave"></i> Request 40% Advance
         </button>
         <button class="btn-action reject" onclick="triggerRejectBooking('${id}', '${phone}', '${escName}', '${escDate}')">
           <i class="fas fa-times"></i> Reject
@@ -1396,7 +1397,7 @@
     } else if (b.status === 'confirmed' && b.paymentStatus !== 'fully_paid') {
       actionBtns = `
         <button class="btn-action approve" onclick="collectCash('${id}')">
-          <i class="fas fa-money-bill-wave"></i> Collect Remaining 70%
+          <i class="fas fa-money-bill-wave"></i> Collect Remaining 60%
         </button>
       `;
     } else if (b.paymentStatus === 'fully_paid') {
@@ -1435,18 +1436,24 @@
   }
 
 
-  function triggerAdvanceRequest(id, phone, name, date, occasion) {
+  function triggerAdvanceRequest(id, phone, name, date, occasion, totalAmount) {
     const cleanPhone = phone.replace(/[^0-9]/g, '');
+    const advanceVal = totalAmount ? Math.round(parseFloat(totalAmount) * 0.4) : null;
+    const advanceStr = advanceVal ? '₹' + advanceVal.toLocaleString('en-IN') : '40% advance';
+    let payLink = 'https://mjculture.in/pay.html';
+    if (advanceVal) payLink += '?am=' + advanceVal;
+
     const lines = [
       'Assalamu Alaikum ' + name + '! \u2728',
       '',
       'Your booking for *' + date + '* is available! \uD83D\uDCC5',
       '',
-      'To confirm, please pay *30% advance* via UPI:',
+      'To confirm, please pay *' + advanceStr + '* (40% advance) via UPI:',
       '',
-      '\uD83D\uDCB3 *UPI:* 9099847718-3@ybl',
+      '\uD83D\uDCB3 *UPI ID:* 9099847718-3@ybl',
+      '\uD83D\uDD17 *Direct Pay Link:* ' + payLink,
       '',
-      'Send the payment screenshot here for verification. \u2705',
+      'Please send the payment screenshot here for verification. \u2705',
       '',
       '- *MJ Culture* \uD83C\uDFE1'
     ];

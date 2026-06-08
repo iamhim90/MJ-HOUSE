@@ -60,7 +60,7 @@ Frontend validates before sending:
 ### 6. Success Flow (Lines 2595-2634)
 On successful booking:
 1. Gets `bookingId` from response
-2. Calculates 30% advance payment
+2. Calculates 40% advance payment
 3. Resets form and slots
 4. Populates booking status tracker
 5. Updates payment QR code display

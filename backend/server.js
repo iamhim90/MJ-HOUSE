@@ -274,7 +274,7 @@ app.patch('/api/bookings/:id/verify-advance', requireAuth, async (req, res) => {
     const current = await pool.query('SELECT total_amount FROM bookings WHERE id = $1', [req.params.id]);
     if (current.rows.length === 0) return res.status(404).json({ error: 'Booking not found' });
     const total = parseFloat(current.rows[0].total_amount) || 0;
-    const advancePaid = +(total * 0.3).toFixed(2);
+    const advancePaid = +(total * 0.4).toFixed(2);
     const result = await pool.query(
       'UPDATE bookings SET status = $1, payment_status = $2, advance_paid = $3 WHERE id = $4 RETURNING *',
       ['advance_verified', 'advance_paid', advancePaid, req.params.id]
