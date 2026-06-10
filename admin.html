@@ -306,9 +306,9 @@
     .cal-cell.today .cal-day-num{color:var(--wheat);font-weight:700;}
     .cal-today-dot{display:inline-block;width:5px;height:5px;background:var(--wheat);border-radius:50%;flex-shrink:0;}
     /* Status colors */
-    .cal-cell.status-booked{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.3);}
-    .cal-cell.status-booked .cal-day-num{color:#fca5a5;}
-    .cal-cell.status-booked:hover{background:rgba(239,68,68,.18);}
+    .cal-cell.status-booked{background:rgba(239,68,68,.25);border-color:rgba(239,68,68,.8);box-shadow:0 0 12px rgba(239,68,68,.5), inset 0 0 8px rgba(239,68,68,.2);}
+    .cal-cell.status-booked .cal-day-num{color:#fff;text-shadow:0 0 6px rgba(239,68,68,.8);}
+    .cal-cell.status-booked:hover{background:rgba(239,68,68,.35);box-shadow:0 0 18px rgba(239,68,68,.7), inset 0 0 12px rgba(239,68,68,.3);}
     .cal-cell.status-hold{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.3);}
     .cal-cell.status-hold .cal-day-num{color:#fcd34d;}
     .cal-cell.status-hold:hover{background:rgba(251,191,36,.16);}
@@ -1796,6 +1796,8 @@
     try {
       const data = await api('/api/bookings');
       const bookings = Array.isArray(data) ? data : (data.bookings || []);
+      // Reverse array so it starts from the 1st booking (ascending order)
+      bookings.reverse();
       const headers = ['Booking ID','Name','Phone','Email','Date','Slot','Occasion','Guests','Status','Total','Advance Paid','Cash Collected','Payment Status','Notes'];
       const rows = bookings.map(b => {
         const adv = b.advancePaid||0;
