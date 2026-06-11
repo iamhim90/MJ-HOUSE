@@ -271,6 +271,8 @@
       margin-bottom: 1.5rem;
       border-bottom: 1px solid rgba(201,169,110,.05);
       padding-bottom: .8rem;
+      position: relative;
+      z-index: 1000;
     }
     @media(max-width:768px){
       :root{--sidebar:0px;}
@@ -430,7 +432,7 @@
     <!-- Layout Header -->
     <div class="layout-header">
       <button class="sidebar-toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
-      <span style="font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:2px;color:var(--wheat);font-weight:500;">MJ Admin</span>
+      <span style="font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:2px;color:var(--wheat);font-weight:500;cursor:pointer;" onclick="showPage('dashboard')">MJ Admin</span>
     </div>
 
     <!-- DASHBOARD -->
