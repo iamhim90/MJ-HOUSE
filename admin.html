@@ -239,15 +239,24 @@
     .account-card.salary .account-card-num{color:#93c5fd;}
     .account-card.neutral .account-card-num{color:var(--wheat);}
     /* ── PIE CHART ── */
-    .pie-wrap{display:flex;gap:2rem;align-items:center;flex-wrap:wrap;}
-    .pie-svg{flex-shrink:0;}
-    .pie-legend{display:flex;flex-direction:column;gap:.6rem;}
-    .pie-legend-item{display:flex;align-items:center;gap:.55rem;font-size:.78rem;color:rgba(245,240,232,.7);}
-    .pie-legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
-    .pie-legend-amt{color:var(--wheat);font-weight:500;margin-left:.3rem;}
+    .pie-wrap{display:flex;gap:2.5rem;align-items:flex-start;flex-wrap:wrap;}
+    .pie-svg{flex-shrink:0;filter:drop-shadow(0 0 18px rgba(0,0,0,.5));}
+    .pie-legend{display:flex;flex-direction:column;gap:.55rem;flex:1;min-width:160px;}
+    .pie-legend-item{display:flex;align-items:center;gap:.6rem;font-size:.8rem;color:rgba(245,240,232,.7);cursor:pointer;border-radius:5px;padding:.2rem .4rem;transition:background .15s;}
+    .pie-legend-item:hover{background:rgba(201,169,110,.06);}
+    .pie-legend-dot{width:13px;height:13px;border-radius:3px;flex-shrink:0;box-shadow:0 0 4px rgba(0,0,0,.4);}
+    .pie-legend-amt{color:var(--wheat);font-weight:600;margin-left:auto;}
+    .pie-tooltip{background:rgba(14,11,6,.95);border:1px solid rgba(201,169,110,.3);border-radius:8px;padding:.6rem 1rem;position:absolute;pointer-events:none;font-size:.78rem;color:var(--cream);display:none;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,.5);min-width:140px;}
+    /* Month breakdown table */
+    .month-table-wrap{overflow-x:auto;margin-top:1.5rem;}
+    .month-table{width:100%;border-collapse:collapse;font-size:.8rem;}
+    .month-table th{padding:.6rem 1rem;text-align:left;font-size:.6rem;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,232,.3);border-bottom:1px solid rgba(201,169,110,.08);font-weight:400;}
+    .month-table td{padding:.75rem 1rem;border-bottom:1px solid rgba(255,255,255,.03);color:rgba(245,240,232,.7);}
+    .month-table tr:last-child td{border-bottom:none;font-weight:600;color:var(--wheat);background:rgba(201,169,110,.04);}
+    .month-table tr:hover td{background:rgba(201,169,110,.03);}
     @media(max-width:768px){
       .account-row{grid-template-columns:1fr 1fr;}
-      .pie-wrap{flex-direction:column;align-items:flex-start;}
+      .pie-wrap{flex-direction:column;align-items:center;}
     }
 
     /* ── EMPTY / LOADING ── */
@@ -479,6 +488,7 @@
         <div class="stat-card"><div class="stat-card-label">Advance Collected</div><div class="stat-card-num" id="ds-advance">—</div><i class="fas fa-rupee-sign stat-card-icon"></i></div>
         <div class="stat-card"><div class="stat-card-label">Pending Payments</div><div class="stat-card-num" id="ds-pending-pay">—</div><i class="fas fa-exclamation-circle stat-card-icon"></i></div>
         <div class="stat-card"><div class="stat-card-label">Total Expenses</div><div class="stat-card-num" id="ds-expenses">—</div><i class="fas fa-file-invoice stat-card-icon"></i></div>
+        <div class="stat-card" style="border-color:rgba(147,197,253,.2)"><div class="stat-card-label">Monthly Salary</div><div class="stat-card-num" id="ds-salary" style="color:#93c5fd">—</div><i class="fas fa-users stat-card-icon"></i></div>
       </div>
       <div class="card">
         <div class="card-header"><span class="card-title"><i class="fas fa-clock"></i> Recent Booking Requests</span><button class="btn-outline" onclick="showPage('bookings')">View All</button></div>
@@ -619,8 +629,8 @@
       </div>
       <div class="card">
         <div class="card-header"><span class="card-title"><i class="fas fa-users"></i> Staff Members</span></div>
-        <div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Role</th><th>Salary</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody id="staffTableBody"><tr><td colspan="5" class="loading"><i class="fas fa-spinner spinner"></i>Loading…</td></tr></tbody></table></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Role</th><th>Salary</th><th>Salary Month / Date</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="staffTableBody"><tr><td colspan="6" class="loading"><i class="fas fa-spinner spinner"></i>Loading…</td></tr></tbody></table></div>
       </div>
     </div>
 
@@ -651,11 +661,20 @@
         <div class="account-card salary"><div class="account-card-label">Total Salary</div><div class="account-card-num" id="acc-salary">₹0</div></div>
         <div class="account-card neutral"><div class="account-card-label">Net Profit</div><div class="account-card-num" id="acc-profit">₹0</div></div>
       </div>
-      <div class="chart-box">
-        <div class="chart-title">Monthly Revenue Breakdown <span style="font-size:.6rem;color:rgba(245,240,232,.2)" id="pieChartSubtitle">From July 2026</span></div>
+      <div class="chart-box" style="position:relative">
+        <div class="chart-title">Monthly Revenue Breakdown <span style="font-size:.65rem;color:rgba(201,169,110,.5)" id="pieChartSubtitle">All Time from July 2026</span></div>
         <div class="pie-wrap">
-          <svg id="revenuePieChart" class="pie-svg" width="180" height="180" viewBox="0 0 180 180"></svg>
+          <svg id="revenuePieChart" class="pie-svg" width="280" height="280" viewBox="0 0 280 280"></svg>
           <div class="pie-legend" id="pieLegend"></div>
+        </div>
+        <div class="pie-tooltip" id="pieTooltip"></div>
+        <!-- Month-wise breakdown table -->
+        <div class="month-table-wrap">
+          <div style="font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,232,.25);margin-bottom:.7rem;margin-top:.5rem">Month-wise Summary</div>
+          <table class="month-table">
+            <thead><tr><th>Month</th><th>Earnings</th><th>Expenses</th><th>Salary</th><th>Net Profit</th></tr></thead>
+            <tbody id="monthTableBody"><tr><td colspan="5" class="loading"><i class="fas fa-spinner spinner"></i> Loading…</td></tr></tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -696,8 +715,11 @@
         <div class="ff2"><label>Full Name</label><input type="text" id="sName" required placeholder="Staff name"></div>
         <div class="ff2"><label>Role</label><input type="text" id="sRole" required placeholder="e.g. Security, Cleaner"></div>
       </div>
-      <div class="form-grid" style="margin-bottom:1.2rem">
+      <div class="form-grid" style="margin-bottom:1rem">
         <div class="ff2"><label>Monthly Salary (₹)</label><input type="number" id="sSalary" required placeholder="e.g. 8000"></div>
+        <div class="ff2"><label>Salary Date (Month Paid For)</label><input type="date" id="sSalaryDate" required></div>
+      </div>
+      <div class="form-grid" style="margin-bottom:1.2rem">
         <div class="ff2"><label>Salary Status</label>
           <select id="sSalaryStatus">
             <option value="pending">Pending</option>
@@ -954,6 +976,7 @@
       const advTotal = allBookings.reduce((s,b) => s + (parseFloat(b.advancePaid)||0), 0);
       const pendingPay = allBookings.filter(b => b.paymentStatus !== 'fully_paid' && b.status === 'confirmed').length;
       const expTotal = allExpenses.reduce((s,e) => s + (parseFloat(e.amount)||0), 0);
+      const salaryTotal = allStaff.reduce((s,st) => s + (parseFloat(st.salary)||0), 0);
 
       document.getElementById('ds-total').textContent = allBookings.length;
       document.getElementById('ds-pending').textContent = pending;
@@ -961,6 +984,7 @@
       document.getElementById('ds-advance').textContent = '₹' + advTotal.toLocaleString('en-IN');
       document.getElementById('ds-pending-pay').textContent = pendingPay;
       document.getElementById('ds-expenses').textContent = '₹' + expTotal.toLocaleString('en-IN');
+      document.getElementById('ds-salary').textContent = '₹' + salaryTotal.toLocaleString('en-IN');
 
       // Recent 5 bookings
       const tbody = document.getElementById('recentBookings');
@@ -1654,7 +1678,7 @@
   /* ── STAFF ── */
   async function loadStaff() {
     const tbody = document.getElementById('staffTableBody');
-    tbody.innerHTML = '<tr><td colspan="5" class="loading"><i class="fas fa-spinner spinner"></i>Loading…</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="loading"><i class="fas fa-spinner spinner"></i>Loading…</td></tr>';
     try {
       const data = await api('/api/staff');
       allStaff = Array.isArray(data) ? data : (data.staff || []);
@@ -1666,10 +1690,14 @@
       tbody.innerHTML = allStaff.length ? allStaff.map(s => {
         const sCls = s.salaryStatus==='paid'?'paid':'unpaid';
         const id = s._id || s.staffId || '';
+        const salaryDateDisplay = s.salaryDate
+          ? new Date(s.salaryDate).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})
+          : '—';
         return `<tr>
           <td>${s.name||'—'}</td>
           <td>${s.role||'—'}</td>
           <td style="color:var(--wheat)">₹${(s.salary||0).toLocaleString('en-IN')}/mo</td>
+          <td style="color:rgba(147,197,253,.8);font-size:.78rem">${salaryDateDisplay}</td>
           <td><span class="badge badge-${sCls}">${s.salaryStatus||'pending'}</span></td>
           <td style="display:flex;gap:.4rem">
             <button class="btn-action approve" onclick="toggleSalaryStatus('${id}','${s.salaryStatus==='paid'?'pending':'paid'}')">
@@ -1678,11 +1706,16 @@
             <button class="btn-action reject" onclick="deleteStaff('${id}')"><i class="fas fa-trash"></i></button>
           </td>
         </tr>`;
-      }).join('') : '<tr><td colspan="5" class="empty-state"><p>No staff added yet</p></td></tr>';
+      }).join('') : '<tr><td colspan="6" class="empty-state"><p>No staff added yet</p></td></tr>';
     } catch(e) { toast('Error loading staff', 'err'); }
   }
 
-  function openAddStaffModal() { openModal('staffModal'); }
+  function openAddStaffModal() {
+    // Pre-fill salary date with today
+    const sdField = document.getElementById('sSalaryDate');
+    if (sdField && !sdField.value) sdField.valueAsDate = new Date();
+    openModal('staffModal');
+  }
 
   async function saveStaff(e) {
     e.preventDefault();
@@ -1690,6 +1723,7 @@
       name: document.getElementById('sName').value.trim(),
       role: document.getElementById('sRole').value.trim(),
       salary: parseInt(document.getElementById('sSalary').value),
+      salaryDate: document.getElementById('sSalaryDate').value,
       salaryStatus: document.getElementById('sSalaryStatus').value
     };
     try {
@@ -1779,6 +1813,7 @@
   /* ── ACCOUNTS ── */
   async function loadAccounts() {
     const monthFilter = document.getElementById('accountMonth').value;
+    const tooltipEl = document.getElementById('pieTooltip');
     try {
       const [bData, eData, sData] = await Promise.allSettled([
         api('/api/bookings'), api('/api/expenses'), api('/api/staff')
@@ -1787,115 +1822,227 @@
       const allExpenses = eData.status==='fulfilled' ? (Array.isArray(eData.value)?eData.value:eData.value.expenses||[]) : [];
       const staff       = sData.status==='fulfilled' ? (Array.isArray(sData.value)?sData.value:sData.value.staff||[]) : [];
 
-      // Filter to July 2026 onwards always
-      const baseDate = new Date(2026, 6, 1); // July 1 2026
-      let bookings = allBookings.filter(b => { const d = new Date(b.check_in||b.date); return d >= baseDate; });
-      let expenses = allExpenses.filter(e => { const d = new Date(e.date); return d >= baseDate; });
+      // Always base from July 2026
+      const baseDate = new Date(2026, 6, 1);
+      let bookings = allBookings.filter(b => new Date(b.check_in||b.date) >= baseDate);
+      let expenses = allExpenses.filter(e => new Date(e.date) >= baseDate);
+      // Salary: filter by salaryDate if present, otherwise always count all (for all-time)
+      let salaryEntries = staff.filter(st => {
+        if (!st.salaryDate) return true;
+        return new Date(st.salaryDate) >= baseDate;
+      });
 
       if (monthFilter) {
         const [yr, mo] = monthFilter.split('-').map(Number);
         bookings = bookings.filter(b => { const d = new Date(b.check_in||b.date); return d.getFullYear()===yr && d.getMonth()+1===mo; });
         expenses = expenses.filter(e => { const d = new Date(e.date); return d.getFullYear()===yr && d.getMonth()+1===mo; });
+        salaryEntries = staff.filter(st => {
+          if (!st.salaryDate) return false;
+          const d = new Date(st.salaryDate);
+          return d.getFullYear()===yr && d.getMonth()+1===mo;
+        });
       }
 
       const earnings    = bookings.filter(b => b.status==='confirmed').reduce((s,b) => s + (parseFloat(b.total_amount)||parseFloat(b.price)||0), 0);
       const expTotal    = expenses.reduce((s,e) => s + (parseFloat(e.amount)||0), 0);
-      const salaryTotal = staff.reduce((s,st) => s + (parseFloat(st.salary)||0), 0);
+      const salaryTotal = salaryEntries.reduce((s,st) => s + (parseFloat(st.salary)||0), 0);
       const profit      = earnings - (expTotal + salaryTotal);
 
       document.getElementById('acc-earnings').textContent = '₹' + earnings.toLocaleString('en-IN');
       document.getElementById('acc-expenses').textContent = '₹' + expTotal.toLocaleString('en-IN');
       document.getElementById('acc-salary').textContent   = '₹' + salaryTotal.toLocaleString('en-IN');
-      document.getElementById('acc-profit').textContent   = '₹' + Math.abs(profit).toLocaleString('en-IN') + (profit < 0 ? ' (Loss)' : '');
+      document.getElementById('acc-profit').textContent   = (profit < 0 ? '-' : '') + '₹' + Math.abs(profit).toLocaleString('en-IN') + (profit < 0 ? ' (Loss)' : '');
       document.getElementById('acc-profit').style.color   = profit >= 0 ? '#86efac' : '#fca5a5';
 
-      // ── PIE CHART: revenue by month from July 2026 ──
-      // Build month buckets (July 2026 → current month)
+      // ── PIE CHART (always all confirmed bookings from Jul 2026 regardless of month filter) ──
       const confirmedAll = allBookings.filter(b => b.status==='confirmed' && new Date(b.check_in||b.date) >= baseDate);
-      const bucketMap = {};
+      const expAll       = allExpenses.filter(e => new Date(e.date) >= baseDate);
+      const staffAll     = staff.filter(st => !st.salaryDate || new Date(st.salaryDate) >= baseDate);
+
+      // Build month keys list from July 2026 to current
+      const now2 = new Date();
+      const allMonthKeys = [];
+      let wy = 2026, wm = 7;
+      while (wy < now2.getFullYear() || (wy === now2.getFullYear() && wm <= now2.getMonth()+1)) {
+        allMonthKeys.push(wy + '-' + String(wm).padStart(2,'0'));
+        wm++; if (wm > 12) { wm = 1; wy++; }
+      }
+
+      // Revenue per month
+      const revMap = {};
       confirmedAll.forEach(b => {
         const d = new Date(b.check_in||b.date);
         const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
-        bucketMap[key] = (bucketMap[key]||0) + (parseFloat(b.total_amount)||parseFloat(b.price)||0);
+        revMap[key] = (revMap[key]||0) + (parseFloat(b.total_amount)||parseFloat(b.price)||0);
+      });
+      // Expenses per month
+      const expMap = {};
+      expAll.forEach(e => {
+        const d = new Date(e.date);
+        const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'00');
+        expMap[key] = (expMap[key]||0) + (parseFloat(e.amount)||0);
+      });
+      // Salary per month (by salaryDate)
+      const salMap = {};
+      staffAll.forEach(st => {
+        if (!st.salaryDate) return;
+        const d = new Date(st.salaryDate);
+        const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'00');
+        salMap[key] = (salMap[key]||0) + (parseFloat(st.salary)||0);
       });
 
-      // Sort buckets chronologically
-      const pieSlices = Object.keys(bucketMap).sort().map(key => {
-        const [y, m] = key.split('-').map(Number);
-        const label = new Date(y, m-1, 1).toLocaleDateString('en-IN',{month:'short',year:'2-digit'});
-        return { key, label, value: bucketMap[key] };
-      }).filter(s => s.value > 0);
+      // Build pie slices from months that have any revenue
+      const pieSlices = allMonthKeys
+        .filter(k => (revMap[k]||0) > 0)
+        .map(k => {
+          const [y, m] = k.split('-').map(Number);
+          const label = new Date(y, m-1, 1).toLocaleDateString('en-IN',{month:'short', year:'2-digit'});
+          return { key: k, label, value: revMap[k]||0, exp: expMap[k]||0, sal: salMap[k]||0 };
+        });
 
-      const PIE_COLORS = ['#c9a96e','#86efac','#93c5fd','#fcd34d','#f9a8d4','#a78bfa','#34d399','#fb923c','#e879f9','#38bdf8','#4ade80','#facc15'];
+      const PIE_COLORS = [
+        '#c9a96e','#86efac','#93c5fd','#fcd34d','#f9a8d4','#a78bfa',
+        '#34d399','#fb923c','#e879f9','#38bdf8','#4ade80','#facc15',
+        '#f87171','#60a5fa','#d946ef','#14b8a6','#f59e0b','#8b5cf6'
+      ];
+
       const svgEl   = document.getElementById('revenuePieChart');
       const legendEl = document.getElementById('pieLegend');
       svgEl.innerHTML = '';
       legendEl.innerHTML = '';
 
+      const cx = 140, cy = 140, r = 120, innerR = 60;
+
       if (pieSlices.length === 0) {
-        svgEl.innerHTML = `<text x="90" y="90" text-anchor="middle" dominant-baseline="middle" fill="rgba(245,240,232,.25)" font-size="12">No data yet</text>`;
-        document.getElementById('pieChartSubtitle').textContent = 'From July 2026';
+        svgEl.innerHTML = `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle" fill="rgba(245,240,232,.25)" font-size="14">No revenue data yet</text>`;
+        document.getElementById('pieChartSubtitle').textContent = 'All Time from July 2026';
       } else {
         const totalRev = pieSlices.reduce((s,sl) => s+sl.value, 0);
         document.getElementById('pieChartSubtitle').textContent = `Total ₹${totalRev.toLocaleString('en-IN')}`;
-        const cx=90, cy=90, r=80;
-        let startAngle = -Math.PI / 2; // start at top
+        let startAngle = -Math.PI / 2;
 
         pieSlices.forEach((sl, i) => {
           const color = PIE_COLORS[i % PIE_COLORS.length];
           const fraction = sl.value / totalRev;
           const sweep = fraction * 2 * Math.PI;
           const endAngle = startAngle + sweep;
-          const x1 = cx + r * Math.cos(startAngle), y1 = cy + r * Math.sin(startAngle);
-          const x2 = cx + r * Math.cos(endAngle),   y2 = cy + r * Math.sin(endAngle);
+          // Outer arc points
+          const x1o = cx + r * Math.cos(startAngle), y1o = cy + r * Math.sin(startAngle);
+          const x2o = cx + r * Math.cos(endAngle),   y2o = cy + r * Math.sin(endAngle);
+          // Inner arc points (donut)
+          const x1i = cx + innerR * Math.cos(endAngle),   y1i = cy + innerR * Math.sin(endAngle);
+          const x2i = cx + innerR * Math.cos(startAngle), y2i = cy + innerR * Math.sin(startAngle);
           const largeArc = sweep > Math.PI ? 1 : 0;
 
-          // Draw slice
           const path = document.createElementNS('http://www.w3.org/2000/svg','path');
-          path.setAttribute('d', `M${cx},${cy} L${x1.toFixed(2)},${y1.toFixed(2)} A${r},${r} 0 ${largeArc},1 ${x2.toFixed(2)},${y2.toFixed(2)} Z`);
+          path.setAttribute('d',
+            `M${x1o.toFixed(2)},${y1o.toFixed(2)} A${r},${r} 0 ${largeArc},1 ${x2o.toFixed(2)},${y2o.toFixed(2)}` +
+            ` L${x1i.toFixed(2)},${y1i.toFixed(2)} A${innerR},${innerR} 0 ${largeArc},0 ${x2i.toFixed(2)},${y2i.toFixed(2)} Z`
+          );
           path.setAttribute('fill', color);
           path.setAttribute('stroke', '#0a0806');
-          path.setAttribute('stroke-width', '1.5');
-          path.style.transition = 'opacity .2s';
+          path.setAttribute('stroke-width', '2');
           path.style.cursor = 'pointer';
-          // Tooltip on hover
-          path.addEventListener('mouseenter', () => { path.style.opacity = '.75'; });
-          path.addEventListener('mouseleave', () => { path.style.opacity = '1'; });
-          const title = document.createElementNS('http://www.w3.org/2000/svg','title');
-          title.textContent = `${sl.label}: ₹${sl.value.toLocaleString('en-IN')} (${(fraction*100).toFixed(1)}%)`;
-          path.appendChild(title);
+          path.style.transition = 'transform .2s, opacity .2s';
+          path.style.transformOrigin = `${cx}px ${cy}px`;
+
+          // Hover: expand slice slightly
+          path.addEventListener('mouseenter', (evt) => {
+            path.style.transform = 'scale(1.04)';
+            path.style.opacity = '0.9';
+            if (tooltipEl) {
+              tooltipEl.style.display = 'block';
+              tooltipEl.innerHTML = `<strong style="color:${color}">${sl.label}</strong><br>Revenue: <strong>₹${sl.value.toLocaleString('en-IN')}</strong><br>Share: <strong>${(fraction*100).toFixed(1)}%</strong>`;
+            }
+          });
+          path.addEventListener('mousemove', (evt) => {
+            if (tooltipEl) {
+              const rect = svgEl.closest('.chart-box').getBoundingClientRect();
+              tooltipEl.style.left = (evt.clientX - rect.left + 14) + 'px';
+              tooltipEl.style.top  = (evt.clientY - rect.top  - 10) + 'px';
+            }
+          });
+          path.addEventListener('mouseleave', () => {
+            path.style.transform = 'scale(1)';
+            path.style.opacity = '1';
+            if (tooltipEl) tooltipEl.style.display = 'none';
+          });
+
           svgEl.appendChild(path);
+
+          // Percentage label inside slice (only if slice is large enough)
+          if (fraction > 0.06) {
+            const midAngle = startAngle + sweep / 2;
+            const lx = cx + (r * 0.68) * Math.cos(midAngle);
+            const ly = cy + (r * 0.68) * Math.sin(midAngle);
+            const pct = document.createElementNS('http://www.w3.org/2000/svg','text');
+            pct.setAttribute('x', lx.toFixed(1)); pct.setAttribute('y', ly.toFixed(1));
+            pct.setAttribute('text-anchor','middle'); pct.setAttribute('dominant-baseline','middle');
+            pct.setAttribute('fill','#fff'); pct.setAttribute('font-size','10'); pct.setAttribute('font-weight','600');
+            pct.setAttribute('pointer-events','none');
+            pct.textContent = (fraction*100).toFixed(0) + '%';
+            svgEl.appendChild(pct);
+          }
 
           // Legend item
           const item = document.createElement('div');
           item.className = 'pie-legend-item';
           item.innerHTML = `<span class="pie-legend-dot" style="background:${color}"></span><span>${sl.label}</span><span class="pie-legend-amt">₹${sl.value.toLocaleString('en-IN')}</span><span style="font-size:.65rem;color:rgba(245,240,232,.35);margin-left:.2rem">${(fraction*100).toFixed(1)}%</span>`;
+          // Click to highlight slice
+          item.addEventListener('click', () => {
+            svgEl.querySelectorAll('path').forEach((p,pi) => { p.style.opacity = pi===i ? '1' : '0.25'; });
+          });
           legendEl.appendChild(item);
 
           startAngle = endAngle;
         });
 
-        // Centre hole (donut style)
-        const hole = document.createElementNS('http://www.w3.org/2000/svg','circle');
-        hole.setAttribute('cx', cx); hole.setAttribute('cy', cy); hole.setAttribute('r', 40);
-        hole.setAttribute('fill', '#0a0806');
-        svgEl.appendChild(hole);
-
-        // Centre label
-        const label = document.createElementNS('http://www.w3.org/2000/svg','text');
-        label.setAttribute('x', cx); label.setAttribute('y', cy - 6);
-        label.setAttribute('text-anchor','middle'); label.setAttribute('dominant-baseline','middle');
-        label.setAttribute('fill','rgba(245,240,232,.5)'); label.setAttribute('font-size','9');
-        label.textContent = 'Revenue';
-        svgEl.appendChild(label);
-        const label2 = document.createElementNS('http://www.w3.org/2000/svg','text');
-        label2.setAttribute('x', cx); label2.setAttribute('y', cy + 8);
-        label2.setAttribute('text-anchor','middle'); label2.setAttribute('dominant-baseline','middle');
-        label2.setAttribute('fill','#c9a96e'); label2.setAttribute('font-size','9'); label2.setAttribute('font-weight','600');
-        label2.textContent = `₹${(totalRev/1000).toFixed(0)}K`;
-        svgEl.appendChild(label2);
+        // Centre labels
+        const cLab1 = document.createElementNS('http://www.w3.org/2000/svg','text');
+        cLab1.setAttribute('x', cx); cLab1.setAttribute('y', cy - 10);
+        cLab1.setAttribute('text-anchor','middle'); cLab1.setAttribute('dominant-baseline','middle');
+        cLab1.setAttribute('fill','rgba(245,240,232,.45)'); cLab1.setAttribute('font-size','11');
+        cLab1.textContent = 'Total Revenue';
+        svgEl.appendChild(cLab1);
+        const cLab2 = document.createElementNS('http://www.w3.org/2000/svg','text');
+        cLab2.setAttribute('x', cx); cLab2.setAttribute('y', cy + 10);
+        cLab2.setAttribute('text-anchor','middle'); cLab2.setAttribute('dominant-baseline','middle');
+        cLab2.setAttribute('fill','#c9a96e'); cLab2.setAttribute('font-size','13'); cLab2.setAttribute('font-weight','700');
+        cLab2.textContent = '₹' + (totalRev >= 1000000 ? (totalRev/1000000).toFixed(1)+'L' : (totalRev/1000).toFixed(0)+'K');
+        svgEl.appendChild(cLab2);
       }
-    } catch(e) { toast('Error loading accounts', 'err'); }
+
+      // ── Month-wise breakdown table ──
+      const tBody = document.getElementById('monthTableBody');
+      if (allMonthKeys.length === 0) {
+        tBody.innerHTML = '<tr><td colspan="5" class="empty-state"><p>No data</p></td></tr>';
+      } else {
+        let totE = 0, totX = 0, totS = 0;
+        const rows = allMonthKeys.filter(k => (revMap[k]||0) > 0 || (expMap[k]||0) > 0 || (salMap[k]||0) > 0).map(k => {
+          const [y, m] = k.split('-').map(Number);
+          const mLabel = new Date(y, m-1, 1).toLocaleDateString('en-IN',{month:'long', year:'numeric'});
+          const e = revMap[k]||0, x = expMap[k]||0, sl = salMap[k]||0;
+          const p = e - (x + sl);
+          totE += e; totX += x; totS += sl;
+          return `<tr>
+            <td>${mLabel}</td>
+            <td style="color:#86efac">₹${e.toLocaleString('en-IN')}</td>
+            <td style="color:#fca5a5">₹${x.toLocaleString('en-IN')}</td>
+            <td style="color:#93c5fd">₹${sl.toLocaleString('en-IN')}</td>
+            <td style="color:${p>=0?'#86efac':'#fca5a5'}">${p<0?'-':''}₹${Math.abs(p).toLocaleString('en-IN')}${p<0?' (Loss)':''}</td>
+          </tr>`;
+        });
+        const totP = totE - (totX + totS);
+        rows.push(`<tr>
+          <td>TOTAL</td>
+          <td style="color:#86efac">₹${totE.toLocaleString('en-IN')}</td>
+          <td style="color:#fca5a5">₹${totX.toLocaleString('en-IN')}</td>
+          <td style="color:#93c5fd">₹${totS.toLocaleString('en-IN')}</td>
+          <td style="color:${totP>=0?'#86efac':'#fca5a5'}">${totP<0?'-':''}₹${Math.abs(totP).toLocaleString('en-IN')}${totP<0?' (Loss)':''}</td>
+        </tr>`);
+        tBody.innerHTML = rows.length > 1 ? rows.join('') : '<tr><td colspan="5" class="empty-state"><p>No data yet</p></td></tr>';
+      }
+    } catch(err) { console.error(err); toast('Error loading accounts', 'err'); }
   }
 
   /* ── EXPORT CSV ── */
