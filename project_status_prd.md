@@ -26,7 +26,7 @@ The core pipeline from the customer making a booking to the database saving it, 
 ### 1. Customer Booking App (`index.html`)
 - **UI/UX:** Premium aesthetic with rich typography, smooth fade/reveal animations, and responsive grid layouts.
 - **Form Submission:** Captures guest count, date, slot (noon/evening/fullday), occasion, price, and special notes.
-- **Payment Section:** Displays a structured QR Payment section (2-column layout fixed) detailing a 30% advance requirement.
+- **Payment Section:** Displays a structured QR Payment section (2-column layout fixed) detailing a 40% advance requirement.
 - **API Integration:** Successfully posts booking payloads to `POST /api/bookings`.
 
 ### 2. Admin Dashboard (`admin.html`)

@@ -17,7 +17,7 @@
       --danger:#ef4444; --success:#22c55e; --warn:#f59e0b; --info:#3b82f6;
     }
     html{height:100%;}
-    body{font-family:'DM Sans',sans-serif;background:var(--ink);color:var(--cream);min-height:100vh;display:flex;flex-direction:column;}
+    body{font-family:'DM Sans',sans-serif;background:var(--ink);color:var(--cream);min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;}
 
     /* ── LOGIN SCREEN ── */
     #loginScreen{
@@ -53,7 +53,7 @@
     #loginErr{font-size:.8rem;color:#fca5a5;text-align:center;margin-top:.8rem;display:none;}
 
     /* ── MAIN LAYOUT ── */
-    #app{display:none;flex:1;min-height:100vh;}
+    #app{display:none;flex:1;min-height:100vh;width:100%;max-width:100%;overflow-x:hidden;}
     .sidebar{
       position:fixed;top:0;left:0;bottom:0;width:200px;
       background:var(--sidebar-c);border-right:1px solid rgba(201,169,110,.1);
@@ -92,7 +92,7 @@
     }
     .sidebar-footer button:hover{background:rgba(201,169,110,.08);color:var(--wheat);border-color:rgba(201,169,110,.4);}
 
-    .main-content{margin-left:var(--sidebar);flex:1;padding:2rem;min-height:100vh;transition:margin-left .3s cubic-bezier(0.4, 0, 0.2, 1), padding .3s;}
+    .main-content{margin-left:var(--sidebar);flex:1;min-width:0;overflow-x:hidden;padding:2rem;min-height:100vh;transition:margin-left .3s cubic-bezier(0.4, 0, 0.2, 1), padding .3s;}
     .page{display:none;}
     .page.active{display:block;}
 
@@ -281,8 +281,12 @@
       margin-bottom: 1.5rem;
       border-bottom: 1px solid rgba(201,169,110,.05);
       padding-bottom: .8rem;
-      position: relative;
+      position: sticky;
+      top: 0;
+      background: var(--ink);
       z-index: 1000;
+      padding-top: 2rem;
+      margin-top: -2rem;
     }
     @media(max-width:768px){
       :root{--sidebar:0px;}
@@ -293,6 +297,10 @@
       .account-row{grid-template-columns:1fr;}
       .form-grid{grid-template-columns:1fr;}
       .stats-grid{grid-template-columns:1fr 1fr;}
+      .layout-header {
+        padding-top: 1rem;
+        margin-top: -1rem;
+      }
     }
 
     /* Inline pay edit */

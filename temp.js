@@ -188,7 +188,7 @@ document.getElementById('annCards').innerHTML = ANNOUNCEMENTS.map(a => {
  
 /* ── ADVANCE PAYMENT HELPERS ── */
 function updateAdvanceDisplay(price) {
-  const advance = Math.round(price * 0.30);
+  const advance = Math.round(price * 0.40);
   const fmt = advance.toLocaleString('en-IN');
   // Advance banner in form summary
   const bannerEl = document.getElementById('advanceBannerAmt');
@@ -597,7 +597,7 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
       if (response.ok) {
         console.log("✅ BOOKING SAVED — redirecting to payment section");
         const bookingId = fetcha.bookingId;
-        const advance = Math.round(price * 0.30);
+        const advance = Math.round(price * 0.40);
 
         // Reset form
         this.reset();
@@ -614,7 +614,7 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
             <i class="fas fa-check-circle" style="font-size:3.5rem;color:#86efac;margin-bottom:1.2rem"></i>
             <h3 style="font-family:'Cinzel',serif;color:var(--wheat);margin-bottom:1rem;font-size:1.5rem">Request Received</h3>
             <p style="color:rgba(245,240,232,0.85);font-size:0.95rem;line-height:1.6;margin-bottom:1.8rem">
-              Your request has been successfully taken. To secure your slot, <strong>please pay the 30% advance</strong> now via the QR code. Your booking will be officially confirmed by the admin once the payment is verified.
+              Your request has been successfully taken. To secure your slot, <strong>please pay the 40% advance</strong> now via the QR code. Your booking will be officially confirmed by the admin once the payment is verified.
             </p>
             <button onclick="const o = this.parentElement.parentElement; o.style.opacity='0'; setTimeout(()=>o.remove(),300)" style="background:var(--wheat);color:#111;border:none;padding:.85rem 2.2rem;border-radius:30px;font-weight:600;font-size:.95rem;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 4px 15px rgba(201,169,110,0.2)">Proceed to Payment</button>
           </div>
@@ -632,7 +632,7 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
           `<div class="bst-row"><span class="bst-label">Name</span><span class="bst-val">${name}</span></div>` +
           `<div class="bst-row"><span class="bst-label">Date</span><span class="bst-val">${formattedDate}</span></div>` +
           `<div class="bst-row"><span class="bst-label">Slot</span><span class="bst-val">${slotLabel}</span></div>` +
-          `<div class="bst-row"><span class="bst-label">Advance (30%)</span><span class="bst-val highlight">₹${advance.toLocaleString()}</span></div>`;
+          `<div class="bst-row"><span class="bst-label">Advance (40%)</span><span class="bst-val highlight">₹${advance.toLocaleString()}</span></div>`;
 
         // Reset stepper to initial state
         document.getElementById('bstStep1').className = 'bst-step done';
