@@ -853,12 +853,11 @@
     document.getElementById('dashDate').textContent = new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
     // Set today's date in expense date field
     document.getElementById('eDate').valueAsDate = new Date();
-    // Populate month selector — July 2026 onwards only
+    // Populate month selector — June 2026 onwards
     const sel = document.getElementById('accountMonth');
-    const startYear = 2026, startMonth = 7; // July 2026
+    const startYear = 2026, startMonth = 6; // June 2026
     const now = new Date();
     let yr = now.getFullYear(), mo = now.getMonth() + 1;
-    // Walk backwards from current month to July 2026
     const monthOptions = [];
     while (yr > startYear || (yr === startYear && mo >= startMonth)) {
       const val = `${yr}-${String(mo).padStart(2,'0')}`;
@@ -867,7 +866,7 @@
       mo--;
       if (mo < 1) { mo = 12; yr--; }
     }
-    sel.innerHTML += monthOptions.join('');
+    sel.innerHTML = '<option value="">All Time</option>' + monthOptions.join('');
     // Clear any previous session so they must log in every time the page is loaded/refreshed
     sessionStorage.removeItem('mjc_admin');
     sessionStorage.removeItem('mjc_admin_token');
@@ -1812,40 +1811,100 @@
 
   /* ── ACCOUNTS ── */
   async function loadAccounts() {
-    const monthFilter = document.getElementById('accountMonth').value;
-    const tooltipEl = document.getElementById('pieTooltip');
+    const monthFilter = document.getElementById('accountMonth').value; // e.g. '2026-07' or ''
+    const tooltipEl  = document.getElementById('pieTooltip');
+
+    // Helper: make a YYYY-MM key correctly
+    function mk(dateStr) {
+      const d = new Date(dateStr);
+      if (isNaN(d)) return null;
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    }
+
     try {
-      const [bData, eData, sData] = await Promise.allSettled([
+      const [bRes, eRes, sRes] = await Promise.allSettled([
         api('/api/bookings'), api('/api/expenses'), api('/api/staff')
       ]);
-      const allBookings = bData.status==='fulfilled' ? (Array.isArray(bData.value)?bData.value:bData.value.bookings||[]) : [];
-      const allExpenses = eData.status==='fulfilled' ? (Array.isArray(eData.value)?eData.value:eData.value.expenses||[]) : [];
-      const staff       = sData.status==='fulfilled' ? (Array.isArray(sData.value)?sData.value:sData.value.staff||[]) : [];
+      const allBookings = bRes.status === 'fulfilled' ? (Array.isArray(bRes.value) ? bRes.value : bRes.value.bookings || []) : [];
+      const allExpenses = eRes.status === 'fulfilled' ? (Array.isArray(eRes.value) ? eRes.value : eRes.value.expenses || []) : [];
+      const allStaff    = sRes.status === 'fulfilled' ? (Array.isArray(sRes.value) ? sRes.value : sRes.value.staff    || []) : [];
 
-      // Always base from July 2026
-      const baseDate = new Date(2026, 6, 1);
-      let bookings = allBookings.filter(b => new Date(b.check_in||b.date) >= baseDate);
-      let expenses = allExpenses.filter(e => new Date(e.date) >= baseDate);
-      // Salary: filter by salaryDate if present, otherwise always count all (for all-time)
-      let salaryEntries = staff.filter(st => {
-        if (!st.salaryDate) return true;
-        return new Date(st.salaryDate) >= baseDate;
+      // Base date: June 2026
+      const baseDate = new Date(2026, 5, 1); // month index 5 = June
+
+      // ── Build ALL-TIME month maps (June 2026 onwards) ──
+      // These always cover every month regardless of the dropdown filter.
+      // Used for the pie chart and the month-wise table.
+      const confirmedAll = allBookings.filter(b => {
+        const d = new Date(b.check_in || b.date);
+        return !isNaN(d) && d >= baseDate && b.status === 'confirmed';
+      });
+      const expAll = allExpenses.filter(e => {
+        const d = new Date(e.date);
+        return !isNaN(d) && d >= baseDate;
+      });
+      const salAll = allStaff.filter(st => {
+        if (!st.salaryDate) return false;
+        const d = new Date(st.salaryDate);
+        return !isNaN(d) && d >= baseDate;
       });
 
-      if (monthFilter) {
-        const [yr, mo] = monthFilter.split('-').map(Number);
-        bookings = bookings.filter(b => { const d = new Date(b.check_in||b.date); return d.getFullYear()===yr && d.getMonth()+1===mo; });
-        expenses = expenses.filter(e => { const d = new Date(e.date); return d.getFullYear()===yr && d.getMonth()+1===mo; });
-        salaryEntries = staff.filter(st => {
-          if (!st.salaryDate) return false;
-          const d = new Date(st.salaryDate);
-          return d.getFullYear()===yr && d.getMonth()+1===mo;
-        });
+      // revenue map: key -> total revenue
+      const revMap = {};
+      confirmedAll.forEach(b => {
+        const k = mk(b.check_in || b.date);
+        if (k) revMap[k] = (revMap[k] || 0) + (parseFloat(b.total_amount) || parseFloat(b.price) || 0);
+      });
+      // expense map: key -> total expenses
+      const expMap = {};
+      expAll.forEach(e => {
+        const k = mk(e.date);
+        if (k) expMap[k] = (expMap[k] || 0) + (parseFloat(e.amount) || 0);
+      });
+      // salary map: key -> total salary
+      const salMap = {};
+      salAll.forEach(st => {
+        const k = mk(st.salaryDate);
+        if (k) salMap[k] = (salMap[k] || 0) + (parseFloat(st.salary) || 0);
+      });
+
+      // Build ordered list of all month keys from June 2026 to current month
+      const now2 = new Date();
+      const allMonthKeys = [];
+      let wy = 2026, wm = 6; // start June 2026
+      while (wy < now2.getFullYear() || (wy === now2.getFullYear() && wm <= now2.getMonth() + 1)) {
+        allMonthKeys.push(wy + '-' + String(wm).padStart(2, '0'));
+        wm++;
+        if (wm > 12) { wm = 1; wy++; }
       }
 
-      const earnings    = bookings.filter(b => b.status==='confirmed').reduce((s,b) => s + (parseFloat(b.total_amount)||parseFloat(b.price)||0), 0);
-      const expTotal    = expenses.reduce((s,e) => s + (parseFloat(e.amount)||0), 0);
-      const salaryTotal = salaryEntries.reduce((s,st) => s + (parseFloat(st.salary)||0), 0);
+      // ── Summary cards: respond to monthFilter ──
+      let cardBookings, cardExpenses, cardSalary;
+      if (monthFilter) {
+        const [fy, fm] = monthFilter.split('-').map(Number);
+        cardBookings = allBookings.filter(b => {
+          const d = new Date(b.check_in || b.date);
+          return !isNaN(d) && d.getFullYear() === fy && d.getMonth() + 1 === fm && b.status === 'confirmed';
+        });
+        cardExpenses = allExpenses.filter(e => {
+          const d = new Date(e.date);
+          return !isNaN(d) && d.getFullYear() === fy && d.getMonth() + 1 === fm;
+        });
+        cardSalary = allStaff.filter(st => {
+          if (!st.salaryDate) return false;
+          const d = new Date(st.salaryDate);
+          return !isNaN(d) && d.getFullYear() === fy && d.getMonth() + 1 === fm;
+        });
+      } else {
+        // All Time from June 2026
+        cardBookings = confirmedAll;
+        cardExpenses = expAll;
+        cardSalary   = salAll;
+      }
+
+      const earnings    = cardBookings.reduce((s, b) => s + (parseFloat(b.total_amount) || parseFloat(b.price) || 0), 0);
+      const expTotal    = cardExpenses.reduce((s, e) => s + (parseFloat(e.amount) || 0), 0);
+      const salaryTotal = cardSalary.reduce((s, st) => s + (parseFloat(st.salary) || 0), 0);
       const profit      = earnings - (expTotal + salaryTotal);
 
       document.getElementById('acc-earnings').textContent = '₹' + earnings.toLocaleString('en-IN');
@@ -1854,195 +1913,169 @@
       document.getElementById('acc-profit').textContent   = (profit < 0 ? '-' : '') + '₹' + Math.abs(profit).toLocaleString('en-IN') + (profit < 0 ? ' (Loss)' : '');
       document.getElementById('acc-profit').style.color   = profit >= 0 ? '#86efac' : '#fca5a5';
 
-      // ── PIE CHART (always all confirmed bookings from Jul 2026 regardless of month filter) ──
-      const confirmedAll = allBookings.filter(b => b.status==='confirmed' && new Date(b.check_in||b.date) >= baseDate);
-      const expAll       = allExpenses.filter(e => new Date(e.date) >= baseDate);
-      const staffAll     = staff.filter(st => !st.salaryDate || new Date(st.salaryDate) >= baseDate);
-
-      // Build month keys list from July 2026 to current
-      const now2 = new Date();
-      const allMonthKeys = [];
-      let wy = 2026, wm = 7;
-      while (wy < now2.getFullYear() || (wy === now2.getFullYear() && wm <= now2.getMonth()+1)) {
-        allMonthKeys.push(wy + '-' + String(wm).padStart(2,'0'));
-        wm++; if (wm > 12) { wm = 1; wy++; }
-      }
-
-      // Revenue per month
-      const revMap = {};
-      confirmedAll.forEach(b => {
-        const d = new Date(b.check_in||b.date);
-        const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
-        revMap[key] = (revMap[key]||0) + (parseFloat(b.total_amount)||parseFloat(b.price)||0);
-      });
-      // Expenses per month
-      const expMap = {};
-      expAll.forEach(e => {
-        const d = new Date(e.date);
-        const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'00');
-        expMap[key] = (expMap[key]||0) + (parseFloat(e.amount)||0);
-      });
-      // Salary per month (by salaryDate)
-      const salMap = {};
-      staffAll.forEach(st => {
-        if (!st.salaryDate) return;
-        const d = new Date(st.salaryDate);
-        const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'00');
-        salMap[key] = (salMap[key]||0) + (parseFloat(st.salary)||0);
-      });
-
-      // Build pie slices from months that have any revenue
-      const pieSlices = allMonthKeys
-        .filter(k => (revMap[k]||0) > 0)
-        .map(k => {
-          const [y, m] = k.split('-').map(Number);
-          const label = new Date(y, m-1, 1).toLocaleDateString('en-IN',{month:'short', year:'2-digit'});
-          return { key: k, label, value: revMap[k]||0, exp: expMap[k]||0, sal: salMap[k]||0 };
-        });
-
+      // ── PIE CHART: always all-time, one slice per month ──
       const PIE_COLORS = [
         '#c9a96e','#86efac','#93c5fd','#fcd34d','#f9a8d4','#a78bfa',
         '#34d399','#fb923c','#e879f9','#38bdf8','#4ade80','#facc15',
         '#f87171','#60a5fa','#d946ef','#14b8a6','#f59e0b','#8b5cf6'
       ];
-
-      const svgEl   = document.getElementById('revenuePieChart');
+      const svgEl    = document.getElementById('revenuePieChart');
       const legendEl = document.getElementById('pieLegend');
       svgEl.innerHTML = '';
       legendEl.innerHTML = '';
 
-      const cx = 140, cy = 140, r = 120, innerR = 60;
+      const pieSlices = allMonthKeys
+        .filter(k => (revMap[k] || 0) > 0)
+        .map((k, i) => {
+          const [y, m] = k.split('-').map(Number);
+          const label = new Date(y, m - 1, 1).toLocaleDateString('en-IN', { month: 'short', year: '2-digit' });
+          return { key: k, label, value: revMap[k] || 0, color: PIE_COLORS[i % PIE_COLORS.length] };
+        });
+
+      const cx = 140, cy = 140, R = 120, innerR = 55;
 
       if (pieSlices.length === 0) {
-        svgEl.innerHTML = `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle" fill="rgba(245,240,232,.25)" font-size="14">No revenue data yet</text>`;
-        document.getElementById('pieChartSubtitle').textContent = 'All Time from July 2026';
+        svgEl.innerHTML = `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle" fill="rgba(245,240,232,.3)" font-size="13" font-family="DM Sans,sans-serif">No revenue data yet</text>`;
+        document.getElementById('pieChartSubtitle').textContent = 'All Time from June 2026';
       } else {
-        const totalRev = pieSlices.reduce((s,sl) => s+sl.value, 0);
-        document.getElementById('pieChartSubtitle').textContent = `Total ₹${totalRev.toLocaleString('en-IN')}`;
+        const totalRev = pieSlices.reduce((s, sl) => s + sl.value, 0);
+        document.getElementById('pieChartSubtitle').textContent = `All Time • ₹${totalRev.toLocaleString('en-IN')}`;
         let startAngle = -Math.PI / 2;
 
         pieSlices.forEach((sl, i) => {
-          const color = PIE_COLORS[i % PIE_COLORS.length];
           const fraction = sl.value / totalRev;
-          const sweep = fraction * 2 * Math.PI;
+          const sweep    = fraction * 2 * Math.PI;
           const endAngle = startAngle + sweep;
-          // Outer arc points
-          const x1o = cx + r * Math.cos(startAngle), y1o = cy + r * Math.sin(startAngle);
-          const x2o = cx + r * Math.cos(endAngle),   y2o = cy + r * Math.sin(endAngle);
-          // Inner arc points (donut)
-          const x1i = cx + innerR * Math.cos(endAngle),   y1i = cy + innerR * Math.sin(endAngle);
-          const x2i = cx + innerR * Math.cos(startAngle), y2i = cy + innerR * Math.sin(startAngle);
           const largeArc = sweep > Math.PI ? 1 : 0;
 
-          const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+          // Outer arc
+          const x1o = cx + R * Math.cos(startAngle), y1o = cy + R * Math.sin(startAngle);
+          const x2o = cx + R * Math.cos(endAngle),   y2o = cy + R * Math.sin(endAngle);
+          // Inner arc (donut)
+          const x1i = cx + innerR * Math.cos(endAngle),   y1i = cy + innerR * Math.sin(endAngle);
+          const x2i = cx + innerR * Math.cos(startAngle), y2i = cy + innerR * Math.sin(startAngle);
+
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
           path.setAttribute('d',
-            `M${x1o.toFixed(2)},${y1o.toFixed(2)} A${r},${r} 0 ${largeArc},1 ${x2o.toFixed(2)},${y2o.toFixed(2)}` +
+            `M${x1o.toFixed(2)},${y1o.toFixed(2)} A${R},${R} 0 ${largeArc},1 ${x2o.toFixed(2)},${y2o.toFixed(2)}` +
             ` L${x1i.toFixed(2)},${y1i.toFixed(2)} A${innerR},${innerR} 0 ${largeArc},0 ${x2i.toFixed(2)},${y2i.toFixed(2)} Z`
           );
-          path.setAttribute('fill', color);
+          path.setAttribute('fill', sl.color);
           path.setAttribute('stroke', '#0a0806');
-          path.setAttribute('stroke-width', '2');
+          path.setAttribute('stroke-width', '1.5');
           path.style.cursor = 'pointer';
-          path.style.transition = 'transform .2s, opacity .2s';
+          path.style.transition = 'transform .18s, opacity .18s';
           path.style.transformOrigin = `${cx}px ${cy}px`;
 
-          // Hover: expand slice slightly
           path.addEventListener('mouseenter', (evt) => {
-            path.style.transform = 'scale(1.04)';
-            path.style.opacity = '0.9';
+            path.style.transform = 'scale(1.05)';
             if (tooltipEl) {
               tooltipEl.style.display = 'block';
-              tooltipEl.innerHTML = `<strong style="color:${color}">${sl.label}</strong><br>Revenue: <strong>₹${sl.value.toLocaleString('en-IN')}</strong><br>Share: <strong>${(fraction*100).toFixed(1)}%</strong>`;
+              tooltipEl.innerHTML = `<strong style="color:${sl.color}">${sl.label}</strong><br>Revenue: <strong>₹${sl.value.toLocaleString('en-IN')}</strong><br>Share: <strong>${(fraction * 100).toFixed(1)}%</strong>`;
             }
           });
           path.addEventListener('mousemove', (evt) => {
             if (tooltipEl) {
-              const rect = svgEl.closest('.chart-box').getBoundingClientRect();
-              tooltipEl.style.left = (evt.clientX - rect.left + 14) + 'px';
-              tooltipEl.style.top  = (evt.clientY - rect.top  - 10) + 'px';
+              const box = svgEl.closest('.chart-box').getBoundingClientRect();
+              tooltipEl.style.left = (evt.clientX - box.left + 16) + 'px';
+              tooltipEl.style.top  = (evt.clientY - box.top  - 14) + 'px';
             }
           });
           path.addEventListener('mouseleave', () => {
             path.style.transform = 'scale(1)';
-            path.style.opacity = '1';
             if (tooltipEl) tooltipEl.style.display = 'none';
           });
-
+          // Click to jump to that month filter
+          path.addEventListener('click', () => {
+            document.getElementById('accountMonth').value = sl.key;
+            loadAccounts();
+          });
           svgEl.appendChild(path);
 
-          // Percentage label inside slice (only if slice is large enough)
-          if (fraction > 0.06) {
-            const midAngle = startAngle + sweep / 2;
-            const lx = cx + (r * 0.68) * Math.cos(midAngle);
-            const ly = cy + (r * 0.68) * Math.sin(midAngle);
-            const pct = document.createElementNS('http://www.w3.org/2000/svg','text');
+          // % label inside slice
+          if (fraction > 0.055) {
+            const mid = startAngle + sweep / 2;
+            const lx  = cx + R * 0.68 * Math.cos(mid);
+            const ly  = cy + R * 0.68 * Math.sin(mid);
+            const pct = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             pct.setAttribute('x', lx.toFixed(1)); pct.setAttribute('y', ly.toFixed(1));
-            pct.setAttribute('text-anchor','middle'); pct.setAttribute('dominant-baseline','middle');
-            pct.setAttribute('fill','#fff'); pct.setAttribute('font-size','10'); pct.setAttribute('font-weight','600');
-            pct.setAttribute('pointer-events','none');
-            pct.textContent = (fraction*100).toFixed(0) + '%';
+            pct.setAttribute('text-anchor', 'middle'); pct.setAttribute('dominant-baseline', 'middle');
+            pct.setAttribute('fill', '#fff'); pct.setAttribute('font-size', '9.5'); pct.setAttribute('font-weight', '700');
+            pct.setAttribute('pointer-events', 'none');
+            pct.textContent = (fraction * 100).toFixed(0) + '%';
             svgEl.appendChild(pct);
           }
 
-          // Legend item
+          // Legend row
           const item = document.createElement('div');
           item.className = 'pie-legend-item';
-          item.innerHTML = `<span class="pie-legend-dot" style="background:${color}"></span><span>${sl.label}</span><span class="pie-legend-amt">₹${sl.value.toLocaleString('en-IN')}</span><span style="font-size:.65rem;color:rgba(245,240,232,.35);margin-left:.2rem">${(fraction*100).toFixed(1)}%</span>`;
-          // Click to highlight slice
+          item.innerHTML = `<span class="pie-legend-dot" style="background:${sl.color}"></span><span>${sl.label}</span><span class="pie-legend-amt">₹${sl.value.toLocaleString('en-IN')}</span><span style="font-size:.62rem;color:rgba(245,240,232,.3);margin-left:.3rem">${(fraction * 100).toFixed(1)}%</span>`;
           item.addEventListener('click', () => {
-            svgEl.querySelectorAll('path').forEach((p,pi) => { p.style.opacity = pi===i ? '1' : '0.25'; });
+            document.getElementById('accountMonth').value = sl.key;
+            loadAccounts();
           });
           legendEl.appendChild(item);
 
           startAngle = endAngle;
         });
 
-        // Centre labels
-        const cLab1 = document.createElementNS('http://www.w3.org/2000/svg','text');
-        cLab1.setAttribute('x', cx); cLab1.setAttribute('y', cy - 10);
-        cLab1.setAttribute('text-anchor','middle'); cLab1.setAttribute('dominant-baseline','middle');
-        cLab1.setAttribute('fill','rgba(245,240,232,.45)'); cLab1.setAttribute('font-size','11');
-        cLab1.textContent = 'Total Revenue';
-        svgEl.appendChild(cLab1);
-        const cLab2 = document.createElementNS('http://www.w3.org/2000/svg','text');
-        cLab2.setAttribute('x', cx); cLab2.setAttribute('y', cy + 10);
-        cLab2.setAttribute('text-anchor','middle'); cLab2.setAttribute('dominant-baseline','middle');
-        cLab2.setAttribute('fill','#c9a96e'); cLab2.setAttribute('font-size','13'); cLab2.setAttribute('font-weight','700');
-        cLab2.textContent = '₹' + (totalRev >= 1000000 ? (totalRev/1000000).toFixed(1)+'L' : (totalRev/1000).toFixed(0)+'K');
-        svgEl.appendChild(cLab2);
+        // Centre text
+        const t1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        t1.setAttribute('x', cx); t1.setAttribute('y', cy - 9);
+        t1.setAttribute('text-anchor', 'middle'); t1.setAttribute('dominant-baseline', 'middle');
+        t1.setAttribute('fill', 'rgba(245,240,232,.4)'); t1.setAttribute('font-size', '10');
+        t1.textContent = 'Revenue';
+        svgEl.appendChild(t1);
+        const t2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        t2.setAttribute('x', cx); t2.setAttribute('y', cy + 9);
+        t2.setAttribute('text-anchor', 'middle'); t2.setAttribute('dominant-baseline', 'middle');
+        t2.setAttribute('fill', '#c9a96e'); t2.setAttribute('font-size', '12'); t2.setAttribute('font-weight', '700');
+        t2.textContent = totalRev >= 100000 ? '₹' + (totalRev / 100000).toFixed(1) + 'L' : '₹' + (totalRev / 1000).toFixed(0) + 'K';
+        svgEl.appendChild(t2);
       }
 
-      // ── Month-wise breakdown table ──
+      // ── Month-wise table: always shows ALL months from June 2026 ──
       const tBody = document.getElementById('monthTableBody');
-      if (allMonthKeys.length === 0) {
-        tBody.innerHTML = '<tr><td colspan="5" class="empty-state"><p>No data</p></td></tr>';
-      } else {
-        let totE = 0, totX = 0, totS = 0;
-        const rows = allMonthKeys.filter(k => (revMap[k]||0) > 0 || (expMap[k]||0) > 0 || (salMap[k]||0) > 0).map(k => {
+      const tableRows = allMonthKeys
+        .filter(k => (revMap[k] || 0) > 0 || (expMap[k] || 0) > 0 || (salMap[k] || 0) > 0)
+        .map(k => {
           const [y, m] = k.split('-').map(Number);
-          const mLabel = new Date(y, m-1, 1).toLocaleDateString('en-IN',{month:'long', year:'numeric'});
-          const e = revMap[k]||0, x = expMap[k]||0, sl = salMap[k]||0;
-          const p = e - (x + sl);
-          totE += e; totX += x; totS += sl;
-          return `<tr>
-            <td>${mLabel}</td>
-            <td style="color:#86efac">₹${e.toLocaleString('en-IN')}</td>
-            <td style="color:#fca5a5">₹${x.toLocaleString('en-IN')}</td>
-            <td style="color:#93c5fd">₹${sl.toLocaleString('en-IN')}</td>
-            <td style="color:${p>=0?'#86efac':'#fca5a5'}">${p<0?'-':''}₹${Math.abs(p).toLocaleString('en-IN')}${p<0?' (Loss)':''}</td>
+          const mLabel = new Date(y, m - 1, 1).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+          const rev = revMap[k] || 0;
+          const exp = expMap[k] || 0;
+          const sal = salMap[k] || 0;
+          const pft = rev - (exp + sal);
+          const isSelected = monthFilter === k;
+          return `<tr style="${isSelected ? 'background:rgba(201,169,110,.08);' : ''}">
+            <td><button onclick="document.getElementById('accountMonth').value='${k}';loadAccounts()" style="background:none;border:none;color:${isSelected ? 'var(--wheat)' : 'rgba(245,240,232,.7)'};cursor:pointer;font-size:.8rem;text-align:left;padding:0;font-weight:${isSelected ? '600' : '400'}">${mLabel}${isSelected ? ' ▼' : ''}</button></td>
+            <td style="color:#86efac">₹${rev.toLocaleString('en-IN')}</td>
+            <td style="color:#fca5a5">₹${exp.toLocaleString('en-IN')}</td>
+            <td style="color:#93c5fd">₹${sal.toLocaleString('en-IN')}</td>
+            <td style="color:${pft >= 0 ? '#86efac' : '#fca5a5'}">${pft < 0 ? '-' : ''}₹${Math.abs(pft).toLocaleString('en-IN')}${pft < 0 ? ' (L)' : ''}</td>
           </tr>`;
         });
-        const totP = totE - (totX + totS);
-        rows.push(`<tr>
-          <td>TOTAL</td>
-          <td style="color:#86efac">₹${totE.toLocaleString('en-IN')}</td>
-          <td style="color:#fca5a5">₹${totX.toLocaleString('en-IN')}</td>
-          <td style="color:#93c5fd">₹${totS.toLocaleString('en-IN')}</td>
-          <td style="color:${totP>=0?'#86efac':'#fca5a5'}">${totP<0?'-':''}₹${Math.abs(totP).toLocaleString('en-IN')}${totP<0?' (Loss)':''}</td>
+
+      if (tableRows.length === 0) {
+        tBody.innerHTML = '<tr><td colspan="5" class="empty-state"><p>No data yet from June 2026</p></td></tr>';
+      } else {
+        // Totals row
+        const totRev = allMonthKeys.reduce((s, k) => s + (revMap[k] || 0), 0);
+        const totExp = allMonthKeys.reduce((s, k) => s + (expMap[k] || 0), 0);
+        const totSal = allMonthKeys.reduce((s, k) => s + (salMap[k] || 0), 0);
+        const totPft = totRev - (totExp + totSal);
+        tableRows.push(`<tr>
+          <td><button onclick="document.getElementById('accountMonth').value='';loadAccounts()" style="background:none;border:none;color:var(--wheat);cursor:pointer;font-size:.8rem;font-weight:700;padding:0">ALL TIME</button></td>
+          <td style="color:#86efac">₹${totRev.toLocaleString('en-IN')}</td>
+          <td style="color:#fca5a5">₹${totExp.toLocaleString('en-IN')}</td>
+          <td style="color:#93c5fd">₹${totSal.toLocaleString('en-IN')}</td>
+          <td style="color:${totPft >= 0 ? '#86efac' : '#fca5a5'}">${totPft < 0 ? '-' : ''}₹${Math.abs(totPft).toLocaleString('en-IN')}${totPft < 0 ? ' (L)' : ''}</td>
         </tr>`);
-        tBody.innerHTML = rows.length > 1 ? rows.join('') : '<tr><td colspan="5" class="empty-state"><p>No data yet</p></td></tr>';
+        tBody.innerHTML = tableRows.join('');
       }
-    } catch(err) { console.error(err); toast('Error loading accounts', 'err'); }
+    } catch (err) {
+      console.error('loadAccounts error:', err);
+      toast('Error loading accounts: ' + err.message, 'err');
+    }
   }
 
   /* ── EXPORT CSV ── */
