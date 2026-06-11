@@ -221,25 +221,34 @@
     .tab-btn{flex:1;padding:.6rem .8rem;text-align:center;font-size:.7rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border-radius:5px;transition:all .15s;color:rgba(245,240,232,.35);border:none;background:none;}
     .tab-btn.active{background:rgba(201,169,110,.1);color:var(--wheat);border:1px solid rgba(201,169,110,.2);}
 
-    /* ── CHARTS PLACEHOLDER ── */
+    /* ── CHARTS ── */
     .chart-box{background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;}
-    .chart-title{font-size:.75rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(245,240,232,.35);margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;}
-    .chart-bars{display:flex;align-items:flex-end;gap:6px;height:100px;}
-    .chart-bar{flex:1;background:linear-gradient(to top,var(--bark),var(--wheat));border-radius:3px 3px 0 0;min-width:8px;transition:opacity .2s;position:relative;}
-    .chart-bar:hover{opacity:.8;}
-    .chart-bar-label{font-size:.5rem;text-align:center;color:rgba(245,240,232,.25);margin-top:.4rem;letter-spacing:.3px;}
+    .chart-title{font-size:.75rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(245,240,232,.35);margin-bottom:1.2rem;display:flex;align-items:center;justify-content:space-between;}
 
     /* ── ACCOUNT SUMMARY ── */
-    .account-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+    .account-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;}
     .account-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:10px;padding:1.4rem;}
     .account-card.positive{border-color:rgba(74,222,128,.2);}
     .account-card.negative{border-color:rgba(251,113,133,.2);}
+    .account-card.salary{border-color:rgba(147,197,253,.2);}
     .account-card.neutral{border-color:rgba(201,169,110,.2);}
     .account-card-label{font-size:.6rem;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,232,.3);margin-bottom:.5rem;}
     .account-card-num{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;}
     .account-card.positive .account-card-num{color:#86efac;}
     .account-card.negative .account-card-num{color:#fca5a5;}
+    .account-card.salary .account-card-num{color:#93c5fd;}
     .account-card.neutral .account-card-num{color:var(--wheat);}
+    /* ── PIE CHART ── */
+    .pie-wrap{display:flex;gap:2rem;align-items:center;flex-wrap:wrap;}
+    .pie-svg{flex-shrink:0;}
+    .pie-legend{display:flex;flex-direction:column;gap:.6rem;}
+    .pie-legend-item{display:flex;align-items:center;gap:.55rem;font-size:.78rem;color:rgba(245,240,232,.7);}
+    .pie-legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+    .pie-legend-amt{color:var(--wheat);font-weight:500;margin-left:.3rem;}
+    @media(max-width:768px){
+      .account-row{grid-template-columns:1fr 1fr;}
+      .pie-wrap{flex-direction:column;align-items:flex-start;}
+    }
 
     /* ── EMPTY / LOADING ── */
     .empty-state{text-align:center;padding:3rem;color:rgba(245,240,232,.25);}
@@ -639,11 +648,15 @@
       <div class="account-row" id="accountsSummary">
         <div class="account-card positive"><div class="account-card-label">Total Earnings</div><div class="account-card-num" id="acc-earnings">₹0</div></div>
         <div class="account-card negative"><div class="account-card-label">Total Expenses</div><div class="account-card-num" id="acc-expenses">₹0</div></div>
+        <div class="account-card salary"><div class="account-card-label">Total Salary</div><div class="account-card-num" id="acc-salary">₹0</div></div>
         <div class="account-card neutral"><div class="account-card-label">Net Profit</div><div class="account-card-num" id="acc-profit">₹0</div></div>
       </div>
       <div class="chart-box">
-        <div class="chart-title">Monthly Revenue <span style="font-size:.6rem;color:rgba(245,240,232,.2)">Last 6 Months</span></div>
-        <div class="chart-bars" id="revenueChart"></div>
+        <div class="chart-title">Monthly Revenue Breakdown <span style="font-size:.6rem;color:rgba(245,240,232,.2)" id="pieChartSubtitle">From July 2026</span></div>
+        <div class="pie-wrap">
+          <svg id="revenuePieChart" class="pie-svg" width="180" height="180" viewBox="0 0 180 180"></svg>
+          <div class="pie-legend" id="pieLegend"></div>
+        </div>
       </div>
     </div>
 
@@ -818,14 +831,21 @@
     document.getElementById('dashDate').textContent = new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
     // Set today's date in expense date field
     document.getElementById('eDate').valueAsDate = new Date();
-    // Populate month selector
+    // Populate month selector — July 2026 onwards only
     const sel = document.getElementById('accountMonth');
-    for (let i = 0; i < 12; i++) {
-      const d = new Date(); d.setMonth(d.getMonth() - i);
-      const val = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-      const label = d.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
-      sel.innerHTML += `<option value="${val}">${label}</option>`;
+    const startYear = 2026, startMonth = 7; // July 2026
+    const now = new Date();
+    let yr = now.getFullYear(), mo = now.getMonth() + 1;
+    // Walk backwards from current month to July 2026
+    const monthOptions = [];
+    while (yr > startYear || (yr === startYear && mo >= startMonth)) {
+      const val = `${yr}-${String(mo).padStart(2,'0')}`;
+      const label = new Date(yr, mo - 1, 1).toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+      monthOptions.push(`<option value="${val}">${label}</option>`);
+      mo--;
+      if (mo < 1) { mo = 12; yr--; }
     }
+    sel.innerHTML += monthOptions.join('');
     // Clear any previous session so they must log in every time the page is loaded/refreshed
     sessionStorage.removeItem('mjc_admin');
     sessionStorage.removeItem('mjc_admin_token');
@@ -1763,48 +1783,118 @@
       const [bData, eData, sData] = await Promise.allSettled([
         api('/api/bookings'), api('/api/expenses'), api('/api/staff')
       ]);
-      let bookings = bData.status==='fulfilled' ? (Array.isArray(bData.value)?bData.value:bData.value.bookings||[]) : [];
-      let expenses = eData.status==='fulfilled' ? (Array.isArray(eData.value)?eData.value:eData.value.expenses||[]) : [];
-      let staff    = sData.status==='fulfilled' ? (Array.isArray(sData.value)?sData.value:sData.value.staff||[]) : [];
+      const allBookings = bData.status==='fulfilled' ? (Array.isArray(bData.value)?bData.value:bData.value.bookings||[]) : [];
+      const allExpenses = eData.status==='fulfilled' ? (Array.isArray(eData.value)?eData.value:eData.value.expenses||[]) : [];
+      const staff       = sData.status==='fulfilled' ? (Array.isArray(sData.value)?sData.value:sData.value.staff||[]) : [];
+
+      // Filter to July 2026 onwards always
+      const baseDate = new Date(2026, 6, 1); // July 1 2026
+      let bookings = allBookings.filter(b => { const d = new Date(b.check_in||b.date); return d >= baseDate; });
+      let expenses = allExpenses.filter(e => { const d = new Date(e.date); return d >= baseDate; });
 
       if (monthFilter) {
         const [yr, mo] = monthFilter.split('-').map(Number);
-        bookings = bookings.filter(b => { const d = new Date(b.date); return d.getFullYear()===yr && d.getMonth()+1===mo; });
+        bookings = bookings.filter(b => { const d = new Date(b.check_in||b.date); return d.getFullYear()===yr && d.getMonth()+1===mo; });
         expenses = expenses.filter(e => { const d = new Date(e.date); return d.getFullYear()===yr && d.getMonth()+1===mo; });
       }
 
-      const earnings = bookings.filter(b => b.status==='confirmed').reduce((s,b) => s + (parseFloat(b.total_amount)||parseFloat(b.price)||0), 0);
-      const expTotal = expenses.reduce((s,e) => s + (parseFloat(e.amount)||0), 0);
+      const earnings    = bookings.filter(b => b.status==='confirmed').reduce((s,b) => s + (parseFloat(b.total_amount)||parseFloat(b.price)||0), 0);
+      const expTotal    = expenses.reduce((s,e) => s + (parseFloat(e.amount)||0), 0);
       const salaryTotal = staff.reduce((s,st) => s + (parseFloat(st.salary)||0), 0);
-      const totalCosts = expTotal + (monthFilter ? salaryTotal : 0);
-      const profit = earnings - totalCosts;
+      const profit      = earnings - (expTotal + salaryTotal);
 
       document.getElementById('acc-earnings').textContent = '₹' + earnings.toLocaleString('en-IN');
-      document.getElementById('acc-expenses').textContent = '₹' + totalCosts.toLocaleString('en-IN');
-      document.getElementById('acc-profit').textContent = '₹' + profit.toLocaleString('en-IN');
-      document.getElementById('acc-profit').style.color = profit >= 0 ? '#86efac' : '#fca5a5';
+      document.getElementById('acc-expenses').textContent = '₹' + expTotal.toLocaleString('en-IN');
+      document.getElementById('acc-salary').textContent   = '₹' + salaryTotal.toLocaleString('en-IN');
+      document.getElementById('acc-profit').textContent   = '₹' + Math.abs(profit).toLocaleString('en-IN') + (profit < 0 ? ' (Loss)' : '');
+      document.getElementById('acc-profit').style.color   = profit >= 0 ? '#86efac' : '#fca5a5';
 
-      // Monthly revenue chart (last 6 months)
-      const chartEl = document.getElementById('revenueChart');
-      const allB = (bData.status==='fulfilled' ? (Array.isArray(bData.value)?bData.value:bData.value.bookings||[]) : []);
-      const months = [];
-      for (let i = 5; i >= 0; i--) {
-        const d = new Date(); d.setMonth(d.getMonth() - i);
-        const yr = d.getFullYear(), mo = d.getMonth() + 1;
-        const rev = allB.filter(b => {
-          const bd = new Date(b.date);
-          return bd.getFullYear()===yr && bd.getMonth()+1===mo && b.status==='confirmed';
-        }).reduce((s,b) => s + (parseFloat(b.total_amount)||parseFloat(b.price)||0), 0);
-        months.push({label: d.toLocaleDateString('en-IN',{month:'short'}), rev});
+      // ── PIE CHART: revenue by month from July 2026 ──
+      // Build month buckets (July 2026 → current month)
+      const confirmedAll = allBookings.filter(b => b.status==='confirmed' && new Date(b.check_in||b.date) >= baseDate);
+      const bucketMap = {};
+      confirmedAll.forEach(b => {
+        const d = new Date(b.check_in||b.date);
+        const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+        bucketMap[key] = (bucketMap[key]||0) + (parseFloat(b.total_amount)||parseFloat(b.price)||0);
+      });
+
+      // Sort buckets chronologically
+      const pieSlices = Object.keys(bucketMap).sort().map(key => {
+        const [y, m] = key.split('-').map(Number);
+        const label = new Date(y, m-1, 1).toLocaleDateString('en-IN',{month:'short',year:'2-digit'});
+        return { key, label, value: bucketMap[key] };
+      }).filter(s => s.value > 0);
+
+      const PIE_COLORS = ['#c9a96e','#86efac','#93c5fd','#fcd34d','#f9a8d4','#a78bfa','#34d399','#fb923c','#e879f9','#38bdf8','#4ade80','#facc15'];
+      const svgEl   = document.getElementById('revenuePieChart');
+      const legendEl = document.getElementById('pieLegend');
+      svgEl.innerHTML = '';
+      legendEl.innerHTML = '';
+
+      if (pieSlices.length === 0) {
+        svgEl.innerHTML = `<text x="90" y="90" text-anchor="middle" dominant-baseline="middle" fill="rgba(245,240,232,.25)" font-size="12">No data yet</text>`;
+        document.getElementById('pieChartSubtitle').textContent = 'From July 2026';
+      } else {
+        const totalRev = pieSlices.reduce((s,sl) => s+sl.value, 0);
+        document.getElementById('pieChartSubtitle').textContent = `Total ₹${totalRev.toLocaleString('en-IN')}`;
+        const cx=90, cy=90, r=80;
+        let startAngle = -Math.PI / 2; // start at top
+
+        pieSlices.forEach((sl, i) => {
+          const color = PIE_COLORS[i % PIE_COLORS.length];
+          const fraction = sl.value / totalRev;
+          const sweep = fraction * 2 * Math.PI;
+          const endAngle = startAngle + sweep;
+          const x1 = cx + r * Math.cos(startAngle), y1 = cy + r * Math.sin(startAngle);
+          const x2 = cx + r * Math.cos(endAngle),   y2 = cy + r * Math.sin(endAngle);
+          const largeArc = sweep > Math.PI ? 1 : 0;
+
+          // Draw slice
+          const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+          path.setAttribute('d', `M${cx},${cy} L${x1.toFixed(2)},${y1.toFixed(2)} A${r},${r} 0 ${largeArc},1 ${x2.toFixed(2)},${y2.toFixed(2)} Z`);
+          path.setAttribute('fill', color);
+          path.setAttribute('stroke', '#0a0806');
+          path.setAttribute('stroke-width', '1.5');
+          path.style.transition = 'opacity .2s';
+          path.style.cursor = 'pointer';
+          // Tooltip on hover
+          path.addEventListener('mouseenter', () => { path.style.opacity = '.75'; });
+          path.addEventListener('mouseleave', () => { path.style.opacity = '1'; });
+          const title = document.createElementNS('http://www.w3.org/2000/svg','title');
+          title.textContent = `${sl.label}: ₹${sl.value.toLocaleString('en-IN')} (${(fraction*100).toFixed(1)}%)`;
+          path.appendChild(title);
+          svgEl.appendChild(path);
+
+          // Legend item
+          const item = document.createElement('div');
+          item.className = 'pie-legend-item';
+          item.innerHTML = `<span class="pie-legend-dot" style="background:${color}"></span><span>${sl.label}</span><span class="pie-legend-amt">₹${sl.value.toLocaleString('en-IN')}</span><span style="font-size:.65rem;color:rgba(245,240,232,.35);margin-left:.2rem">${(fraction*100).toFixed(1)}%</span>`;
+          legendEl.appendChild(item);
+
+          startAngle = endAngle;
+        });
+
+        // Centre hole (donut style)
+        const hole = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        hole.setAttribute('cx', cx); hole.setAttribute('cy', cy); hole.setAttribute('r', 40);
+        hole.setAttribute('fill', '#0a0806');
+        svgEl.appendChild(hole);
+
+        // Centre label
+        const label = document.createElementNS('http://www.w3.org/2000/svg','text');
+        label.setAttribute('x', cx); label.setAttribute('y', cy - 6);
+        label.setAttribute('text-anchor','middle'); label.setAttribute('dominant-baseline','middle');
+        label.setAttribute('fill','rgba(245,240,232,.5)'); label.setAttribute('font-size','9');
+        label.textContent = 'Revenue';
+        svgEl.appendChild(label);
+        const label2 = document.createElementNS('http://www.w3.org/2000/svg','text');
+        label2.setAttribute('x', cx); label2.setAttribute('y', cy + 8);
+        label2.setAttribute('text-anchor','middle'); label2.setAttribute('dominant-baseline','middle');
+        label2.setAttribute('fill','#c9a96e'); label2.setAttribute('font-size','9'); label2.setAttribute('font-weight','600');
+        label2.textContent = `₹${(totalRev/1000).toFixed(0)}K`;
+        svgEl.appendChild(label2);
       }
-      const maxRev = Math.max(...months.map(m => m.rev), 1);
-      chartEl.innerHTML = months.map(m => {
-        const pct = Math.max((m.rev / maxRev) * 100, m.rev > 0 ? 8 : 4);
-        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem">
-          <div class="chart-bar" style="height:${pct}%;width:100%" title="₹${m.rev.toLocaleString('en-IN')}"></div>
-          <div class="chart-bar-label">${m.label}</div>
-        </div>`;
-      }).join('');
     } catch(e) { toast('Error loading accounts', 'err'); }
   }
 
