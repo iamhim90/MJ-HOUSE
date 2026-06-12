@@ -1811,7 +1811,7 @@
 
   /* ── ACCOUNTS ── */
   async function loadAccounts() {
-    const monthFilter = document.getElementById('accountMonth').value; // e.g. '2026-07' or ''
+    let monthFilter = document.getElementById('accountMonth').value; // e.g. '2026-07' or ''
     const tooltipEl  = document.getElementById('pieTooltip');
 
     // Helper: make a YYYY-MM key correctly
@@ -1868,44 +1868,100 @@
         if (k) salMap[k] = (salMap[k] || 0) + (parseFloat(st.salary) || 0);
       });
 
-      // Build ordered list of all month keys from June 2026 to current month
-      const now2 = new Date();
+      // Find the maximum date to determine the end of our month list
+      let maxDate = new Date(); // default to current date
+      allBookings.forEach(b => {
+        const d = new Date(b.check_in || b.date);
+        if (!isNaN(d.getTime()) && d > maxDate) maxDate = d;
+      });
+      allExpenses.forEach(e => {
+        const d = new Date(e.date);
+        if (!isNaN(d.getTime()) && d > maxDate) maxDate = d;
+      });
+      allStaff.forEach(st => {
+        if (st.salaryDate) {
+          const d = new Date(st.salaryDate);
+          if (!isNaN(d.getTime()) && d > maxDate) maxDate = d;
+        }
+      });
+
+      // Update the month filter select dropdown options to include future months
+      const sel = document.getElementById('accountMonth');
+      const prevFilterValue = monthFilter; // use the initial value
+      const startYear = 2026, startMonth = 6; // June 2026
+      let yr = maxDate.getFullYear(), mo = maxDate.getMonth() + 1;
+      const monthOptions = [];
+      while (yr > startYear || (yr === startYear && mo >= startMonth)) {
+        const val = `${yr}-${String(mo).padStart(2,'0')}`;
+        const label = new Date(yr, mo - 1, 1).toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+        monthOptions.push(`<option value="${val}">${label}</option>`);
+        mo--;
+        if (mo < 1) { mo = 12; yr--; }
+      }
+      sel.innerHTML = '<option value="">All Time</option>' + monthOptions.join('');
+      
+      // Restore previous selection if it is still valid
+      if ([...sel.options].some(o => o.value === prevFilterValue)) {
+        sel.value = prevFilterValue;
+      } else {
+        sel.value = '';
+      }
+      monthFilter = sel.value;
+
+      // Build ordered list of all month keys from June 2026 to maxDate month
       const allMonthKeys = [];
       let wy = 2026, wm = 6; // start June 2026
-      while (wy < now2.getFullYear() || (wy === now2.getFullYear() && wm <= now2.getMonth() + 1)) {
+      const targetYear = maxDate.getFullYear();
+      const targetMonth = maxDate.getMonth() + 1;
+      while (wy < targetYear || (wy === targetYear && wm <= targetMonth)) {
         allMonthKeys.push(wy + '-' + String(wm).padStart(2, '0'));
         wm++;
         if (wm > 12) { wm = 1; wy++; }
       }
 
       // ── Summary cards: respond to monthFilter ──
-      let cardBookings, cardExpenses, cardSalary;
+      // ALL-TIME salary = sum of every staff member's salary (no date restriction)
+      const allTimeSal = allStaff.reduce((s, st) => s + (parseFloat(st.salary) || 0), 0);
+
+      let earnings = 0, expTotal = 0, salaryTotal = 0;
+
       if (monthFilter) {
         const [fy, fm] = monthFilter.split('-').map(Number);
-        cardBookings = allBookings.filter(b => {
+        allBookings.forEach(b => {
+          if (b.status !== 'confirmed') return;
           const d = new Date(b.check_in || b.date);
-          return !isNaN(d) && d.getFullYear() === fy && d.getMonth() + 1 === fm && b.status === 'confirmed';
+          if (!isNaN(d.getTime()) && d.getFullYear() === fy && d.getMonth() + 1 === fm)
+            earnings += (parseFloat(b.total_amount) || parseFloat(b.price) || 0);
         });
-        cardExpenses = allExpenses.filter(e => {
+        allExpenses.forEach(e => {
           const d = new Date(e.date);
-          return !isNaN(d) && d.getFullYear() === fy && d.getMonth() + 1 === fm;
+          if (!isNaN(d.getTime()) && d.getFullYear() === fy && d.getMonth() + 1 === fm)
+            expTotal += (parseFloat(e.amount) || 0);
         });
-        cardSalary = allStaff.filter(st => {
-          if (!st.salaryDate) return false;
+        // Monthly salary: only staff whose salaryDate is in this exact month
+        allStaff.forEach(st => {
+          if (!st.salaryDate) return;
           const d = new Date(st.salaryDate);
-          return !isNaN(d) && d.getFullYear() === fy && d.getMonth() + 1 === fm;
+          if (!isNaN(d.getTime()) && d.getFullYear() === fy && d.getMonth() + 1 === fm)
+            salaryTotal += (parseFloat(st.salary) || 0);
         });
       } else {
-        // All Time from June 2026
-        cardBookings = confirmedAll;
-        cardExpenses = expAll;
-        cardSalary   = salAll;
+        // ALL TIME — use all confirmed bookings/expenses from June 2026, ALL staff salaries
+        allBookings.forEach(b => {
+          if (b.status !== 'confirmed') return;
+          const d = new Date(b.check_in || b.date);
+          if (!isNaN(d.getTime()) && d >= baseDate)
+            earnings += (parseFloat(b.total_amount) || parseFloat(b.price) || 0);
+        });
+        allExpenses.forEach(e => {
+          const d = new Date(e.date);
+          if (!isNaN(d.getTime()) && d >= baseDate)
+            expTotal += (parseFloat(e.amount) || 0);
+        });
+        salaryTotal = allTimeSal; // ALL staff, no date restriction
       }
 
-      const earnings    = cardBookings.reduce((s, b) => s + (parseFloat(b.total_amount) || parseFloat(b.price) || 0), 0);
-      const expTotal    = cardExpenses.reduce((s, e) => s + (parseFloat(e.amount) || 0), 0);
-      const salaryTotal = cardSalary.reduce((s, st) => s + (parseFloat(st.salary) || 0), 0);
-      const profit      = earnings - (expTotal + salaryTotal);
+      const profit = earnings - (expTotal + salaryTotal);
 
       document.getElementById('acc-earnings').textContent = '₹' + earnings.toLocaleString('en-IN');
       document.getElementById('acc-expenses').textContent = '₹' + expTotal.toLocaleString('en-IN');
@@ -1913,7 +1969,7 @@
       document.getElementById('acc-profit').textContent   = (profit < 0 ? '-' : '') + '₹' + Math.abs(profit).toLocaleString('en-IN') + (profit < 0 ? ' (Loss)' : '');
       document.getElementById('acc-profit').style.color   = profit >= 0 ? '#86efac' : '#fca5a5';
 
-      // ── PIE CHART: always all-time, one slice per month ──
+      // ── PIE CHART: all-time slices, selected month highlighted ──
       const PIE_COLORS = [
         '#c9a96e','#86efac','#93c5fd','#fcd34d','#f9a8d4','#a78bfa',
         '#34d399','#fb923c','#e879f9','#38bdf8','#4ade80','#facc15',
@@ -1929,29 +1985,33 @@
         .map((k, i) => {
           const [y, m] = k.split('-').map(Number);
           const label = new Date(y, m - 1, 1).toLocaleDateString('en-IN', { month: 'short', year: '2-digit' });
-          return { key: k, label, value: revMap[k] || 0, color: PIE_COLORS[i % PIE_COLORS.length] };
+          return { key: k, label, value: revMap[k], color: PIE_COLORS[i % PIE_COLORS.length] };
         });
 
       const cx = 140, cy = 140, R = 120, innerR = 55;
 
       if (pieSlices.length === 0) {
-        svgEl.innerHTML = `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle" fill="rgba(245,240,232,.3)" font-size="13" font-family="DM Sans,sans-serif">No revenue data yet</text>`;
-        document.getElementById('pieChartSubtitle').textContent = 'All Time from June 2026';
+        svgEl.innerHTML = `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle" fill="rgba(245,240,232,.3)" font-size="13">No revenue data yet</text>`;
+        document.getElementById('pieChartSubtitle').textContent = 'All Time • June 2026 onwards';
       } else {
         const totalRev = pieSlices.reduce((s, sl) => s + sl.value, 0);
-        document.getElementById('pieChartSubtitle').textContent = `All Time • ₹${totalRev.toLocaleString('en-IN')}`;
+        if (monthFilter) {
+          const mName = new Date(Number(monthFilter.split('-')[0]), Number(monthFilter.split('-')[1]) - 1, 1).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+          document.getElementById('pieChartSubtitle').textContent = `${mName} • ₹${earnings.toLocaleString('en-IN')}`;
+        } else {
+          document.getElementById('pieChartSubtitle').textContent = `All Time • ₹${totalRev.toLocaleString('en-IN')}`;
+        }
+
         let startAngle = -Math.PI / 2;
+        pieSlices.forEach(sl => {
+          const fraction   = sl.value / totalRev;
+          const sweep      = fraction * 2 * Math.PI;
+          const endAngle   = startAngle + sweep;
+          const largeArc   = sweep > Math.PI ? 1 : 0;
+          const isSelected = monthFilter === sl.key;
 
-        pieSlices.forEach((sl, i) => {
-          const fraction = sl.value / totalRev;
-          const sweep    = fraction * 2 * Math.PI;
-          const endAngle = startAngle + sweep;
-          const largeArc = sweep > Math.PI ? 1 : 0;
-
-          // Outer arc
           const x1o = cx + R * Math.cos(startAngle), y1o = cy + R * Math.sin(startAngle);
           const x2o = cx + R * Math.cos(endAngle),   y2o = cy + R * Math.sin(endAngle);
-          // Inner arc (donut)
           const x1i = cx + innerR * Math.cos(endAngle),   y1i = cy + innerR * Math.sin(endAngle);
           const x2i = cx + innerR * Math.cos(startAngle), y2i = cy + innerR * Math.sin(startAngle);
 
@@ -1962,19 +2022,21 @@
           );
           path.setAttribute('fill', sl.color);
           path.setAttribute('stroke', '#0a0806');
-          path.setAttribute('stroke-width', '1.5');
-          path.style.cursor = 'pointer';
-          path.style.transition = 'transform .18s, opacity .18s';
+          path.setAttribute('stroke-width', isSelected ? '3' : '1.5');
+          path.style.cursor      = 'pointer';
+          path.style.transition  = 'transform .18s, opacity .18s';
           path.style.transformOrigin = `${cx}px ${cy}px`;
+          if (monthFilter && !isSelected) path.style.opacity = '0.28';
+          if (isSelected) path.style.transform = 'scale(1.06)';
 
-          path.addEventListener('mouseenter', (evt) => {
-            path.style.transform = 'scale(1.05)';
+          path.addEventListener('mouseenter', () => {
+            if (!monthFilter || isSelected) path.style.transform = 'scale(1.06)';
             if (tooltipEl) {
               tooltipEl.style.display = 'block';
               tooltipEl.innerHTML = `<strong style="color:${sl.color}">${sl.label}</strong><br>Revenue: <strong>₹${sl.value.toLocaleString('en-IN')}</strong><br>Share: <strong>${(fraction * 100).toFixed(1)}%</strong>`;
             }
           });
-          path.addEventListener('mousemove', (evt) => {
+          path.addEventListener('mousemove', evt => {
             if (tooltipEl) {
               const box = svgEl.closest('.chart-box').getBoundingClientRect();
               tooltipEl.style.left = (evt.clientX - box.left + 16) + 'px';
@@ -1982,36 +2044,36 @@
             }
           });
           path.addEventListener('mouseleave', () => {
-            path.style.transform = 'scale(1)';
+            path.style.transform = isSelected ? 'scale(1.06)' : 'scale(1)';
             if (tooltipEl) tooltipEl.style.display = 'none';
           });
-          // Click to jump to that month filter
           path.addEventListener('click', () => {
-            document.getElementById('accountMonth').value = sl.key;
+            document.getElementById('accountMonth').value = isSelected ? '' : sl.key;
             loadAccounts();
           });
           svgEl.appendChild(path);
 
-          // % label inside slice
-          if (fraction > 0.055) {
+          if (fraction > 0.05) {
             const mid = startAngle + sweep / 2;
-            const lx  = cx + R * 0.68 * Math.cos(mid);
-            const ly  = cy + R * 0.68 * Math.sin(mid);
+            const lx  = cx + R * 0.67 * Math.cos(mid);
+            const ly  = cy + R * 0.67 * Math.sin(mid);
             const pct = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             pct.setAttribute('x', lx.toFixed(1)); pct.setAttribute('y', ly.toFixed(1));
             pct.setAttribute('text-anchor', 'middle'); pct.setAttribute('dominant-baseline', 'middle');
             pct.setAttribute('fill', '#fff'); pct.setAttribute('font-size', '9.5'); pct.setAttribute('font-weight', '700');
             pct.setAttribute('pointer-events', 'none');
+            if (monthFilter && !isSelected) pct.style.opacity = '0.28';
             pct.textContent = (fraction * 100).toFixed(0) + '%';
             svgEl.appendChild(pct);
           }
 
-          // Legend row
           const item = document.createElement('div');
-          item.className = 'pie-legend-item';
-          item.innerHTML = `<span class="pie-legend-dot" style="background:${sl.color}"></span><span>${sl.label}</span><span class="pie-legend-amt">₹${sl.value.toLocaleString('en-IN')}</span><span style="font-size:.62rem;color:rgba(245,240,232,.3);margin-left:.3rem">${(fraction * 100).toFixed(1)}%</span>`;
+          item.className  = 'pie-legend-item';
+          item.style.opacity = (monthFilter && !isSelected) ? '0.35' : '1';
+          item.style.cursor  = 'pointer';
+          item.innerHTML  = `<span class="pie-legend-dot" style="background:${sl.color}"></span><span>${sl.label}</span><span class="pie-legend-amt">₹${sl.value.toLocaleString('en-IN')}</span><span style="font-size:.62rem;color:rgba(245,240,232,.3);margin-left:.3rem">${(fraction * 100).toFixed(1)}%</span>`;
           item.addEventListener('click', () => {
-            document.getElementById('accountMonth').value = sl.key;
+            document.getElementById('accountMonth').value = isSelected ? '' : sl.key;
             loadAccounts();
           });
           legendEl.appendChild(item);
@@ -2019,59 +2081,56 @@
           startAngle = endAngle;
         });
 
-        // Centre text
+        // Centre label
         const t1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         t1.setAttribute('x', cx); t1.setAttribute('y', cy - 9);
         t1.setAttribute('text-anchor', 'middle'); t1.setAttribute('dominant-baseline', 'middle');
         t1.setAttribute('fill', 'rgba(245,240,232,.4)'); t1.setAttribute('font-size', '10');
-        t1.textContent = 'Revenue';
+        t1.textContent = monthFilter ? 'Selected' : 'All Time';
         svgEl.appendChild(t1);
         const t2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         t2.setAttribute('x', cx); t2.setAttribute('y', cy + 9);
         t2.setAttribute('text-anchor', 'middle'); t2.setAttribute('dominant-baseline', 'middle');
         t2.setAttribute('fill', '#c9a96e'); t2.setAttribute('font-size', '12'); t2.setAttribute('font-weight', '700');
-        t2.textContent = totalRev >= 100000 ? '₹' + (totalRev / 100000).toFixed(1) + 'L' : '₹' + (totalRev / 1000).toFixed(0) + 'K';
+        const dispRev = monthFilter ? earnings : totalRev;
+        t2.textContent = dispRev >= 100000 ? '₹' + (dispRev / 100000).toFixed(1) + 'L' : '₹' + Math.round(dispRev / 1000) + 'K';
         svgEl.appendChild(t2);
       }
 
-      // ── Month-wise table: always shows ALL months from June 2026 ──
+      // ── Month-wise table: ALL months from June 2026, every month shown ──
       const tBody = document.getElementById('monthTableBody');
-      const tableRows = allMonthKeys
-        .filter(k => (revMap[k] || 0) > 0 || (expMap[k] || 0) > 0 || (salMap[k] || 0) > 0)
-        .map(k => {
-          const [y, m] = k.split('-').map(Number);
-          const mLabel = new Date(y, m - 1, 1).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
-          const rev = revMap[k] || 0;
-          const exp = expMap[k] || 0;
-          const sal = salMap[k] || 0;
-          const pft = rev - (exp + sal);
-          const isSelected = monthFilter === k;
-          return `<tr style="${isSelected ? 'background:rgba(201,169,110,.08);' : ''}">
-            <td><button onclick="document.getElementById('accountMonth').value='${k}';loadAccounts()" style="background:none;border:none;color:${isSelected ? 'var(--wheat)' : 'rgba(245,240,232,.7)'};cursor:pointer;font-size:.8rem;text-align:left;padding:0;font-weight:${isSelected ? '600' : '400'}">${mLabel}${isSelected ? ' ▼' : ''}</button></td>
-            <td style="color:#86efac">₹${rev.toLocaleString('en-IN')}</td>
-            <td style="color:#fca5a5">₹${exp.toLocaleString('en-IN')}</td>
-            <td style="color:#93c5fd">₹${sal.toLocaleString('en-IN')}</td>
-            <td style="color:${pft >= 0 ? '#86efac' : '#fca5a5'}">${pft < 0 ? '-' : ''}₹${Math.abs(pft).toLocaleString('en-IN')}${pft < 0 ? ' (L)' : ''}</td>
-          </tr>`;
-        });
+      const tableRows = allMonthKeys.map(k => {
+        const [y, m] = k.split('-').map(Number);
+        const mLabel = new Date(y, m - 1, 1).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+        const rev = revMap[k] || 0;
+        const exp = expMap[k] || 0;
+        const sal = salMap[k] || 0; // only staff whose salaryDate is in this month
+        const pft = rev - (exp + sal);
+        const isSelected = monthFilter === k;
+        const hasData = rev > 0 || exp > 0 || sal > 0;
+        return `<tr style="${isSelected ? 'background:rgba(201,169,110,.1);' : ''}${!hasData ? 'opacity:.4;' : ''}">
+          <td><button onclick="document.getElementById('accountMonth').value='${k}';loadAccounts()" style="background:none;border:none;color:${isSelected ? 'var(--wheat)' : 'rgba(245,240,232,.75)'};cursor:pointer;font-size:.8rem;text-align:left;padding:0;font-weight:${isSelected ? '700' : '400'}">${mLabel}${isSelected ? ' ◄' : ''}</button></td>
+          <td style="color:#86efac">₹${rev.toLocaleString('en-IN')}</td>
+          <td style="color:#fca5a5">₹${exp.toLocaleString('en-IN')}</td>
+          <td style="color:#93c5fd">₹${sal.toLocaleString('en-IN')}</td>
+          <td style="color:${pft >= 0 ? '#86efac' : '#fca5a5'}">${pft < 0 ? '-' : ''}₹${Math.abs(pft).toLocaleString('en-IN')}</td>
+        </tr>`;
+      });
 
-      if (tableRows.length === 0) {
-        tBody.innerHTML = '<tr><td colspan="5" class="empty-state"><p>No data yet from June 2026</p></td></tr>';
-      } else {
-        // Totals row
-        const totRev = allMonthKeys.reduce((s, k) => s + (revMap[k] || 0), 0);
-        const totExp = allMonthKeys.reduce((s, k) => s + (expMap[k] || 0), 0);
-        const totSal = allMonthKeys.reduce((s, k) => s + (salMap[k] || 0), 0);
-        const totPft = totRev - (totExp + totSal);
-        tableRows.push(`<tr>
-          <td><button onclick="document.getElementById('accountMonth').value='';loadAccounts()" style="background:none;border:none;color:var(--wheat);cursor:pointer;font-size:.8rem;font-weight:700;padding:0">ALL TIME</button></td>
-          <td style="color:#86efac">₹${totRev.toLocaleString('en-IN')}</td>
-          <td style="color:#fca5a5">₹${totExp.toLocaleString('en-IN')}</td>
-          <td style="color:#93c5fd">₹${totSal.toLocaleString('en-IN')}</td>
-          <td style="color:${totPft >= 0 ? '#86efac' : '#fca5a5'}">${totPft < 0 ? '-' : ''}₹${Math.abs(totPft).toLocaleString('en-IN')}${totPft < 0 ? ' (L)' : ''}</td>
-        </tr>`);
-        tBody.innerHTML = tableRows.join('');
-      }
+      // ALL TIME row — earnings/expenses from June 2026+, salary = ALL staff
+      const totRev = Object.values(revMap).reduce((s, v) => s + v, 0);
+      const totExp = Object.values(expMap).reduce((s, v) => s + v, 0);
+      const totPft = totRev - (totExp + allTimeSal);
+      tableRows.push(`<tr style="background:rgba(201,169,110,.05);">
+        <td><button onclick="document.getElementById('accountMonth').value='';loadAccounts()" style="background:none;border:none;color:var(--wheat);cursor:pointer;font-size:.8rem;font-weight:700;padding:0">ALL TIME${!monthFilter ? ' ◄' : ''}</button></td>
+        <td style="color:#86efac">₹${totRev.toLocaleString('en-IN')}</td>
+        <td style="color:#fca5a5">₹${totExp.toLocaleString('en-IN')}</td>
+        <td style="color:#93c5fd">₹${allTimeSal.toLocaleString('en-IN')}</td>
+        <td style="color:${totPft >= 0 ? '#86efac' : '#fca5a5'}">${totPft < 0 ? '-' : ''}₹${Math.abs(totPft).toLocaleString('en-IN')}${totPft < 0 ? ' (Loss)' : ''}</td>
+      </tr>`);
+
+      tBody.innerHTML = tableRows.join('');
+
     } catch (err) {
       console.error('loadAccounts error:', err);
       toast('Error loading accounts: ' + err.message, 'err');

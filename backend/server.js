@@ -319,7 +319,7 @@ app.patch('/api/bookings/:id/paydone', requireAuth, async (req, res) => {
 app.get('/api/staff', requireAuth, async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT id as _id, name, role, salary, salary_status as "salaryStatus", created_at FROM staff ORDER BY created_at DESC'
+      'SELECT id as _id, name, role, salary, salary_status as "salaryStatus", salary_date as "salaryDate", created_at FROM staff ORDER BY created_at DESC'
     );
     res.json(result.rows);
   } catch (err) {
@@ -329,13 +329,13 @@ app.get('/api/staff', requireAuth, async (req, res) => {
 
 app.post('/api/staff', requireAuth, async (req, res) => {
   try {
-    const { name, role, salary, salaryStatus } = req.body;
+    const { name, role, salary, salaryStatus, salaryDate } = req.body;
     if (!name || !role || salary == null) {
       return res.status(400).json({ error: 'Name, role, and salary are required' });
     }
     const result = await pool.query(
-      'INSERT INTO staff (name, role, salary, salary_status) VALUES ($1, $2, $3, $4) RETURNING id as _id, *',
-      [name.trim(), role.trim(), salary, salaryStatus || 'pending']
+      'INSERT INTO staff (name, role, salary, salary_status, salary_date) VALUES ($1, $2, $3, $4, $5) RETURNING id as _id, name, role, salary, salary_status as "salaryStatus", salary_date as "salaryDate", created_at',
+      [name.trim(), role.trim(), salary, salaryStatus || 'pending', salaryDate || new Date()]
     );
     res.json({ success: true, staff: result.rows[0] });
   } catch (err) {
@@ -350,7 +350,7 @@ app.patch('/api/staff/:id', requireAuth, async (req, res) => {
       return res.status(400).json({ error: 'Invalid salary status' });
     }
     const result = await pool.query(
-      'UPDATE staff SET salary_status = $1 WHERE id = $2 RETURNING id as _id, *',
+      'UPDATE staff SET salary_status = $1 WHERE id = $2 RETURNING id as _id, name, role, salary, salary_status as "salaryStatus", salary_date as "salaryDate", created_at',
       [salaryStatus, req.params.id]
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Staff not found' });

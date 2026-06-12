@@ -44,8 +44,15 @@ async function migrate() {
         role VARCHAR(255) NOT NULL,
         salary NUMERIC DEFAULT 0,
         salary_status VARCHAR(50) DEFAULT 'pending',
+        salary_date DATE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+    `);
+
+    // Ensure salary_date exists on older schemas
+    await client.query(`
+      ALTER TABLE staff
+      ADD COLUMN IF NOT EXISTS salary_date DATE;
     `);
 
     // 3. Create expenses table
