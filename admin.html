@@ -1510,17 +1510,15 @@
     const advanceStr = advanceVal ? '₹' + advanceVal.toLocaleString('en-IN') : '40% advance';
 
     const lines = [
-      'Assalamu Alaikum ' + name + '! \u2728',
+      'Hello ' + name + ',',
       '',
-      'Your booking for *' + date + '* is available! \uD83D\uDCC5',
-      '',
+      'Your booking for *' + date + '* is available.',
       'To confirm, please pay *' + advanceStr + '* (40% advance) via UPI:',
+      '*UPI ID:* 9099847718-3@ybl',
       '',
-      '\uD83D\uDCB3 *UPI ID:* 9099847718-3@ybl',
+      'Please send the payment screenshot here for verification.',
       '',
-      'Please send the payment screenshot here for verification. \u2705',
-      '',
-      '- *MJ Culture* \uD83C\uDFE1'
+      '- MJ Culture'
     ];
     const msg = lines.join('\n');
     window.open('https://wa.me/91' + cleanPhone + '?text=' + encodeURIComponent(msg), '_blank');
@@ -1530,13 +1528,12 @@
   function triggerRejectBooking(id, phone, name, date) {
     const cleanPhone = phone.replace(/[^0-9]/g, '');
     const lines = [
-      'Assalamu Alaikum ' + name + ',',
+      'Hello ' + name + ',',
       '',
-      'We\'re sorry, your requested date *' + date + '* is not available. \uD83D\uDE14',
+      'Sorry, your requested date *' + date + '* is not available.',
+      'Please check another date on our website. We would love to host you!',
       '',
-      'Please check another date on our website. We\'d love to host you! \uD83D\uDCC6\u2728',
-      '',
-      '- *MJ Culture* \uD83C\uDFE1'
+      '- MJ Culture'
     ];
     const msg = lines.join('\n');
     window.open('https://wa.me/91' + cleanPhone + '?text=' + encodeURIComponent(msg), '_blank');
@@ -1546,21 +1543,19 @@
   function triggerConfirmBooking(id, phone, name, date, occasion, guests) {
     const cleanPhone = phone.replace(/[^0-9]/g, '');
     const lines = [
-      'Assalamu Alaikum ' + name + '! \uD83C\uDF89',
+      'Hello ' + name + ',',
       '',
-      'Your booking is *CONFIRMED*! \u2705',
-      '',
-      '\uD83D\uDCC5 *Date:* ' + date,
+      'Your booking is confirmed for *' + date + '*.'
     ];
-    if (occasion) lines.push('\uD83C\uDF1F *Occasion:* ' + occasion);
-    if (guests) lines.push('\uD83D\uDC65 *Guests:* ' + guests);
+    if (occasion) lines.push('Occasion: *' + occasion + '*');
+    if (guests) lines.push('Guests: *' + guests + '*');
     lines.push('');
-    lines.push('*Payment Details:*');
-    lines.push('\uD83D\uDD39 Security Deposit: *Rs.10,000* (refundable)');
-    lines.push('\uD83D\uDD39 Remaining *60%* to be paid in cash');
-    lines.push('\uD83D\uDD39 Both to be paid *2-3 days before* the event');
+    lines.push('Payment Details:');
+    lines.push('- Security Deposit: Rs.10,000 (refundable)');
+    lines.push('- Remaining 60% due in cash');
+    lines.push('- Both to be paid 2-3 days before the event');
     lines.push('');
-    lines.push('Thank you for choosing MJ Culture! \uD83C\uDFE1\u2728');
+    lines.push('Thank you for choosing MJ Culture!');
     const msg = lines.join('\n');
     window.open('https://wa.me/91' + cleanPhone + '?text=' + encodeURIComponent(msg), '_blank');
     updateBookingStatus(id, 'confirmed');
@@ -2218,38 +2213,34 @@
 
     if (status === 'confirmed') {
       lines = [
-        'Assalamu Alaikum ' + name + '! \uD83C\uDF89',
+        'Hello ' + name + ',',
         '',
-        'Your booking is *CONFIRMED*! \u2705',
+        'Your booking is confirmed for *' + bd + '*.',
         '',
-        '\uD83D\uDCC5 *Date:* ' + bd,
+        'Payment Details:',
+        '- Security Deposit: Rs.10,000 (refundable)',
+        '- Remaining 60% in cash',
+        '- Both due 2-3 days before the event',
         '',
-        '*Payment Details:*',
-        '\uD83D\uDD39 Security Deposit: *Rs.10,000* (refundable)',
-        '\uD83D\uDD39 Remaining *60%* in cash',
-        '\uD83D\uDD39 Both due *2-3 days before* event',
-        '',
-        'Thank you! - *MJ Culture* \uD83C\uDFE1\u2728'
+        'Thank you! - MJ Culture'
       ];
     } else if (status === 'rejected') {
       lines = [
-        'Assalamu Alaikum ' + name + ',',
+        'Hello ' + name + ',',
         '',
-        'Sorry, *' + bd + '* is not available. \uD83D\uDE14',
+        'Sorry, *' + bd + '* is not available.',
+        'Please try another date!',
         '',
-        'Please try another date! \uD83D\uDCC6\u2728',
-        '',
-        '- *MJ Culture* \uD83C\uDFE1'
+        '- MJ Culture'
       ];
     } else {
       lines = [
-        'Assalamu Alaikum ' + name + '! \u2728',
+        'Hello ' + name + ',',
         '',
-        'Your booking for *' + bd + '* is under review. \uD83D\uDCCB',
+        'Your booking for *' + bd + '* is under review.',
+        'We will get back to you within 24 hours.',
         '',
-        'We\'ll get back to you within 24 hours. \u23F3',
-        '',
-        '- *MJ Culture* \uD83C\uDFE1'
+        '- MJ Culture'
       ];
     }
 
