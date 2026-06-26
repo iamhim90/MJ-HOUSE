@@ -3145,16 +3145,17 @@ if (slotMeta) {
         .from('bookings')
         .insert([
           {
-            customer_name: payload.customerName,
-            phone: payload.customerPhone,
-            email: payload.customerEmail || null,
-            check_in: payload.eventDate,
-            check_out: payload.eventDate,
-            guests: 1,
-            total_amount: payload.price + (payload.gardenAccess ? 3000 : 0),
-            slot: payload.slotId,
-            advance_paid: payload.advance,
-            notes: payload.gardenAccess ? 'Garden Access Requested' : ''
+            customer_name: payload.name,
+            phone: payload.phone,
+            email: payload.email || null,
+            check_in: payload.date,
+            check_out: payload.date,
+            guests: payload.guests,
+            total_amount: payload.price,
+            slot: payload.timeSlot,
+            advance_paid: Math.round(payload.price * 0.40),
+            notes: payload.specialRequirements,
+            occasion: payload.occasion
           }
         ])
         .select();
@@ -3997,34 +3998,35 @@ document
 
 
 /* BLOCK RIGHT CLICK */
-document.addEventListener('contextmenu', function(e) {
-  e.preventDefault();
-});
+/* BLOCK RIGHT CLICK */
+// document.addEventListener('contextmenu', function(e) {
+//   e.preventDefault();
+// });
 
 /* BLOCK F12, CTRL+SHIFT+I, CTRL+U */
-document.addEventListener('keydown', function(e) {
-
-  // F12
-  if (e.key === 'F12') {
-    e.preventDefault();
-  }
-
-  // CTRL + SHIFT + I
-  if (e.ctrlKey && e.shiftKey && e.key === 'I') {
-    e.preventDefault();
-  }
-
-  // CTRL + SHIFT + J
-  if (e.ctrlKey && e.shiftKey && e.key === 'J') {
-    e.preventDefault();
-  }
-
-  // CTRL + U
-  if (e.ctrlKey && e.key === 'u') {
-    e.preventDefault();
-  }
-
-});
+// document.addEventListener('keydown', function(e) {
+// 
+//   // F12
+//   if (e.key === 'F12') {
+//     e.preventDefault();
+//   }
+// 
+//   // CTRL + SHIFT + I
+//   if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+//     e.preventDefault();
+//   }
+// 
+//   // CTRL + SHIFT + J
+//   if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+//     e.preventDefault();
+//   }
+// 
+//   // CTRL + U
+//   if (e.ctrlKey && e.key === 'u') {
+//     e.preventDefault();
+//   }
+// 
+// });
 
 
 /* GARDEN LIVE UPDATE */
