@@ -802,42 +802,53 @@
     }
   }
 
-  function doAdminLogin() {
-    const u = document.getElementById('adminUser').value.trim();
-    const p = document.getElementById('adminPass').value;
+  async function doAdminLogin() {
     const btn = document.getElementById('loginBtn2');
     const err = document.getElementById('loginErr');
+    
+    try {
+      const u = document.getElementById('adminUser').value.trim();
+      const p = document.getElementById('adminPass').value;
 
-    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner spinner"></i> Signing in…';
-    err.style.display = 'none';
+      btn.disabled = true; 
+      btn.innerHTML = '<i class="fas fa-spinner spinner"></i> Signing in…';
+      err.style.display = 'none';
 
-    const email = u.includes('@') ? u : u + '@mjculture.com'; // Support both raw username and full email
-    supabase.auth.signInWithPassword({ email, password: p }).then(async ({ data, error }) => {
+      const email = u.includes('@') ? u : u + '@mjculture.com'; // Support both raw username and full email
+      
+      let { data, error } = await supabase.auth.signInWithPassword({ email, password: p });
+      
       if (error && error.message.includes('Invalid login credentials')) {
         // Since it's a new database and the user might not exist, attempt to sign them up
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password: p });
-        if (!signUpError && signUpData.user) {
+        if (!signUpError && signUpData && signUpData.user) {
           data = signUpData;
           error = null;
         }
       }
       
-      if (!error && data.session) {
+      if (!error && data && data.session) {
         sessionStorage.setItem('mjc_admin', '1');
         sessionStorage.setItem('mjc_admin_token', data.session.access_token);
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('app').style.display = 'flex';
         loadDashboard();
+      } else if (!error && data && !data.session) {
+        // User was signed up but email confirmation is required
+        err.textContent = 'Account created. Please verify your email in Supabase or disable email confirmations.';
+        err.style.display = 'block';
       } else {
         err.textContent = error?.message || 'Invalid credentials.';
         err.style.display = 'block';
       }
-    }).catch((e) => {
-      err.textContent = 'Connection error. Check credentials.';
+    } catch (e) {
+      console.error("Login Error:", e);
+      err.textContent = e.message || 'Connection error. Check credentials.';
       err.style.display = 'block';
-    }).finally(() => {
-      btn.disabled = false; btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Enter Admin Panel';
-    });
+    } finally {
+      btn.disabled = false; 
+      btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Enter Admin Panel';
+    }
   }
 
   function adminLogout() {
