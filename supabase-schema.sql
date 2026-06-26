@@ -3,7 +3,6 @@ CREATE TABLE IF NOT EXISTS bookings (
   id SERIAL PRIMARY KEY,
   customer_name VARCHAR(255) NOT NULL,
   phone VARCHAR(50) NOT NULL,
-  email VARCHAR(255),
   check_in DATE NOT NULL,
   check_out DATE NOT NULL,
   guests INTEGER NOT NULL,

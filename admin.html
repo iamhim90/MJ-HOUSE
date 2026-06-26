@@ -584,7 +584,7 @@
       </div>
       <div class="card">
         <div class="card-header"><span class="card-title"><i class="fas fa-calendar-check"></i> All Bookings</span><span id="bookingCount" style="font-size:.7rem;color:rgba(245,240,232,.3)"></span></div>
-        <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Email</th><th>Date</th><th>Occasion</th><th>Guests</th><th>Slot</th><th>Amount</th><th>Status</th><th>Notes</th><th>Actions</th></tr></thead>
+        <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Date</th><th>Occasion</th><th>Guests</th><th>Slot</th><th>Amount</th><th>Status</th><th>Notes</th><th>Actions</th></tr></thead>
         <tbody id="bookingsTableBody"><tr><td colspan="12" class="loading"><i class="fas fa-spinner spinner"></i>Loading bookings...</td></tr></tbody></table></div>
       </div>
     </div>
@@ -1140,7 +1140,7 @@
     const sl = document.getElementById('bookingSlotFilter').value;
     const df = document.getElementById('bookingDateFilter').value;
     renderBookings(allBookings.filter(b => {
-      const matchQ = !q || (b.customer_name||'').toLowerCase().includes(q) || (b.phone||'').includes(q) || (b.email||'').toLowerCase().includes(q);
+      const matchQ = !q || (b.customer_name||'').toLowerCase().includes(q) || (b.phone||'').includes(q);
       const matchS = !s || b.status === s;
       const matchSL = !sl || b.slot === sl;
       let matchDF = true;
@@ -1431,7 +1431,7 @@
           + (b.phone ? '<span><i class="fas fa-phone" style="margin-right:.3rem;opacity:.5"></i><a href="tel:+91' + rawPhone + '" class="day-phone-link">' + b.phone + '</a></span>' : '')
           + (guests ? '<span><i class="fas fa-users" style="margin-right:.3rem;opacity:.5"></i>' + guests + ' guests</span>' : '')
           + (b.occasion ? '<span><i class="fas fa-star" style="margin-right:.3rem;opacity:.5"></i>' + b.occasion + '</span>' : '')
-          + (b.email ? '<span><i class="fas fa-envelope" style="margin-right:.3rem;opacity:.5"></i>' + b.email + '</span>' : '')
+          + '</div>'
           + '</div>'
           + payHtml
           + (b.notes ? '<div style="font-size:.7rem;color:rgba(245,240,232,.35);background:rgba(255,255,255,.02);border-radius:4px;padding:.4rem .6rem;margin-bottom:.6rem;border-left:2px solid rgba(201,169,110,.2);">' + b.notes + '</div>' : '')
@@ -1605,7 +1605,6 @@
       <td style="font-size:.65rem;color:rgba(245,240,232,.3)">${sid}</td>
       <td>${b.customer_name||b.name||'—'}</td>
       <td>${b.phone||'—'}</td>
-      <td>${b.email||'—'}</td>
       <td>${date}</td>
       <td>${b.occasion||'—'}</td>
       <td>${b.guests||'—'}</td>
@@ -2249,7 +2248,7 @@
       const bookings = Array.isArray(data) ? data : (data.bookings || []);
       // Reverse array so it starts from the 1st booking (ascending order)
       bookings.reverse();
-      const headers = ['Booking ID','Name','Phone','Email','Date','Slot','Occasion','Guests','Status','Total','Advance Paid','Cash Collected','Payment Status','Notes'];
+      const headers = ['Booking ID','Name','Phone','Date','Slot','Occasion','Guests','Status','Total','Advance Paid','Cash Collected','Payment Status','Notes'];
       const rows = bookings.map(b => {
         const adv = b.advancePaid||0;
         const total = parseFloat(b.total_amount||b.price||0);
@@ -2266,7 +2265,7 @@
         };
         const slot = slotMap[b.slot] || b.slot || 'Full Day';
         const cashCollected = b.paymentStatus === 'fully_paid' ? (total - adv) : `Pending Cash: ₹${total - adv}`;
-        return [b.id||b._id||b.bookingId||'',b.customer_name||b.name||'',b.phone||'',b.email||'',
+        return [b.id||b._id||b.bookingId||'',b.customer_name||b.name||'',b.phone||'',
           (b.check_in||b.date)?new Date(b.check_in||b.date).toLocaleDateString('en-IN'):'',
           slot,b.occasion||'',b.guests||'',b.status||'',
           total,adv,cashCollected,b.paymentStatus||'not_paid',b.notes||b.specialRequirements||''];

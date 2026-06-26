@@ -2436,7 +2436,6 @@
   <i class="fab fa-whatsapp" style="color: #25d366; margin-right: 4px;"></i><strong>Important:</strong> Please provide an active WhatsApp number. All booking updates, confirmation, and payment details will be sent via WhatsApp.
 </p>
               <div class="frow">
-                <div class="ff"><label for="bEmail">Email Address</label><input type="email" id="bEmail" placeholder="your@email.com"></div>
                 <div class="ff">
                   <label>Event Date *</label>
                   <input type="hidden" id="bDate">
@@ -3069,7 +3068,6 @@ if (slotMeta) {
 
     const name     = document.getElementById('bName').value.trim();
     const phone    = document.getElementById('bPhone').value.trim();
-    const email    = document.getElementById('bEmail').value.trim();
     const date     = document.getElementById('bDate').value;
     const occasion = document.getElementById('bOccasion').value;
     const guests   = document.getElementById('bGuests').value;
@@ -3088,7 +3086,6 @@ if (slotMeta) {
     console.log("Form data extracted:");
     console.log("  name:", name);
     console.log("  phone:", phone);
-    console.log("  email:", email);
     console.log("  date:", date);
     console.log("  slot (timeSlot):", slot);
     console.log("  occasion:", occasion);
@@ -3120,7 +3117,6 @@ if (slotMeta) {
     const payload = {
       name,
       phone,
-      email,
       date,
       timeSlot: slot,
       occasion,
@@ -3147,7 +3143,6 @@ if (slotMeta) {
           {
             customer_name: payload.name,
             phone: payload.phone,
-            email: payload.email || null,
             check_in: payload.date,
             check_out: payload.date,
             guests: payload.guests,
