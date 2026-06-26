@@ -2372,6 +2372,7 @@
   </div>
 
 </div>
+</div>
 
  <!-- GARDEN ACCESS -->
 <div class="garden-option">
@@ -3138,24 +3139,37 @@ if (slotMeta) {
     submitBtn.innerHTML = '<i class="fas fa-spinner" style="animation:spin 1s linear infinite"></i> Processing...';
 
     try {
-      // Call backend API — URL untouched
-      console.log(API_BASE_URL + "/api/bookings");
-      const response = await fetch(API_BASE_URL + '/api/bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      // Call Supabase API
+      console.log("Submitting to Supabase...");
+      const { data, error } = await supabase
+        .from('bookings')
+        .insert([
+          {
+            customer_name: payload.customerName,
+            phone: payload.customerPhone,
+            email: payload.customerEmail || null,
+            check_in: payload.eventDate,
+            check_out: payload.eventDate,
+            guests: 1,
+            total_amount: payload.price + (payload.gardenAccess ? 3000 : 0),
+            slot: payload.slotId,
+            advance_paid: payload.advance,
+            notes: payload.gardenAccess ? 'Garden Access Requested' : ''
+          }
+        ])
+        .select();
 
-      const fetcha = await response.json();
+      if (error) {
+        throw new Error(error.message);
+      }
 
-      console.log("📥 RESPONSE FROM BACKEND:");
-      console.log("Status:", response.status);
-      console.log("Data:", fetcha);
+      console.log("📥 RESPONSE FROM SUPABASE:");
+      console.log("Data:", data);
       console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
-      if (response.ok) {
+      if (data && data.length > 0) {
         console.log("✅ BOOKING INQUIRY SAVED");
-        const bookingId = fetcha.bookingId;
+        const bookingId = data[0].id;
 
         // Reset form
         this.reset();
