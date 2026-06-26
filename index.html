@@ -3140,7 +3140,7 @@ if (slotMeta) {
 
     try {
       // Call Supabase API
-      console.log("Submitting to Supabase...");
+      console.log("Submitting to supabaseClient...");
       const { data, error } = await supabase
         .from('bookings')
         .insert([

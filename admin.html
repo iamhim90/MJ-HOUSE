@@ -816,11 +816,11 @@
 
       const email = u.includes('@') ? u : u + '@mjculture.com'; // Support both raw username and full email
       
-      let { data, error } = await supabase.auth.signInWithPassword({ email, password: p });
+      let { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: p });
       
       if (error && error.message.includes('Invalid login credentials')) {
         // Since it's a new database and the user might not exist, attempt to sign them up
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password: p });
+        const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({ email, password: p });
         if (!signUpError && signUpData && signUpData.user) {
           data = signUpData;
           error = null;
@@ -942,7 +942,7 @@
   /* ── API HELPER (SUPABASE ROUTER) ── */
   async function api(path, method='GET', body=null) {
     // 1. Auth check
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session && path !== '/api/admin/login') {
       toast('Session expired. Please log in again.', 'err');
       adminLogout();
@@ -954,12 +954,12 @@
     try {
       if (parts[1] === 'bookings') {
         if (method === 'GET' && !parts[2]) {
-          const { data, error } = await supabase.from('bookings').select('*').order('created_at', { ascending: false });
+          const { data, error } = await supabaseClient.from('bookings').select('*').order('created_at', { ascending: false });
           if (error) throw error;
           return data.map(b => ({...b, advancePaid: b.advance_paid, paymentStatus: b.payment_status, paymentNotes: b.payment_notes, createdAt: b.created_at}));
         }
         if (method === 'GET' && parts[2]) {
-          const { data, error } = await supabase.from('bookings').select('*').eq('id', parts[2]).single();
+          const { data, error } = await supabaseClient.from('bookings').select('*').eq('id', parts[2]).single();
           if (error) throw error;
           return {...data, advancePaid: data.advance_paid, paymentStatus: data.payment_status, paymentNotes: data.payment_notes, createdAt: data.created_at};
         }
@@ -967,29 +967,29 @@
           const id = parts[2];
           const action = parts[3];
           if (action === 'status') {
-            const { data, error } = await supabase.from('bookings').update({ status: body.status }).eq('id', id).select().single();
+            const { data, error } = await supabaseClient.from('bookings').update({ status: body.status }).eq('id', id).select().single();
             if (error) throw error;
             return { success: true, booking: data };
           }
           if (action === 'payment') {
-            const { data, error } = await supabase.from('bookings').update({ advance_paid: body.advancePaid, payment_status: body.paymentStatus, payment_notes: body.paymentNotes }).eq('id', id).select().single();
+            const { data, error } = await supabaseClient.from('bookings').update({ advance_paid: body.advancePaid, payment_status: body.paymentStatus, payment_notes: body.paymentNotes }).eq('id', id).select().single();
             if (error) throw error;
             return { success: true, booking: data };
           }
           if (action === 'verify-advance') {
-            const { data: current } = await supabase.from('bookings').select('total_amount').eq('id', id).single();
+            const { data: current } = await supabaseClient.from('bookings').select('total_amount').eq('id', id).single();
             const advancePaid = +(current.total_amount * 0.4).toFixed(2);
-            const { data, error } = await supabase.from('bookings').update({ status: 'advance_verified', payment_status: 'advance_paid', advance_paid: advancePaid }).eq('id', id).select().single();
+            const { data, error } = await supabaseClient.from('bookings').update({ status: 'advance_verified', payment_status: 'advance_paid', advance_paid: advancePaid }).eq('id', id).select().single();
             if (error) throw error;
             return { success: true, booking: data };
           }
           if (action === 'collect-cash') {
-            const { data, error } = await supabase.from('bookings').update({ payment_status: 'fully_paid' }).eq('id', id).select().single();
+            const { data, error } = await supabaseClient.from('bookings').update({ payment_status: 'fully_paid' }).eq('id', id).select().single();
             if (error) throw error;
             return { success: true, booking: data };
           }
           if (action === 'paydone') {
-            const { data, error } = await supabase.from('bookings').update({ status: 'confirmed' }).eq('id', id).select().single();
+            const { data, error } = await supabaseClient.from('bookings').update({ status: 'confirmed' }).eq('id', id).select().single();
             if (error) throw error;
             return { success: true, booking: data };
           }
@@ -998,22 +998,22 @@
 
       if (parts[1] === 'staff') {
         if (method === 'GET') {
-          const { data, error } = await supabase.from('staff').select('*').order('created_at', { ascending: false });
+          const { data, error } = await supabaseClient.from('staff').select('*').order('created_at', { ascending: false });
           if (error) throw error;
           return data.map(s => ({...s, _id: s.id, salaryStatus: s.salary_status, salaryDate: s.salary_date, createdAt: s.created_at}));
         }
         if (method === 'POST') {
-          const { data, error } = await supabase.from('staff').insert([{ name: body.name, role: body.role, salary: body.salary, salary_status: body.salaryStatus || 'pending', salary_date: body.salaryDate || new Date() }]).select().single();
+          const { data, error } = await supabaseClient.from('staff').insert([{ name: body.name, role: body.role, salary: body.salary, salary_status: body.salaryStatus || 'pending', salary_date: body.salaryDate || new Date() }]).select().single();
           if (error) throw error;
           return { success: true, staff: {...data, _id: data.id, salaryStatus: data.salary_status, salaryDate: data.salary_date, createdAt: data.created_at} };
         }
         if (method === 'PATCH' && parts[2]) {
-          const { data, error } = await supabase.from('staff').update({ salary_status: body.salaryStatus }).eq('id', parts[2]).select().single();
+          const { data, error } = await supabaseClient.from('staff').update({ salary_status: body.salaryStatus }).eq('id', parts[2]).select().single();
           if (error) throw error;
           return { success: true, staff: {...data, _id: data.id, salaryStatus: data.salary_status, salaryDate: data.salary_date, createdAt: data.created_at} };
         }
         if (method === 'DELETE' && parts[2]) {
-          const { error } = await supabase.from('staff').delete().eq('id', parts[2]);
+          const { error } = await supabaseClient.from('staff').delete().eq('id', parts[2]);
           if (error) throw error;
           return { success: true };
         }
@@ -1021,17 +1021,17 @@
 
       if (parts[1] === 'expenses') {
         if (method === 'GET') {
-          const { data, error } = await supabase.from('expenses').select('*').order('date', { ascending: false });
+          const { data, error } = await supabaseClient.from('expenses').select('*').order('date', { ascending: false });
           if (error) throw error;
           return data.map(e => ({...e, _id: e.id, createdAt: e.created_at}));
         }
         if (method === 'POST') {
-          const { data, error } = await supabase.from('expenses').insert([{ category: body.category, amount: body.amount, date: body.date, status: body.status || 'paid', notes: body.notes }]).select().single();
+          const { data, error } = await supabaseClient.from('expenses').insert([{ category: body.category, amount: body.amount, date: body.date, status: body.status || 'paid', notes: body.notes }]).select().single();
           if (error) throw error;
           return { success: true, expense: {...data, _id: data.id, createdAt: data.created_at} };
         }
         if (method === 'DELETE' && parts[2]) {
-          const { error } = await supabase.from('expenses').delete().eq('id', parts[2]);
+          const { error } = await supabaseClient.from('expenses').delete().eq('id', parts[2]);
           if (error) throw error;
           return { success: true };
         }
