@@ -407,6 +407,8 @@
     }
     #calPrintArea{display:none;}
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabaseClient.js"></script>
 </head>
 <body>
 
@@ -809,33 +811,30 @@
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner spinner"></i> Signing in…';
     err.style.display = 'none';
 
-    // Always attempt backend login first so we get the JWT token needed for APIs
-    fetch(BACKEND_URL + '/api/admin/login', {
-      method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({username: u, password: p})
-    }).then(r => r.json()).then(data => {
-      if (data.token || data.success) {
+    const email = u + '@mjculture.com'; // Map username to an email format required by Supabase Auth
+    supabase.auth.signInWithPassword({ email, password: p }).then(async ({ data, error }) => {
+      if (error && error.message.includes('Invalid login credentials')) {
+        // Since it's a new database and the user might not exist, attempt to sign them up
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password: p });
+        if (!signUpError && signUpData.user) {
+          data = signUpData;
+          error = null;
+        }
+      }
+      
+      if (!error && data.session) {
         sessionStorage.setItem('mjc_admin', '1');
-        if (data.token) sessionStorage.setItem('mjc_admin_token', data.token);
+        sessionStorage.setItem('mjc_admin_token', data.session.access_token);
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('app').style.display = 'flex';
         loadDashboard();
       } else {
-        err.textContent = data.message || data.error || 'Invalid credentials.';
+        err.textContent = error?.message || 'Invalid credentials.';
         err.style.display = 'block';
       }
     }).catch((e) => {
-      console.warn("Backend auth failed or unreachable, checking local credentials bypass:", e);
-      // Fallback to local bypass ONLY if server is unreachable/offline and credentials match local ADMIN_CREDENTIALS
-      if (u === ADMIN_CREDENTIALS.username && p === ADMIN_CREDENTIALS.password) {
-        sessionStorage.setItem('mjc_admin', '1');
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('app').style.display = 'flex';
-        loadDashboard();
-      } else {
-        err.textContent = 'Connection error. Check credentials or try local login.';
-        err.style.display = 'block';
-      }
+      err.textContent = 'Connection error. Check credentials.';
+      err.style.display = 'block';
     }).finally(() => {
       btn.disabled = false; btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Enter Admin Panel';
     });
@@ -929,20 +928,114 @@
     setTimeout(() => el.remove(), 3500);
   }
 
-  /* ── API HELPER ── */
+  /* ── API HELPER (SUPABASE ROUTER) ── */
   async function api(path, method='GET', body=null) {
-    const opts = {method, headers:{'Content-Type':'application/json'}};
-    const tok = sessionStorage.getItem('mjc_admin_token');
-    if (tok) opts.headers['Authorization'] = 'Bearer ' + tok;
-    if (body) opts.body = JSON.stringify(body);
-    const res = await fetch(BACKEND_URL + path, opts);
-    if (res.status === 401) {
-      // Token expired or invalid mid-session — force re-login
+    // 1. Auth check
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session && path !== '/api/admin/login') {
       toast('Session expired. Please log in again.', 'err');
       adminLogout();
-      throw new Error('Unauthorized — session expired');
+      throw new Error('Unauthorized');
     }
-    return res.json();
+
+    const parts = path.split('/').filter(Boolean); // ['api', 'bookings', '123', 'status']
+
+    try {
+      if (parts[1] === 'bookings') {
+        if (method === 'GET' && !parts[2]) {
+          const { data, error } = await supabase.from('bookings').select('*').order('created_at', { ascending: false });
+          if (error) throw error;
+          return data.map(b => ({...b, advancePaid: b.advance_paid, paymentStatus: b.payment_status, paymentNotes: b.payment_notes, createdAt: b.created_at}));
+        }
+        if (method === 'GET' && parts[2]) {
+          const { data, error } = await supabase.from('bookings').select('*').eq('id', parts[2]).single();
+          if (error) throw error;
+          return {...data, advancePaid: data.advance_paid, paymentStatus: data.payment_status, paymentNotes: data.payment_notes, createdAt: data.created_at};
+        }
+        if (method === 'PATCH' && parts[2]) {
+          const id = parts[2];
+          const action = parts[3];
+          if (action === 'status') {
+            const { data, error } = await supabase.from('bookings').update({ status: body.status }).eq('id', id).select().single();
+            if (error) throw error;
+            return { success: true, booking: data };
+          }
+          if (action === 'payment') {
+            const { data, error } = await supabase.from('bookings').update({ advance_paid: body.advancePaid, payment_status: body.paymentStatus, payment_notes: body.paymentNotes }).eq('id', id).select().single();
+            if (error) throw error;
+            return { success: true, booking: data };
+          }
+          if (action === 'verify-advance') {
+            const { data: current } = await supabase.from('bookings').select('total_amount').eq('id', id).single();
+            const advancePaid = +(current.total_amount * 0.4).toFixed(2);
+            const { data, error } = await supabase.from('bookings').update({ status: 'advance_verified', payment_status: 'advance_paid', advance_paid: advancePaid }).eq('id', id).select().single();
+            if (error) throw error;
+            return { success: true, booking: data };
+          }
+          if (action === 'collect-cash') {
+            const { data, error } = await supabase.from('bookings').update({ payment_status: 'fully_paid' }).eq('id', id).select().single();
+            if (error) throw error;
+            return { success: true, booking: data };
+          }
+          if (action === 'paydone') {
+            const { data, error } = await supabase.from('bookings').update({ status: 'confirmed' }).eq('id', id).select().single();
+            if (error) throw error;
+            return { success: true, booking: data };
+          }
+        }
+      }
+
+      if (parts[1] === 'staff') {
+        if (method === 'GET') {
+          const { data, error } = await supabase.from('staff').select('*').order('created_at', { ascending: false });
+          if (error) throw error;
+          return data.map(s => ({...s, _id: s.id, salaryStatus: s.salary_status, salaryDate: s.salary_date, createdAt: s.created_at}));
+        }
+        if (method === 'POST') {
+          const { data, error } = await supabase.from('staff').insert([{ name: body.name, role: body.role, salary: body.salary, salary_status: body.salaryStatus || 'pending', salary_date: body.salaryDate || new Date() }]).select().single();
+          if (error) throw error;
+          return { success: true, staff: {...data, _id: data.id, salaryStatus: data.salary_status, salaryDate: data.salary_date, createdAt: data.created_at} };
+        }
+        if (method === 'PATCH' && parts[2]) {
+          const { data, error } = await supabase.from('staff').update({ salary_status: body.salaryStatus }).eq('id', parts[2]).select().single();
+          if (error) throw error;
+          return { success: true, staff: {...data, _id: data.id, salaryStatus: data.salary_status, salaryDate: data.salary_date, createdAt: data.created_at} };
+        }
+        if (method === 'DELETE' && parts[2]) {
+          const { error } = await supabase.from('staff').delete().eq('id', parts[2]);
+          if (error) throw error;
+          return { success: true };
+        }
+      }
+
+      if (parts[1] === 'expenses') {
+        if (method === 'GET') {
+          const { data, error } = await supabase.from('expenses').select('*').order('date', { ascending: false });
+          if (error) throw error;
+          return data.map(e => ({...e, _id: e.id, createdAt: e.created_at}));
+        }
+        if (method === 'POST') {
+          const { data, error } = await supabase.from('expenses').insert([{ category: body.category, amount: body.amount, date: body.date, status: body.status || 'paid', notes: body.notes }]).select().single();
+          if (error) throw error;
+          return { success: true, expense: {...data, _id: data.id, createdAt: data.created_at} };
+        }
+        if (method === 'DELETE' && parts[2]) {
+          const { error } = await supabase.from('expenses').delete().eq('id', parts[2]);
+          if (error) throw error;
+          return { success: true };
+        }
+      }
+
+      throw new Error('Not implemented API path: ' + path);
+    } catch (err) {
+      console.error(err);
+      if (err.message === 'Unauthorized' || err.status === 401) {
+        toast('Session expired. Please log in again.', 'err');
+        adminLogout();
+        throw new Error('Unauthorized');
+      }
+      return { error: err.message };
+    }
   }
 
   /* ── MODAL ── */

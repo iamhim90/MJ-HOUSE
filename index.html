@@ -1732,16 +1732,8 @@
 }
 
   </style>
-  <script src="js/config.js"></script>
-  <script>
-    // Early background wake-up ping for Render server
-    (function() {
-      if (typeof API_BASE_URL !== 'undefined') {
-        console.log("⚡ [Antigravity] Early background wake-up ping sent to:", API_BASE_URL);
-        fetch(API_BASE_URL + '/health').catch(err => console.warn("Early ping failed:", err));
-      }
-    })();
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabaseClient.js"></script>
 </head>
 <body>
 

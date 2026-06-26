@@ -249,10 +249,18 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
   async function fetchAvailability() {
     if (availCache !== null) return;
     try {
-      const res = await fetch(API, { method: 'GET' });
-      if (!res.ok) throw new Error('non-200');
-      const data = await res.json();
-      availCache = data.availability || {};
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('check_in, slot, status')
+        .in('status', ['confirmed', 'pending', 'waiting', 'advance_requested', 'advance_verified']);
+      if (error) throw error;
+      
+      availCache = {};
+      data.forEach(r => {
+        const d = String(r.check_in).split('T')[0];
+        if (!availCache[d]) availCache[d] = {};
+        availCache[d][r.slot] = 'booked';
+      });
     } catch {
       availCache = {};   // graceful degradation — calendar still works, no colors
     }
@@ -579,24 +587,36 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
     submitBtn.innerHTML = '<i class="fas fa-spinner" style="animation:spin 1s linear infinite"></i> Processing...';
 
     try {
-      // Call backend API — URL untouched
-      console.log(API_BASE_URL + "/api/bookings");
-      const response = await fetch(API_BASE_URL + '/api/bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      // Insert booking via Supabase
+      const { data, error } = await supabase
+        .from('bookings')
+        .insert([{
+          customer_name: name,
+          phone: phone,
+          email: email || null,
+          check_in: date,
+          check_out: date,
+          guests: parseInt(guests),
+          total_amount: parseFloat(price),
+          occasion: occasion,
+          notes: notes || null,
+          slot: slot,
+          status: 'pending'
+        }])
+        .select()
+        .single();
 
-      const fetcha = await response.json();
+      if (error) {
+        throw error;
+      }
 
-      console.log("📥 RESPONSE FROM BACKEND:");
-      console.log("Status:", response.status);
-      console.log("Data:", fetcha);
+      console.log("📥 RESPONSE FROM SUPABASE:");
+      console.log("Data:", data);
       console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
-      if (response.ok) {
+      if (data) {
         console.log("✅ BOOKING SAVED — redirecting to payment section");
-        const bookingId = fetcha.bookingId;
+        const bookingId = data.id;
         const advance = Math.round(price * 0.40);
 
         // Reset form
@@ -663,8 +683,12 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
           newPayDoneBtn.disabled = true;
           newPayDoneBtn.innerHTML = '<i class="fas fa-spinner" style="animation:spin 1s linear infinite"></i> Notifying owner…';
           try {
-            const pRes = await fetch(API_BASE_URL + '/api/bookings/' + bookingId + '/paydone', { method: 'PATCH' });
-            if (pRes.ok) {
+            const { error: pError } = await supabase
+              .from('bookings')
+              .update({ status: 'waiting', payment_status: 'advance_paid' })
+              .eq('id', bookingId);
+              
+            if (!pError) {
               // Switch to waiting state
               document.getElementById('bstStep2').className = 'bst-step done';
               document.getElementById('bstStep3').className = 'bst-step active';
@@ -673,10 +697,9 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
               // Start polling
               startStatusPolling(bookingId);
             } else {
-              const pData = await pRes.json();
               newPayDoneBtn.disabled = false;
               newPayDoneBtn.innerHTML = '<i class="fas fa-check-circle"></i> I Have Completed Payment';
-              alert(pData.error || 'Something went wrong. Please try again.');
+              alert(pError.message || 'Something went wrong. Please check your internet and try again.');
             }
           } catch (pollErr) {
             newPayDoneBtn.disabled = false;
@@ -685,9 +708,9 @@ document.querySelectorAll('.slot').forEach(s => s.addEventListener('click', () =
           }
         });
       } else {
-        console.log("⚠️ BOOKING FAILED:", fetcha.message);
+        console.log("⚠️ BOOKING FAILED");
         showMsg('error',
-          `<div class="msg-title"><span class="msg-icon">⚠️</span>${fetcha.message || 'Booking failed'}</div>` +
+          `<div class="msg-title"><span class="msg-icon">⚠️</span>Booking failed</div>` +
           `<div class="msg-detail">This time slot may already be booked. Please select another date or time.</div>`
         );
       }
@@ -711,9 +734,13 @@ function startStatusPolling(bookingId) {
   if (_pollTimer) clearInterval(_pollTimer);
   _pollTimer = setInterval(async () => {
     try {
-      const res = await fetch(API_BASE_URL + '/api/bookings/' + bookingId);
-      if (!res.ok) return;
-      const data = await res.json();
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('status')
+        .eq('id', bookingId)
+        .single();
+        
+      if (error || !data) return;
 
       if (data.status === 'confirmed') {
         clearInterval(_pollTimer); _pollTimer = null;
