@@ -424,8 +424,8 @@
       <span class="login-badge"><i class="fas fa-shield-alt" style="margin-right:.3rem"></i>Secure Admin Access</span>
     </div>
     <div class="lf">
-      <label>Admin Username</label>
-      <input type="text" id="adminUser" placeholder="admin" autocomplete="username">
+      <label>Admin Username (or Email)</label>
+      <input type="text" id="adminUser" placeholder="admin or admin@mjculture.com" autocomplete="username">
     </div>
     <div class="lf">
       <label>Password</label>
@@ -811,7 +811,7 @@
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner spinner"></i> Signing in…';
     err.style.display = 'none';
 
-    const email = u + '@mjculture.com'; // Map username to an email format required by Supabase Auth
+    const email = u.includes('@') ? u : u + '@mjculture.com'; // Support both raw username and full email
     supabase.auth.signInWithPassword({ email, password: p }).then(async ({ data, error }) => {
       if (error && error.message.includes('Invalid login credentials')) {
         // Since it's a new database and the user might not exist, attempt to sign them up
