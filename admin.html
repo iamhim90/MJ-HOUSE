@@ -629,9 +629,10 @@
         <div class="stat-card"><div class="stat-card-label">Salary Paid</div><div class="stat-card-num" id="salaryPaid">—</div></div>
         <div class="stat-card"><div class="stat-card-label">Salary Pending</div><div class="stat-card-num" id="salaryPending">—</div></div>
       </div>
+      <p style="font-size:0.8rem; color:var(--wheat); margin-bottom: 1.2rem; opacity: 0.7;"><i class="fas fa-info-circle"></i> Note: To deduct salary payouts from your Accounts Net Profit, you must manually log them in the <strong>Bills & Expenses</strong> tab.</p>
       <div class="card">
         <div class="card-header"><span class="card-title"><i class="fas fa-users"></i> Staff Members</span></div>
-        <div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Role</th><th>Salary</th><th>Salary Month / Date</th><th>Status</th><th>Actions</th></tr></thead>
+        <div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Role</th><th>Salary Month / Date</th><th>Status</th><th>Actions</th></tr></thead>
         <tbody id="staffTableBody"><tr><td colspan="6" class="loading"><i class="fas fa-spinner spinner"></i>Loading…</td></tr></tbody></table></div>
       </div>
     </div>
@@ -660,7 +661,6 @@
       <div class="account-row" id="accountsSummary">
         <div class="account-card positive"><div class="account-card-label">Total Earnings</div><div class="account-card-num" id="acc-earnings">₹0</div></div>
         <div class="account-card negative"><div class="account-card-label">Total Expenses</div><div class="account-card-num" id="acc-expenses">₹0</div></div>
-        <div class="account-card salary"><div class="account-card-label">Total Salary</div><div class="account-card-num" id="acc-salary">₹0</div></div>
         <div class="account-card neutral"><div class="account-card-label">Net Profit</div><div class="account-card-num" id="acc-profit">₹0</div></div>
       </div>
       <div class="chart-box" style="position:relative">
@@ -674,7 +674,7 @@
         <div class="month-table-wrap">
           <div style="font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,232,.25);margin-bottom:.7rem;margin-top:.5rem">Month-wise Summary</div>
           <table class="month-table">
-            <thead><tr><th>Month</th><th>Earnings</th><th>Expenses</th><th>Salary</th><th>Net Profit</th></tr></thead>
+            <thead><tr><th>Month</th><th>Earnings</th><th>Expenses</th><th>Net Profit</th></tr></thead>
             <tbody id="monthTableBody"><tr><td colspan="5" class="loading"><i class="fas fa-spinner spinner"></i> Loading…</td></tr></tbody>
           </table>
         </div>
@@ -858,7 +858,7 @@
   }
 
   // Check session on load
-  window.addEventListener('DOMContentLoaded', () => {
+  window.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('dashDate').textContent = new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
     // Set today's date in expense date field
     document.getElementById('eDate').valueAsDate = new Date();
@@ -876,9 +876,14 @@
       if (mo < 1) { mo = 12; yr--; }
     }
     sel.innerHTML = '<option value="">All Time</option>' + monthOptions.join('');
-    // Clear any previous session so they must log in every time the page is loaded/refreshed
-    sessionStorage.removeItem('mjc_admin');
-    sessionStorage.removeItem('mjc_admin_token');
+    // Check existing Supabase session instead of clearing it
+    const { data: { session } } = await window.supabaseClient.auth.getSession();
+    if (session) {
+      sessionStorage.setItem('mjc_admin', '1');
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+      loadDashboard();
+    }
     
     // Auto-refresh every 10 seconds (silent background refresh)
     setInterval(() => {
@@ -890,7 +895,8 @@
     }, 10000);
   });
 
-  function adminLogout() {
+  async function adminLogout() {
+    await window.supabaseClient.auth.signOut();
     sessionStorage.removeItem('mjc_admin');
     sessionStorage.removeItem('mjc_admin_token');
     document.getElementById('loginScreen').style.display = 'flex';
@@ -2026,7 +2032,7 @@
       // ALL-TIME salary = sum of every staff member's salary (no date restriction)
       const allTimeSal = allStaff.reduce((s, st) => s + (parseFloat(st.salary) || 0), 0);
 
-      let earnings = 0, expTotal = 0, salaryTotal = 0;
+      let earnings = 0, expTotal = 0;
 
       if (monthFilter) {
         const [fy, fm] = monthFilter.split('-').map(Number);
@@ -2041,15 +2047,8 @@
           if (!isNaN(d.getTime()) && d.getFullYear() === fy && d.getMonth() + 1 === fm)
             expTotal += (parseFloat(e.amount) || 0);
         });
-        // Monthly salary: only staff whose salaryDate is in this exact month
-        allStaff.forEach(st => {
-          if (!st.salaryDate) return;
-          const d = new Date(st.salaryDate);
-          if (!isNaN(d.getTime()) && d.getFullYear() === fy && d.getMonth() + 1 === fm)
-            salaryTotal += (parseFloat(st.salary) || 0);
-        });
       } else {
-        // ALL TIME — use all confirmed bookings/expenses from June 2026, ALL staff salaries
+        // ALL TIME — use all confirmed bookings/expenses from June 2026
         allBookings.forEach(b => {
           if (b.status !== 'confirmed') return;
           const d = new Date(b.check_in || b.date);
@@ -2061,14 +2060,12 @@
           if (!isNaN(d.getTime()) && d >= baseDate)
             expTotal += (parseFloat(e.amount) || 0);
         });
-        salaryTotal = allTimeSal; // ALL staff, no date restriction
       }
 
-      const profit = earnings - (expTotal + salaryTotal);
+      const profit = earnings - expTotal;
 
       document.getElementById('acc-earnings').textContent = '₹' + earnings.toLocaleString('en-IN');
       document.getElementById('acc-expenses').textContent = '₹' + expTotal.toLocaleString('en-IN');
-      document.getElementById('acc-salary').textContent   = '₹' + salaryTotal.toLocaleString('en-IN');
       document.getElementById('acc-profit').textContent   = (profit < 0 ? '-' : '') + '₹' + Math.abs(profit).toLocaleString('en-IN') + (profit < 0 ? ' (Loss)' : '');
       document.getElementById('acc-profit').style.color   = profit >= 0 ? '#86efac' : '#fca5a5';
 
@@ -2207,28 +2204,25 @@
         const mLabel = new Date(y, m - 1, 1).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
         const rev = revMap[k] || 0;
         const exp = expMap[k] || 0;
-        const sal = salMap[k] || 0; // only staff whose salaryDate is in this month
-        const pft = rev - (exp + sal);
+        const pft = rev - exp;
         const isSelected = monthFilter === k;
-        const hasData = rev > 0 || exp > 0 || sal > 0;
+        const hasData = rev > 0 || exp > 0;
         return `<tr style="${isSelected ? 'background:rgba(201,169,110,.1);' : ''}${!hasData ? 'opacity:.4;' : ''}">
           <td><button onclick="document.getElementById('accountMonth').value='${k}';loadAccounts()" style="background:none;border:none;color:${isSelected ? 'var(--wheat)' : 'rgba(245,240,232,.75)'};cursor:pointer;font-size:.8rem;text-align:left;padding:0;font-weight:${isSelected ? '700' : '400'}">${mLabel}${isSelected ? ' ◄' : ''}</button></td>
           <td style="color:#86efac">₹${rev.toLocaleString('en-IN')}</td>
           <td style="color:#fca5a5">₹${exp.toLocaleString('en-IN')}</td>
-          <td style="color:#93c5fd">₹${sal.toLocaleString('en-IN')}</td>
           <td style="color:${pft >= 0 ? '#86efac' : '#fca5a5'}">${pft < 0 ? '-' : ''}₹${Math.abs(pft).toLocaleString('en-IN')}</td>
         </tr>`;
       });
 
-      // ALL TIME row — earnings/expenses from June 2026+, salary = ALL staff
+      // ALL TIME row — earnings/expenses from June 2026+
       const totRev = Object.values(revMap).reduce((s, v) => s + v, 0);
       const totExp = Object.values(expMap).reduce((s, v) => s + v, 0);
-      const totPft = totRev - (totExp + allTimeSal);
+      const totPft = totRev - totExp;
       tableRows.push(`<tr style="background:rgba(201,169,110,.05);">
         <td><button onclick="document.getElementById('accountMonth').value='';loadAccounts()" style="background:none;border:none;color:var(--wheat);cursor:pointer;font-size:.8rem;font-weight:700;padding:0">ALL TIME${!monthFilter ? ' ◄' : ''}</button></td>
         <td style="color:#86efac">₹${totRev.toLocaleString('en-IN')}</td>
         <td style="color:#fca5a5">₹${totExp.toLocaleString('en-IN')}</td>
-        <td style="color:#93c5fd">₹${allTimeSal.toLocaleString('en-IN')}</td>
         <td style="color:${totPft >= 0 ? '#86efac' : '#fca5a5'}">${totPft < 0 ? '-' : ''}₹${Math.abs(totPft).toLocaleString('en-IN')}${totPft < 0 ? ' (Loss)' : ''}</td>
       </tr>`);
 
