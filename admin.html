@@ -1075,7 +1075,12 @@
 
       const pending = allBookings.filter(b => b.status==='pending' || b.status==='waiting' || b.status==='advance_requested' || b.status==='advance_verified').length;
       const approved = allBookings.filter(b => b.status==='confirmed').length;
-      const advTotal = allBookings.reduce((s,b) => s + (parseFloat(b.advancePaid)||0), 0);
+      const advTotal = allBookings.reduce((s,b) => {
+        if (b.paymentStatus === 'advance_paid' || b.paymentStatus === 'partially_paid' || b.paymentStatus === 'fully_paid') {
+          return s + (parseFloat(b.advancePaid)||0);
+        }
+        return s;
+      }, 0);
       const pendingPay = allBookings.filter(b => b.paymentStatus !== 'fully_paid' && b.status === 'confirmed').length;
       const expTotal = allExpenses.reduce((s,e) => s + (parseFloat(e.amount)||0), 0);
       const salaryTotal = allStaff.reduce((s,st) => s + (parseFloat(st.salary)||0), 0);
